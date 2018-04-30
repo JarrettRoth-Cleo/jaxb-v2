@@ -1,5 +1,7 @@
 package com.sun.tools.xjc;
 
+import com.sun.tools.xjc.model.CClass;
+import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.tools.xjc.model.CElementInfo;
 import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.model.nav.NClass;
@@ -11,50 +13,24 @@ import java.util.Map;
 
 public class ModelSanitizer {
 
+    private List<String> nClassNames = new ArrayList<String>();
+    private List<String> qnameNames = new ArrayList<String>();
+
     public Model sanitize(Model model){
         Map<NClass, Map<QName, CElementInfo>> x = model.getElementMappings();
-        List<Map<QName, CElementInfo>> maps = new ArrayList<Map<QName, CElementInfo>>(x.values());
-        List<String> names = getNamesOfMappedElements(maps);
-        //Adding a comment for testing the git branch issue
-
-        for(String collectedName : names){
-            for (String test : names){
-                if (collectedName.equalsIgnoreCase(test)) {
-                    System.out.println("found dupe" + test + "too similar to " + collectedName);
+        for(Map.Entry<NClass,Map<QName,CElementInfo>> currentElement : x.entrySet()){
+            NClass key = currentElement.getKey();
+            if(key!=null) {
+                String packageName = key.fullName();
+                for(Map.Entry<QName,CElementInfo> currentClassEntry : currentElement.getValue().entrySet()){
+                    QName qnameKey = currentClassEntry.getKey();
+                    System.out.println(key.fullName()+ " " +qnameKey.toString());
                 }
             }
-
         }
         //TODO
         return model;
     }
-    private static List<String> getNamesOfMappedElements(List<Map<QName, CElementInfo>> rootMaps){
-        List<String> classNameList = new ArrayList<String>();
-        for(Map<QName, CElementInfo> m : rootMaps) {
-            getNameAndSubElementNames(classNameList, null, m);
-        }
-        return classNameList;
-    }
 
-    private static void getNameAndSubElementNames(List<String> accumulatedNames, String elementName, Map<QName, CElementInfo> mapOfChildren){
-        if (elementName != null){
-            accumulatedNames.add(elementName);
-        }
 
-        /*
-        for (int r = 0 ; r < mapOfChildren.size() ; r++){
-        }
-        */
-        for (Map.Entry<QName, CElementInfo> e: mapOfChildren.entrySet()){
-            QName key = e.getKey();
-            String simpleName = key.getLocalPart();
-            if (simpleName != null){
-                accumulatedNames.add(simpleName);
-            }
-
-            //Map<QName, CElementInfo> map = new HashMap<QName, CElementInfo>();
-            //map.put(e.getKey(), e.getValue());
-            //getNameAndSubElementNames(accumulatedNames, x, map);
-        }
-    }
 }
