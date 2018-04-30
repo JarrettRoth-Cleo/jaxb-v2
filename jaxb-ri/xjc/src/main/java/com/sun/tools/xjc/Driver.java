@@ -364,6 +364,7 @@ public class Driver {
             Map<NClass, Map<QName, CElementInfo>> x = model.getElementMappings();
             List<Map<QName, CElementInfo>> maps = new ArrayList<Map<QName, CElementInfo>>(x.values());
             names = getNamesOfMappedElements(maps);
+            //Adding a comment for testing the git branch issue
 
             for(String collectedName : names){
                 for (String test : names){
