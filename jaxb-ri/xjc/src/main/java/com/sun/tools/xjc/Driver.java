@@ -48,7 +48,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.Iterator;
+import java.util.*;
 
 import com.sun.codemodel.CodeWriter;
 import com.sun.codemodel.JCodeModel;
@@ -57,7 +57,8 @@ import com.sun.istack.NotNull;
 import com.sun.istack.Nullable;
 import com.sun.istack.tools.DefaultAuthenticator;
 import com.sun.tools.xjc.generator.bean.BeanGenerator;
-import com.sun.tools.xjc.model.Model;
+import com.sun.tools.xjc.model.*;
+import com.sun.tools.xjc.model.nav.NClass;
 import com.sun.tools.xjc.outline.Outline;
 import com.sun.tools.xjc.reader.gbind.Expression;
 import com.sun.tools.xjc.reader.gbind.Graph;
@@ -75,12 +76,15 @@ import com.sun.xml.xsom.XSSchemaSet;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import javax.xml.namespace.QName;
+
 
 /**
  * Command Line Interface of XJC.
  */
 public class Driver {
 
+    private static List<String> names ;
     private static final String SYSTEM_PROXY_PROPERTY = "java.net.useSystemProxies";
 
     public static void main(final String[] args) throws Exception {
@@ -350,14 +354,28 @@ public class Driver {
                 }
                 return -1;
             }
-            
+
             Model model = ModelLoader.load( opt, new JCodeModel(), receiver );
 
             if (model == null) {
                 listener.message(Messages.format(Messages.PARSE_FAILED));
                 return -1;
             }
+            Map<NClass, Map<QName, CElementInfo>> x = model.getElementMappings();
+            List<Map<QName, CElementInfo>> maps = new ArrayList<Map<QName, CElementInfo>>(x.values());
+            names = getNamesOfMappedElements(maps);
 
+            for(String collectedName : names){
+                for (String test : names){
+                    if (collectedName.equalsIgnoreCase(test)) {
+                        System.out.println("found dupe" + test + "too similar to " + collectedName);
+                    }
+                }
+            }
+
+            /**
+             * Function to check ever entry in the list to see if it makes
+             */
             if( !opt.quiet ) {
                 listener.message(Messages.format(Messages.COMPILING_SCHEMA));
             }
@@ -448,6 +466,36 @@ public class Driver {
             if (opt.proxyAuth != null) {
                 DefaultAuthenticator.reset();
             }
+        }
+    }
+
+    private static List<String> getNamesOfMappedElements(List<Map<QName, CElementInfo>> rootMaps){
+        List<String> classNameList = new ArrayList<String>();
+        for(Map<QName, CElementInfo> m : rootMaps) {
+            getNameAndSubElementNames(classNameList, null, m);
+        }
+        return classNameList;
+    }
+
+    private static void getNameAndSubElementNames(List<String> accumulatedNames, String elementName, Map<QName, CElementInfo> mapOfChildren){
+        if (elementName != null){
+            accumulatedNames.add(elementName);
+        }
+
+        /*
+        for (int r = 0 ; r < mapOfChildren.size() ; r++){
+        }
+        */
+        for (Map.Entry<QName, CElementInfo> e: mapOfChildren.entrySet()){
+            QName key = e.getKey();
+            String simpleName = key.getLocalPart();
+            if (simpleName != null){
+                accumulatedNames.add(simpleName);
+            }
+
+            //Map<QName, CElementInfo> map = new HashMap<QName, CElementInfo>();
+            //map.put(e.getKey(), e.getValue());
+            //getNameAndSubElementNames(accumulatedNames, x, map);
         }
     }
 

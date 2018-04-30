@@ -409,6 +409,9 @@ public final class Model implements TypeInfoSet<NType,NClass,Void,Void>, CCustom
     public Map<QName,CElementInfo> getElementMappings(NClass scope) {
         return elementMappings.get(scope);
     }
+    public Map <NClass, Map<QName, CElementInfo>> getElementMappings(){
+        return elementMappings;
+    }
 
     public Iterable<? extends CElementInfo> getAllElements() {
         return allElements;

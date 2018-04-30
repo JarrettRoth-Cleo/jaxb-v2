@@ -114,6 +114,7 @@ holder.
                 </excludes>
             </resource>
         </resources>
+        <pluginManagement>
         <plugins>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -200,5 +201,6 @@ holder.
                 </executions>
             </plugin>
         </plugins>
+        </pluginManagement>
     </build>
 </project>
