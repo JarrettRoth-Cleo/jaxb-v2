@@ -110,10 +110,12 @@ public interface NameConverter
 
     static class Standard extends NameUtil implements NameConverter {
         public String toClassName(String s) {
-            return toMixedCaseName(toWordList(s), true);
+            return toMixedCaseName(toWordList(s), false);
+            //return s;
         }
         public String toVariableName(String s) {
             return toMixedCaseName(toWordList(s), false);
+            //return s;
         }
         public String toInterfaceName( String token ) {
             return toClassName(token);
