@@ -350,7 +350,7 @@ public class Driver {
                     }
                     return 0;
                 } catch (SAXException e) {
-                    // the error should have already been reported
+                    // the error should have already been reported .. no really
                 }
                 return -1;
             }
