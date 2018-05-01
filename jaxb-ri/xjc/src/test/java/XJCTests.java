@@ -24,7 +24,6 @@ public class XJCTests {
 
     @Test
     public void shouldFailTest() throws Throwable{
-        System.out.println(rootDir.getAbsolutePath());
         runTest(new File(rootDir,"EADS_INVOICING_JUST_PRECISION.XSD"),new File(destRootDir,"shouldFail"));
         Assert.assertTrue(true);
     }
