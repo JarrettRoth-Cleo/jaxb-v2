@@ -42,6 +42,7 @@ package com.sun.tools.xjc.reader.internalizer;
 
 import com.sun.xml.bind.unmarshaller.DOMScanner;
 
+import com.sun.xml.bind.unmarshaller.MyDOMScanner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -81,7 +82,8 @@ public class DOMForestScanner {
      * element e as if it's a root element.
      */
     public void scan( Element e, ContentHandler contentHandler ) throws SAXException {
-        DOMScanner scanner = new DOMScanner();
+        //TODO
+        DOMScanner scanner = new MyDOMScanner();
         
         // insert the location resolver into the pipe line
         LocationResolver resolver = new LocationResolver(scanner);

@@ -45,6 +45,7 @@ public class XJCTests {
             model.generateCode(null,null);
 
         }catch(Exception e){
+            e.printStackTrace();
             Assert.fail(e.getMessage());
         }
     }
