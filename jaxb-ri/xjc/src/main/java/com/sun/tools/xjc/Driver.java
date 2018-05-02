@@ -361,18 +361,8 @@ public class Driver {
                 listener.message(Messages.format(Messages.PARSE_FAILED));
                 return -1;
             }
-            Map<NClass, Map<QName, CElementInfo>> x = model.getElementMappings();
-            List<Map<QName, CElementInfo>> maps = new ArrayList<Map<QName, CElementInfo>>(x.values());
-            names = getNamesOfMappedElements(maps);
-            //Adding a comment for testing the git branch issue
 
-            for(String collectedName : names){
-                for (String test : names){
-                    if (collectedName.equalsIgnoreCase(test)) {
-                        System.out.println("found dupe" + test + "too similar to " + collectedName);
-                    }
-                }
-            }
+            model = new ModelSanitizer().sanitize(model);
 
             /**
              * Function to check ever entry in the list to see if it makes
@@ -467,36 +457,6 @@ public class Driver {
             if (opt.proxyAuth != null) {
                 DefaultAuthenticator.reset();
             }
-        }
-    }
-
-    private static List<String> getNamesOfMappedElements(List<Map<QName, CElementInfo>> rootMaps){
-        List<String> classNameList = new ArrayList<String>();
-        for(Map<QName, CElementInfo> m : rootMaps) {
-            getNameAndSubElementNames(classNameList, null, m);
-        }
-        return classNameList;
-    }
-
-    private static void getNameAndSubElementNames(List<String> accumulatedNames, String elementName, Map<QName, CElementInfo> mapOfChildren){
-        if (elementName != null){
-            accumulatedNames.add(elementName);
-        }
-
-        /*
-        for (int r = 0 ; r < mapOfChildren.size() ; r++){
-        }
-        */
-        for (Map.Entry<QName, CElementInfo> e: mapOfChildren.entrySet()){
-            QName key = e.getKey();
-            String simpleName = key.getLocalPart();
-            if (simpleName != null){
-                accumulatedNames.add(simpleName);
-            }
-
-            //Map<QName, CElementInfo> map = new HashMap<QName, CElementInfo>();
-            //map.put(e.getKey(), e.getValue());
-            //getNameAndSubElementNames(accumulatedNames, x, map);
         }
     }
 
