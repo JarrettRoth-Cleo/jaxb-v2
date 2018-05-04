@@ -40,3 +40,8 @@
 /jaxb-ri/codemodel/target/
 /jaxb-ri/codemodel/codemodel-annotation-compiler/target/
 /jaxb-ri/codemodel/codemodel/target/
+
+#Eclipse
+**/.project
+**/.settings
+**/.classpath 
