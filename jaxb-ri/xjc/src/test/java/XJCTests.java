@@ -70,7 +70,7 @@ public class XJCTests {
 
 //    @Ignore
     @Test
-    public void shouldFailWithBindings() throws Throwable{
+    public void shouldFailWithBindings3() throws Throwable{
         File xsd = new File(resourceDir,"EADS_INVOICING_JUST_PRECISION.XSD");
         File bindingsFile = new File(resourceDir,"Just_precision_bindings.xjb");
         runTest(xsd,bindingsFile);

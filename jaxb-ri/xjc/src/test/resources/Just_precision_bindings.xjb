@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jxb:bindings schemaLocation="EADS_INVOICING_JUST_PRECISION.XSD" version="2.1" xmlns:jxb="http://java.sun.com/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<jxb:bindings node="//*[local-name()='element' and @name='semiramis']/*[local-name()='complexType']/*[local-name()='sequence']/*[local-name()='element' and @name='Precision']/*[local-name()='complexType']">
-		<jxb:class name="Precision2_ClassOverwrite"/>
-		<jxb:property name="Precision2_Type_PropOverwrite"/>
+		<jxb:class name="Precision2"/>
+		<jxb:property name="Precision2"/>
 	</jxb:bindings>
 	<jxb:bindings node="//*[local-name()='element' and @name='semiramis']/*[local-name()='complexType']/*[local-name()='sequence']/*[local-name()='element' and @name='Precision']">
-		<jxb:property name="Precision2_PropOverwrite"/>
+		<jxb:property name="Precision2"/>
 	</jxb:bindings>
 </jxb:bindings>
