@@ -60,7 +60,7 @@ public class XJCTests {
     }
 
     
-    @Ignore
+//    @Ignore
     @Test
     public void shouldFailTest() throws Throwable{
         runTest(new File(resourceDir,"EADS_INVOICING_JUST_PRECISION.XSD"));
@@ -94,7 +94,7 @@ public class XJCTests {
             inputSource.setSystemId(xsd.toURI().toString());
 
             for(File f : bindings){
-            	FileInputStream fileInputStream2 = new FileInputStream(xsd);
+            	FileInputStream fileInputStream2 = new FileInputStream(f);
                 InputSource inputSource2 = new InputSource(fileInputStream2);
                 inputSource2.setSystemId(f.toURI().toString());
                 compiler.getOptions().addBindFile(inputSource2);
