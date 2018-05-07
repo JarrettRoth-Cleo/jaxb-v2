@@ -32,6 +32,7 @@ import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
 import com.sun.tools.xjc.api.XJC;
 import com.sun.tools.xjc.model.CClassInfo;
+import com.sun.tools.xjc.model.CElementInfo;
 import com.sun.tools.xjc.model.CPluginCustomization;
 import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.model.nav.NClass;
@@ -60,7 +61,7 @@ public class XJCTests {
     }
 
     
-//    @Ignore
+    @Ignore
     @Test
     public void shouldFailTest() throws Throwable{
         runTest(new File(resourceDir,"EADS_INVOICING_JUST_PRECISION.XSD"));
@@ -84,7 +85,7 @@ public class XJCTests {
         SchemaCompiler compiler = XJC.createSchemaCompiler();
         
         //TODO: THIS is how you activate a plugin for post porcessing modeling...
-//        compiler.getOptions().activePlugins.add(new TestingPlugin());
+        compiler.getOptions().activePlugins.add(new TestingPlugin2());
         
         compiler.setErrorListener(new TestingErrorListener());
         InputSource inputSource;
@@ -106,6 +107,9 @@ public class XJCTests {
             Assert.assertNotNull("model is null",model);
             
             JCodeModel jModel = model.generateCode(null,null);
+            if(!outputDir.exists()){
+            	outputDir.mkdirs();
+            }
             jModel.build(outputDir);
             //TODO: delete
         }catch(Exception e){
@@ -189,6 +193,55 @@ public class XJCTests {
 
     }
 
+    
+    private class TestingPlugin2 extends Plugin{
+
+        @Override
+        public String getOptionName() {
+            return "Quick Test";
+        }
+
+        @Override
+        public String getUsage() {
+            return "PostProcess";
+        }
+
+        @Override
+        public boolean run(Outline outline, Options opt, ErrorHandler errorHandler) throws SAXException {
+            return true;
+        }
+
+        @Override
+		public void postProcessModel(Model model, ErrorHandler errorHandler) {
+            //oh boi
+        	Map<NClass,CClassInfo> conflicts = findConflicts(model);
+          for(CElementInfo info :  model.getAllElements()){
+        	  org.w3c.dom.Element woof = new Woof("todo");
+        	       	  
+//        	  info.getCustomizations().add(new CPluginCustomization(woof ,info.getLocator()));
+          }
+        }
+
+    }
+    
+    private Map<NClass,CClassInfo> findConflicts(Model m){
+    	Map<NClass,CClassInfo> changesToMake = new HashMap<NClass, CClassInfo>();
+        List<String> usedNames = new ArrayList<String>();
+        for(Map.Entry<NClass, CClassInfo> entry : m.beans().entrySet()){
+            String name  = entry.getValue().toString();
+            if(usedNames.contains(name)){
+     
+                name = findUniquName(usedNames,name);
+                entry.getValue().getCustomizations().add(new CPluginCustomization(new Woof(buildShortName(name)) ,entry.getValue().getLocator()));
+                changesToMake.put(entry.getKey(),entry.getValue());
+                usedNames.add(name);
+            }else{
+                usedNames.add(name);
+            }
+        }
+        return changesToMake;
+    }
+    
     private void updateNewClassInfoUseages(NClass newCLass){
 
     }
