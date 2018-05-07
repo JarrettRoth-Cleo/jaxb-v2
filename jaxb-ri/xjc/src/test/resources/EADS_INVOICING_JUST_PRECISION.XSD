@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="qualified" targetNamespace="com.cisag.app.sales.obj.CustomerInvoice" xmlns="com.cisag.app.sales.obj.CustomerInvoice" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="semiramis">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element minOccurs="0" name="accuracy" nillable="true" type="xsd:string"/>
+                <xsd:element minOccurs="0" name="offset" nillable="true" type="xsd:string"/>
+                <xsd:element minOccurs="0" name="value" nillable="true" type="xsd:string"/>
+                <xsd:element minOccurs="0" name="precision" nillable="true">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element minOccurs="0" name="precision" nillable="true" type="xsd:string"/>
+                            <xsd:element minOccurs="0" name="use" nillable="true" type="xsd:string"/>
+                        </xsd:sequence>
+                        <xsd:attribute name="mark" type="xsd:string"/>
+                        <xsd:attribute name="mode" type="xsd:string"/>
+                        <xsd:attribute name="invalid" type="xsd:boolean"/>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element minOccurs="0" name="Precision" nillable="true">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element minOccurs="0" name="guid" nillable="true">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element minOccurs="0" name="precision" nillable="true" type="xsd:string"/>
+                                        <xsd:element minOccurs="0" name="use" nillable="true" type="xsd:string"/>
+                                    </xsd:sequence>
+                                    <xsd:attribute name="mark" type="xsd:string"/>
+                                    <xsd:attribute name="mode" type="xsd:string"/>
+                                    <xsd:attribute name="invalid" type="xsd:boolean"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element minOccurs="0" name="precision" nillable="true" type="xsd:string"/>
+                        </xsd:sequence>
+                        <xsd:attribute name="mark" type="xsd:string"/>
+                        <xsd:attribute name="mode" type="xsd:string"/>
+                        <xsd:attribute name="invalid" type="xsd:boolean"/>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

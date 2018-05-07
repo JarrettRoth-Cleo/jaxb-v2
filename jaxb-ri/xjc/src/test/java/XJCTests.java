@@ -13,8 +13,11 @@ import com.sun.tools.xjc.model.nav.NClass;
 import com.sun.tools.xjc.outline.Outline;
 import com.sun.xml.xsom.XSComponent;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 import com.sun.tools.xjc.api.S2JJAXBModel;
@@ -28,30 +31,48 @@ import java.util.List;
 import java.util.Map;
 
 public class XJCTests {
-    private final File rootDir = new File("C:\\code\\xjcFork\\xsds");
+	//TODO: there must be a better way to do this
+	private final File resourceDir = new File("src/test/resources");
+	
     private final File destRootDir = new File("C:/code/xjcFork/xsds/output");
+    private File outputDir;
+    
+    @Rule
+    public TestName name = new TestName();
+    
+    @Before
+    public void createOutputDir(){
+    	outputDir = new File(destRootDir,name.getMethodName());
+    }
 
     @Ignore
     @Test
     public void simpleTest() throws Throwable{
-        runTest(new File(rootDir,"ImageAttachment.xsd"), new File(destRootDir,"simple"));
+        runTest(new File(resourceDir,"ImageAttachment.xsd"));
+        Assert.assertTrue(true);
+    }
+
+    
+    @Ignore
+    @Test
+    public void shouldFailTest() throws Throwable{
+        runTest(new File(resourceDir,"EADS_INVOICING_JUST_PRECISION.XSD"));
         Assert.assertTrue(true);
     }
 
     @Test
-    public void shouldFailTest() throws Throwable{
-        runTest(new File(rootDir,"EADS_INVOICING_JUST_PRECISION.XSD"),new File(destRootDir,"shouldFail"));
+    public void shouldFailWithBindings() throws Throwable{
+        File xsd = new File(resourceDir,"EADS_INVOICING_JUST_PRECISION.XSD");
+        File bindingsFile = new File(resourceDir,"Just_precision_bindings.xjb");
+        runTest(xsd,bindingsFile);
         Assert.assertTrue(true);
     }
+    
+   
 
-//    @Test
-//    public void shouldNotFailWithBindings() throws Throwable{
-//        File xsd = new File(rootDir,\"EADS_INVOICING_JUST_PRECISION.XSD\");
-//    }
+    private void runTest(File xsd,File ... bindings) throws Throwable{
 
-    private void runTest(File xsd,File dest) throws Throwable{
-
-        System.out.println(dest.getAbsolutePath());
+        System.out.println(outputDir.getAbsolutePath());
         SchemaCompiler compiler = XJC.createSchemaCompiler();
         //TODO: THIS is how you activate a plugin for post porcessing modeling...
 //        compiler.getOptions().activePlugins.add(new TestingPlugin());
@@ -62,16 +83,19 @@ public class XJCTests {
             inputSource = new InputSource(fileInputStream);
             inputSource.setSystemId(xsd.toURI().toString());
 
+            for(File f : bindings){
+            	FileInputStream fileInputStream2 = new FileInputStream(xsd);
+                InputSource inputSource2 = new InputSource(fileInputStream2);
+                inputSource2.setSystemId(f.toURI().toString());
+                compiler.getOptions().addBindFile(inputSource2);
+            }
+            
             compiler.parseSchema(inputSource);
 
             S2JJAXBModel model = compiler.bind();
 
             JCodeModel jModel = model.generateCode(null,null);
-            if(!dest.exists()){
-                dest.mkdirs();
-            }
-
-            jModel.build(dest);
+            jModel.build(outputDir);
             //TODO: delete
         }catch(Exception e){
             e.printStackTrace();
