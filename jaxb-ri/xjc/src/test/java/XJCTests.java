@@ -1,34 +1,41 @@
-import com.sun.codemodel.JCodeModel;
-import com.sun.codemodel.JPackage;
-import com.sun.tools.xjc.Options;
-import com.sun.tools.xjc.Plugin;
-import com.sun.tools.xjc.api.ErrorListener;
-import com.sun.tools.xjc.api.SchemaCompiler;
-import com.sun.tools.xjc.api.XJC;
-import com.sun.tools.xjc.model.CClassInfo;
-import com.sun.tools.xjc.model.CCustomizations;
-import com.sun.tools.xjc.model.CPluginCustomization;
-import com.sun.tools.xjc.model.Model;
-import com.sun.tools.xjc.model.nav.NClass;
-import com.sun.tools.xjc.outline.Outline;
-import com.sun.xml.xsom.XSComponent;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
-import org.w3c.dom.*;
-import org.xml.sax.*;
-import com.sun.tools.xjc.api.S2JJAXBModel;
-
-import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
+import org.w3c.dom.Attr;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.TypeInfo;
+import org.w3c.dom.UserDataHandler;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+import com.sun.codemodel.JCodeModel;
+import com.sun.tools.xjc.Options;
+import com.sun.tools.xjc.Plugin;
+import com.sun.tools.xjc.api.ErrorListener;
+import com.sun.tools.xjc.api.S2JJAXBModel;
+import com.sun.tools.xjc.api.SchemaCompiler;
+import com.sun.tools.xjc.api.XJC;
+import com.sun.tools.xjc.model.CClassInfo;
+import com.sun.tools.xjc.model.CPluginCustomization;
+import com.sun.tools.xjc.model.Model;
+import com.sun.tools.xjc.model.nav.NClass;
+import com.sun.tools.xjc.outline.Outline;
 
 public class XJCTests {
 	//TODO: there must be a better way to do this
@@ -60,12 +67,13 @@ public class XJCTests {
         Assert.assertTrue(true);
     }
 
+//    @Ignore
     @Test
     public void shouldFailWithBindings() throws Throwable{
         File xsd = new File(resourceDir,"EADS_INVOICING_JUST_PRECISION.XSD");
         File bindingsFile = new File(resourceDir,"Just_precision_bindings.xjb");
         runTest(xsd,bindingsFile);
-        Assert.assertTrue(true);
+        Assert.assertTrue(true); 
     }
     
    
@@ -74,8 +82,10 @@ public class XJCTests {
 
         System.out.println(outputDir.getAbsolutePath());
         SchemaCompiler compiler = XJC.createSchemaCompiler();
+        
         //TODO: THIS is how you activate a plugin for post porcessing modeling...
 //        compiler.getOptions().activePlugins.add(new TestingPlugin());
+        
         compiler.setErrorListener(new TestingErrorListener());
         InputSource inputSource;
         try {
@@ -93,7 +103,8 @@ public class XJCTests {
             compiler.parseSchema(inputSource);
 
             S2JJAXBModel model = compiler.bind();
-
+            Assert.assertNotNull("model is null",model);
+            
             JCodeModel jModel = model.generateCode(null,null);
             jModel.build(outputDir);
             //TODO: delete
@@ -106,7 +117,8 @@ public class XJCTests {
     private class TestingErrorListener implements ErrorListener {
         @Override
         public void error(SAXParseException exception) {
-            System.out.println("ERROR: "+exception.getLocalizedMessage());
+        	System.out.println("ERROR: "+exception.getLocalizedMessage());
+        	exception.printStackTrace();
         }
 
         @Override
@@ -143,7 +155,8 @@ public class XJCTests {
             return true;
         }
 
-        public void postProcessModel(Model model, ErrorHandler errorHandler) {
+        @Override
+		public void postProcessModel(Model model, ErrorHandler errorHandler) {
             //oh boi
             Map<NClass,CClassInfo> changesToMake = new HashMap<NClass, CClassInfo>();
             List<String> usedNames = new ArrayList<String>();
