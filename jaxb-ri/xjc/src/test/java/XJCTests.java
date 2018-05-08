@@ -1,10 +1,12 @@
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.tools.xjc.api.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -27,10 +29,6 @@ import org.xml.sax.SAXParseException;
 import com.sun.codemodel.JCodeModel;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
-import com.sun.tools.xjc.api.ErrorListener;
-import com.sun.tools.xjc.api.S2JJAXBModel;
-import com.sun.tools.xjc.api.SchemaCompiler;
-import com.sun.tools.xjc.api.XJC;
 import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.tools.xjc.model.CElementInfo;
 import com.sun.tools.xjc.model.CPluginCustomization;
@@ -42,7 +40,7 @@ public class XJCTests {
 	//TODO: there must be a better way to do this
 	private final File resourceDir = new File("src/test/resources");
 	
-    private final File destRootDir = new File("C:/code/xjcFork/xsds/output");
+    private final File destRootDir = new File("src/test/output");
     private File outputDir;
     
     @Rule
@@ -53,7 +51,6 @@ public class XJCTests {
     	outputDir = new File(destRootDir,name.getMethodName());
     }
 
-    @Ignore
     @Test
     public void simpleTest() throws Throwable{
         runTest(new File(resourceDir,"ImageAttachment.xsd"));
@@ -61,7 +58,6 @@ public class XJCTests {
     }
 
     
-    @Ignore
     @Test
     public void shouldFailTest() throws Throwable{
         runTest(new File(resourceDir,"EADS_INVOICING_JUST_PRECISION.XSD"));
@@ -76,47 +72,55 @@ public class XJCTests {
         runTest(xsd,bindingsFile);
         Assert.assertTrue(true); 
     }
-    
-   
 
-    private void runTest(File xsd,File ... bindings) throws Throwable{
 
-        System.out.println(outputDir.getAbsolutePath());
+    private InputSource getInputSource(File file) {
+        InputSource inputSource = null;
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            inputSource = new InputSource(fileInputStream);
+            inputSource.setSystemId(file.toURI().toString());
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        return inputSource;
+    }
+
+    private SchemaCompiler getSchemaCompiler(File ... bindings){
         SchemaCompiler compiler = XJC.createSchemaCompiler();
-        
         //TODO: THIS is how you activate a plugin for post porcessing modeling...
         compiler.getOptions().activePlugins.add(new TestingPlugin2());
-        
         compiler.setErrorListener(new TestingErrorListener());
-        InputSource inputSource;
-        try {
-            FileInputStream fileInputStream = new FileInputStream(xsd);
-            inputSource = new InputSource(fileInputStream);
-            inputSource.setSystemId(xsd.toURI().toString());
-
-            for(File f : bindings){
-            	FileInputStream fileInputStream2 = new FileInputStream(f);
-                InputSource inputSource2 = new InputSource(fileInputStream2);
-                inputSource2.setSystemId(f.toURI().toString());
-                compiler.getOptions().addBindFile(inputSource2);
-            }
-            
-            compiler.parseSchema(inputSource);
-
-            S2JJAXBModel model = compiler.bind();
-            Assert.assertNotNull("model is null",model);
-            
-            JCodeModel jModel = model.generateCode(null,null);
-            if(!outputDir.exists()){
-            	outputDir.mkdirs();
-            }
-            jModel.build(outputDir);
-            //TODO: delete
-        }catch(Exception e){
-            e.printStackTrace();
-            Assert.fail(e.getMessage());
+        for(File f : bindings){
+            compiler.getOptions().addBindFile(getInputSource(f));
         }
+        return compiler;
     }
+
+    private S2JJAXBModel runTest(File xsd,File ... bindings){
+        SchemaCompiler compiler = getSchemaCompiler(bindings);
+        compiler.parseSchema(getInputSource(xsd));
+        return compiler.bind();
+        /*
+        This can be ignored for now as it is the final step in building the schema which
+        means it is used to actually generate files.  Its useless without a S2JJAXBmodel
+       -------
+        Assert.assertNotNull("model is null",model);
+
+        JCodeModel jModel = model.generateCode(null,null);
+        if(!outputDir.exists()){
+            outputDir.mkdirs();
+        }
+        jModel.build(outputDir);
+        //TODO: delete
+        */
+    }
+
+    /**
+     * This code should be inserted in order to show how to fully generate files using the schema compiler
+     * maybe make this another test
+     *
+     */
 
     private class TestingErrorListener implements ErrorListener {
         @Override
