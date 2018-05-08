@@ -5,8 +5,6 @@ import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.sun.tools.xjc.Plugin;
-
 public class XJCTests extends AbstractXJCTest {
 
     @Ignore
@@ -17,20 +15,7 @@ public class XJCTests extends AbstractXJCTest {
 			@Override
 			public File getXsd() {
 				return (new File(resourceDir,"ImageAttachment.xsd"));
-			}
-
-			@Override
-			public void loadBindings(List<File> files) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void loadPlugins(List<Plugin> plugins) {
-				// TODO Auto-generated method stub
-				
-			}
-    		
+			}    		
     	});
     }
 
@@ -45,17 +30,6 @@ public class XJCTests extends AbstractXJCTest {
 				return new File(resourceDir,"EADS_INVOICING_JUST_PRECISION.XSD");
 			}
 
-			@Override
-			public void loadBindings(List<File> files) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void loadPlugins(List<Plugin> plugins) {
-				// TODO Auto-generated method stub
-				
-			}
     		
     	});
     }
@@ -78,11 +52,6 @@ public class XJCTests extends AbstractXJCTest {
 				
 			}
 
-			@Override
-			public void loadPlugins(List<Plugin> plugins) {
-				// TODO Auto-generated method stub
-				
-			}
     		
     	});
     }

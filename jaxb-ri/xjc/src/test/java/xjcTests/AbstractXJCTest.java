@@ -2,6 +2,7 @@ package xjcTests;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,7 +96,7 @@ public class AbstractXJCTest {
             if(!outputDir.exists()){
             	outputDir.mkdirs();
             }
-            jModel.build(outputDir);
+            
             //TODO: delete
         }catch(Exception e){
             e.printStackTrace();
@@ -138,10 +139,11 @@ public class AbstractXJCTest {
         }
     }
 
-    protected interface Logic{
-    	File getXsd();
-    	void loadBindings(List<File> files);
-    	void loadPlugins(List<Plugin> plugins);
+    protected abstract class Logic{
+    	protected abstract File getXsd();
+    	protected void loadBindings(List<File> files){}
+    	protected void loadPlugins(List<Plugin> plugins){}
+    	protected void writeCode(JCodeModel jModel, File outputDir) throws IOException{jModel.build(outputDir);}
     }
     
 }
