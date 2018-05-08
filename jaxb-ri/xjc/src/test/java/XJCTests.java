@@ -9,7 +9,6 @@ import java.util.Map;
 import com.sun.tools.xjc.api.*;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -26,7 +25,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import com.sun.codemodel.JCodeModel;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.model.CClassInfo;
@@ -39,36 +37,42 @@ import com.sun.tools.xjc.outline.Outline;
 public class XJCTests {
 	//TODO: there must be a better way to do this
 	private final File resourceDir = new File("src/test/resources");
-	
     private final File destRootDir = new File("src/test/output");
     private File outputDir;
-    
+    private SchemaCompiler schemaCompiler;
+    private SchemaCompiler schemaCompilerSansBindings;
     @Rule
     public TestName name = new TestName();
     
     @Before
-    public void createOutputDir(){
+    public void setup(){
     	outputDir = new File(destRootDir,name.getMethodName());
+    	List<File> bindings = new ArrayList<File>();
+    	bindings.add(new File(resourceDir, "simplifiedbindings.xsd"));
+    	schemaCompilerSansBindings = initializedSchemaCompiler(xsd);
+    	schemaCompiler = initializedSchemaCompiler(xsd, bindings);
     }
 
     @Test
-    public void simpleTest() throws Throwable{
-        runTest(new File(resourceDir,"ImageAttachment.xsd"));
+    public void simpleTest(){
+        File xsd = new File(resourceDir,"ImageAttachment.xsd");
+        SchemaCompiler compiler = getInitializedSchemaCompiler(xsd);
+        runTest(new File(resourceDir,));
         Assert.assertTrue(true);
     }
 
     
     @Test
     public void shouldFailTest() throws Throwable{
-        runTest(new File(resourceDir,"EADS_INVOICING_JUST_PRECISION.XSD"));
+        runTest(new File(resourceDir, "simplified.xsd"));
         Assert.assertTrue(true);
     }
 
 //    @Ignore
     @Test
     public void shouldFailWithBindings3() throws Throwable{
-        File xsd = new File(resourceDir,"EADS_INVOICING_JUST_PRECISION.XSD");
-        File bindingsFile = new File(resourceDir,"Just_precision_bindings.xjb");
+        File xsd = new File(resourceDir, "simplified.xsd");
+        File bindingsFile = new File(resourceDir, "simplifiedBindings.xjb");
         runTest(xsd,bindingsFile);
         Assert.assertTrue(true); 
     }
@@ -86,7 +90,7 @@ public class XJCTests {
         return inputSource;
     }
 
-    private SchemaCompiler getSchemaCompiler(File ... bindings){
+    private SchemaCompiler getInitializedSchemaCompiler(File xsd, List<File> bindings){
         SchemaCompiler compiler = XJC.createSchemaCompiler();
         //TODO: THIS is how you activate a plugin for post porcessing modeling...
         compiler.getOptions().activePlugins.add(new TestingPlugin2());
@@ -94,12 +98,11 @@ public class XJCTests {
         for(File f : bindings){
             compiler.getOptions().addBindFile(getInputSource(f));
         }
+        compiler.parseSchema(getInputSource(xsd));
         return compiler;
     }
 
-    private S2JJAXBModel runTest(File xsd,File ... bindings){
-        SchemaCompiler compiler = getSchemaCompiler(bindings);
-        compiler.parseSchema(getInputSource(xsd));
+    private S2JJAXBModel getModel(File ... bindings){
         return compiler.bind();
         /*
         This can be ignored for now as it is the final step in building the schema which
