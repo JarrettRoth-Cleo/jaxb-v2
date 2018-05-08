@@ -1,0 +1,76 @@
+<xs:schema elementFormDefault="qualified" targetNamespace="cleo.clarify.just.restriction.issue.d04923" xmlns="cleo.clarify.just.restriction.issue.d04923" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="root" type="InvoiceType"/>
+	<xs:complexType name="InvoiceType">
+		<xs:complexContent>
+			<xs:extension base="DocumentType">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" name="invoiceLines" type="InvoiceLineListType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DocumentType">
+		<xs:attribute name="timestamp" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="InvoiceLineListType">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="invoiceLine" type="InvoiceLineType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceLineType">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="references" type="InvoiceReferenceListType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoiceReferenceListType">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="relationship" type="SalesOrderPartyRelationshipType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SalesOrderPartyRelationshipType">
+		<xs:simpleContent>
+			<xs:extension base="PartyIdentifierType">
+				<xs:attribute name="role" type="SalesOrderPartyRelationshipRoleType" use="optional"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="SalesOrderPartyRelationshipRoleType">
+		<xs:union memberTypes="SalesOrderPartyRelationshipRoleEnum NonNullStringType"/>
+	</xs:simpleType>
+	<xs:simpleType name="SalesOrderPartyRelationshipRoleEnum">
+		<xs:restriction base="NonNullStringType">
+			<xs:enumeration value="Bill To"/>
+			<xs:enumeration value="Order Entered By"/>
+			<xs:enumeration value="Payer"/>
+			<xs:enumeration value="Sell To"/>
+			<xs:enumeration value="Ship To"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="PartyIdentifierType">
+		<xs:annotation>
+			<xs:documentation>Describes a party identifier, including its restriction to known identification schemes.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:restriction base="IdentifierType">
+				<xs:attribute name="taxExemptionPercentage" type="xs:int" use="optional">
+					<xs:annotation>
+						<xs:documentation>Review with Hannes</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:restriction>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType abstract="true" name="IdentifierType">
+		<xs:simpleContent>
+			<xs:extension base="NonNullStringType">
+				<xs:attribute name="active" type="xs:boolean" use="optional"/>
+				<xs:anyAttribute/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="NonNullStringType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

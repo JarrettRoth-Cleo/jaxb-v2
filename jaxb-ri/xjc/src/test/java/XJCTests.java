@@ -68,13 +68,19 @@ public class XJCTests {
         Assert.assertTrue(true);
     }
 
-//    @Ignore
+    @Ignore
     @Test
     public void shouldFailWithBindings3() throws Throwable{
         File xsd = new File(resourceDir,"EADS_INVOICING_JUST_PRECISION.XSD");
         File bindingsFile = new File(resourceDir,"Just_precision_bindings.xjb");
         runTest(xsd,bindingsFile);
         Assert.assertTrue(true); 
+    }
+
+    @Test
+    public void restrictionIssue() throws Throwable{
+    	File xsd = new File(resourceDir,"JustRestrictionIssue.xsd");
+    	runTest(xsd);
     }
     
    
