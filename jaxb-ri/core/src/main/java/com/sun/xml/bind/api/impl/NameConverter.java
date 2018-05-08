@@ -112,7 +112,7 @@ public interface NameConverter
     static class Standard extends NameUtil implements NameConverter {
         @Override
 		public String toClassName(String s) {
-            return toMixedCaseName(toWordList(s), false);
+            return toMixedCaseName(toWordList(s), true);
             //return s;
         }
         @Override
