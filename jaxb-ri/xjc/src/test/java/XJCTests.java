@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -45,12 +46,38 @@ public class XJCTests {
     private final File destRootDir = new File("C:/code/xjcFork/xsds/output");
     private File outputDir;
     
+    // Only leave the generated folders if the 'is.dev' property is set to true
+    private boolean shouldCleanUpAfter = !Boolean.parseBoolean(System.getProperty("is.dev"));
+    
     @Rule
     public TestName name = new TestName();
     
     @Before
     public void createOutputDir(){
     	outputDir = new File(destRootDir,name.getMethodName());
+    }
+    
+    /**
+     * Clean up the testing output folder.  Java 7 Files could do this better
+     */
+    @After
+    public void cleanUp(){
+    	if(shouldCleanUpAfter){
+    		cleanUpFolder(outputDir);
+    		outputDir.delete();
+    	}
+    }
+    
+    private void cleanUpFolder(File f){
+    	for(File file : f.listFiles()){
+    		if(file.isDirectory()){
+    			cleanUpFolder(file);
+    			file.delete();
+    		}
+    		else{
+    			file.delete();
+    		}
+    	}
     }
 
     @Ignore
@@ -77,9 +104,16 @@ public class XJCTests {
         Assert.assertTrue(true); 
     }
 
+    @Ignore
     @Test
     public void restrictionIssue() throws Throwable{
     	File xsd = new File(resourceDir,"JustRestrictionIssue.xsd");
+    	runTest(xsd);
+    }
+    
+    @Test
+    public void fullRestrictionIssue() throws Throwable{
+    	File xsd = new File("C:/code/xjcFork/xsds/RestrictionIssue","Party.xsd");
     	runTest(xsd);
     }
     
