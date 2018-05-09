@@ -46,4 +46,5 @@ Generating XJC dependencies:
 2. mvn dependency:copy-dependencies -DincludeScope=runtime
 
 
-After completing these 2 mvn calls, the XJC jar can be found in jaxb-ri/xjc/xjc/target and all dependencies can be found in jaxb-ri/xjc/xjc/target/dependencies
+After completing these 2 mvn calls, the XJC jar can be found in jaxb-ri/xjc/xjc/target and all dependencies can be found in jaxb-ri/xjc/xjc/target/dependencies.  All need to be added to the xsd.importwizard plugin.
+
