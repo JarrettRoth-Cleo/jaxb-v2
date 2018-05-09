@@ -7,10 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.sun.tools.xjc.api.*;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TestName;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
@@ -22,8 +19,6 @@ import org.w3c.dom.TypeInfo;
 import org.w3c.dom.UserDataHandler;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
@@ -33,47 +28,57 @@ import com.sun.tools.xjc.model.CPluginCustomization;
 import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.model.nav.NClass;
 import com.sun.tools.xjc.outline.Outline;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public class XJCTests {
 	//TODO: there must be a better way to do this
 	private final File resourceDir = new File("src/test/resources");
     private final File destRootDir = new File("src/test/output");
-    private File outputDir;
-    private SchemaCompiler schemaCompiler;
-    private SchemaCompiler schemaCompilerSansBindings;
     @Rule
     public TestName name = new TestName();
     
     @Before
     public void setup(){
-    	outputDir = new File(destRootDir,name.getMethodName());
-    	List<File> bindings = new ArrayList<File>();
-    	bindings.add(new File(resourceDir, "simplifiedbindings.xsd"));
-    	schemaCompilerSansBindings = initializedSchemaCompiler(xsd);
-    	schemaCompiler = initializedSchemaCompiler(xsd, bindings);
+        File outputDir = new File(destRootDir, name.getMethodName());
     }
 
     @Test
-    public void simpleTest(){
+    public void schemaShouldParseAndProduceModel_test(){
         File xsd = new File(resourceDir,"ImageAttachment.xsd");
-        SchemaCompiler compiler = getInitializedSchemaCompiler(xsd);
-        runTest(new File(resourceDir,));
-        Assert.assertTrue(true);
+        SchemaCompiler compiler = getInitializedSchemaCompiler(xsd, new ArrayList<File>());
+        S2JJAXBModel model = compiler.bind();
+        Assert.assertNotNull(model);
     }
 
-    
+
     @Test
-    public void shouldFailTest() throws Throwable{
-        runTest(new File(resourceDir, "simplified.xsd"));
-        Assert.assertTrue(true);
+    public void schemaShouldParseAndFailAndNotProduceModel_test(){
+        File xsd = new File(resourceDir, "simplified.xsd");
+        SchemaCompiler compiler = getInitializedSchemaCompiler(xsd, new ArrayList<File>());
+        S2JJAXBModel model = compiler.bind();
+        Assert.assertNull(model);
     }
 
-//    @Ignore
+    @Test
+    public void schemaShouldPraseAndProduceModelUsingBindings_test(){
+        File xsd = new File(resourceDir, "simplified.xsd");
+        List<File> bindings = new ArrayList<File>();
+        File bindingFile = new File(resourceDir, "simplifiedbindings.xsd");
+        bindings.add(bindingFile);
+        SchemaCompiler compiler = getInitializedSchemaCompiler(xsd, bindings);
+        S2JJAXBModel model = compiler.bind();
+        Assert.assertNotNull(model);
+    }
+
+    @Ignore
     @Test
     public void shouldFailWithBindings3() throws Throwable{
         File xsd = new File(resourceDir, "simplified.xsd");
-        File bindingsFile = new File(resourceDir, "simplifiedBindings.xjb");
-        runTest(xsd,bindingsFile);
+        //File bindingsFile = new File(resourceDir, "simplifiedBindings.xjb");
+        List<File> bindings = new ArrayList<File>();
+        bindings.add(new File(resourceDir, "simplifiedbindings.xsd"));
+        //runTest(xsd,bindingsFile);
         Assert.assertTrue(true); 
     }
 
@@ -103,7 +108,7 @@ public class XJCTests {
     }
 
     private S2JJAXBModel getModel(File ... bindings){
-        return compiler.bind();
+        //return compiler.bind();
         /*
         This can be ignored for now as it is the final step in building the schema which
         means it is used to actually generate files.  Its useless without a S2JJAXBmodel
@@ -117,6 +122,7 @@ public class XJCTests {
         jModel.build(outputDir);
         //TODO: delete
         */
+        return null;
     }
 
     /**
@@ -124,12 +130,16 @@ public class XJCTests {
      * maybe make this another test
      *
      */
+    private class NullModelException extends Exception{
+        public NullModelException(String message) {
+            super(message);
+        }
+    }
 
     private class TestingErrorListener implements ErrorListener {
         @Override
         public void error(SAXParseException exception) {
         	System.out.println("ERROR: "+exception.getLocalizedMessage());
-        	exception.printStackTrace();
         }
 
         @Override
