@@ -17,3 +17,22 @@ or have questions, ask at our user forum: <a href="mailto:users@metro.java.net">
 * http://java.net/jira/browse/JAXB
 * http://java.net/jira/browse/JAX_WS
 * http://java.net/jira/browse/WSIT
+
+
+### Clarify changes
+
+Clarify needed changes to various aspects of the XJC parsing/generation process.  Most notably:
+
+* Standard NameConverter needs to preserve how items are represented in the XSD
+* ObjectFactory needs to honor bindings values for fields/classes
+* ComplexType restriction needs to be enabled
+
+#### To build a new XJC jar for Clarify:
+
+1. In command line: move into the xjc module
+2. run ```mvn package```
+3. The new jar should be found in the xjc/target directory
+
+This new jar can be added to the Clarify XSD import wizard plugin to be used when generated XML schemas.
+
+TODO: automate this packaging and placing the most recent version on a shared location for Clarify.
