@@ -27,12 +27,23 @@ Clarify needed changes to various aspects of the XJC parsing/generation process.
 * ObjectFactory needs to honor bindings values for fields/classes
 * ComplexType restriction needs to be enabled
 
-#### To build a new XJC jar for Clarify:
+#### Add generated code to Clarify
 
-1. In command line: move into the xjc module
-2. run ```mvn package```
-3. The new jar should be found in the xjc/target directory
+To add all necessary classes to the XSD import wizard, you must build the project to generate the XJC deliverables.  Then, you will need to generate the dependencies for the project's runtime.
 
-This new jar can be added to the Clarify XSD import wizard plugin to be used when generated XML schemas.
+*Note*: this process is multipart and generates more jars than there were before, but I am not sure how the XJC team generates the smaller jar that just contains XSD and DTD dependencies.
 
-TODO: automate this packaging and placing the most recent version on a shared location for Clarify.
+Generating the project's deliverables:
+
+1. cd jaxb-ri
+2. mvn package
+
+This will run all tests and generate deliverables for each module.
+
+Generating XJC dependencies:
+
+1. cd jaxb-ri/xjc
+2. mvn dependency:copy-dependencies -DincludeScope=runtime
+
+
+After completing these 2 mvn calls, the XJC jar can be found in jaxb-ri/xjc/xjc/target and all dependencies can be found in jaxb-ri/xjc/xjc/target/dependencies

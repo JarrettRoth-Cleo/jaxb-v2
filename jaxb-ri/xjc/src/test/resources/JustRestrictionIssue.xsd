@@ -65,6 +65,11 @@
 			<xs:extension base="NonNullStringType">
 				<xs:attribute name="active" type="xs:boolean" use="optional"/>
 				<xs:anyAttribute/>
+				<xs:attribute name="scheme" use="optional" type="xs:anySimpleType">
+					<xs:annotation>
+						<xs:documentation>The type of identification scheme.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
