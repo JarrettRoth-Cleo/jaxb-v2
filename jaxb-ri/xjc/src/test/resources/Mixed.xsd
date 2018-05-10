@@ -1,0 +1,10 @@
+<xs:schema elementFormDefault="qualified" targetNamespace="cleo.clarify.just.mixed.testing" xmlns="cleo.clarify.just.mixed.testing" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="letter" type="lettertype"/>
+	<xs:complexType mixed="true" name="lettertype">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string"/>
+			<xs:element name="orderid" type="xs:positiveInteger"/>
+			<xs:element name="shipdate" type="xs:date"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

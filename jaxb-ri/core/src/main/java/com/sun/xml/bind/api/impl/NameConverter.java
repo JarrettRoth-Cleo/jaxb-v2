@@ -40,10 +40,11 @@
 
 package com.sun.xml.bind.api.impl;
 
-import javax.lang.model.SourceVersion;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import javax.lang.model.SourceVersion;
 
 /**
  * Converts aribitrary strings into Java identifiers.
@@ -109,18 +110,22 @@ public interface NameConverter
     public static final NameConverter standard = new Standard();
 
     static class Standard extends NameUtil implements NameConverter {
-        public String toClassName(String s) {
-            return toMixedCaseName(toWordList(s), false);
+        @Override
+		public String toClassName(String s) {
+            return toMixedCaseName(toWordList(s), true);
             //return s;
         }
-        public String toVariableName(String s) {
-            return toMixedCaseName(toWordList(s), false);
-            //return s;
+        @Override
+		public String toVariableName(String s) {
+//            return toMixedCaseName(toWordList(s), false);
+            return s;
         }
-        public String toInterfaceName( String token ) {
+        @Override
+		public String toInterfaceName( String token ) {
             return toClassName(token);
         }
-        public String toPropertyName(String s) {
+        @Override
+		public String toPropertyName(String s) {
             String prop = toClassName(s);
             // property name "Class" with collide with Object.getClass,
             // so escape this.
@@ -128,7 +133,8 @@ public interface NameConverter
                 prop = "Clazz";
             return prop;
         }
-        public String toConstantName( String token ) {
+        @Override
+		public String toConstantName( String token ) {
             return super.toConstantName(token);
         }
         /**
@@ -138,7 +144,8 @@ public interface NameConverter
          * @return
          *      null if it fails to derive a package name.
          */
-        public String toPackageName( String nsUri ) {
+        @Override
+		public String toPackageName( String nsUri ) {
             // remove scheme and :, if present
             // spec only requires us to remove 'http' and 'urn'...
             int idx = nsUri.indexOf(':');
@@ -257,15 +264,18 @@ public interface NameConverter
      * and not as a word separator.
      */
     public static final NameConverter jaxrpcCompatible = new Standard() {
-        protected boolean isPunct(char c) {
+        @Override
+		protected boolean isPunct(char c) {
             return (c == '.' || c == '-' || c == ';' /*|| c == '_'*/ || c == '\u00b7'
                     || c == '\u0387' || c == '\u06dd' || c == '\u06de');
         }
-        protected boolean isLetter(char c) {
+        @Override
+		protected boolean isLetter(char c) {
             return super.isLetter(c) || c=='_';
         }
 
-        protected int classify(char c0) {
+        @Override
+		protected int classify(char c0) {
             if(c0=='_') return NameUtil.OTHER_LETTER;
             return super.classify(c0);
         }
@@ -275,7 +285,8 @@ public interface NameConverter
      * Smarter converter used for RELAX NG support.
      */
     public static final NameConverter smart = new Standard() {
-        public String toConstantName( String token ) {
+        @Override
+		public String toConstantName( String token ) {
             String name = super.toConstantName(token);
             if(!SourceVersion.isKeyword(name))
                 return name;

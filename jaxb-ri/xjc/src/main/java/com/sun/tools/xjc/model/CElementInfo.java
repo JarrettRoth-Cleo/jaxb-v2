@@ -40,6 +40,9 @@
 
 package com.sun.tools.xjc.model;
 
+import static com.sun.tools.xjc.model.CElementPropertyInfo.CollectionMode.NOT_REPEATED;
+import static com.sun.tools.xjc.model.CElementPropertyInfo.CollectionMode.REPEATED_VALUE;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -50,24 +53,22 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.namespace.QName;
 
+import org.xml.sax.Locator;
+
 import com.sun.codemodel.JPackage;
 import com.sun.codemodel.JType;
 import com.sun.istack.Nullable;
-import static com.sun.tools.xjc.model.CElementPropertyInfo.CollectionMode.NOT_REPEATED;
-import static com.sun.tools.xjc.model.CElementPropertyInfo.CollectionMode.REPEATED_VALUE;
 import com.sun.tools.xjc.model.nav.NClass;
 import com.sun.tools.xjc.model.nav.NType;
 import com.sun.tools.xjc.model.nav.NavigatorImpl;
 import com.sun.tools.xjc.outline.Outline;
-import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIInlineBinaryData;
-import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIFactoryMethod;
-import com.sun.tools.xjc.reader.xmlschema.BGMBuilder;
 import com.sun.tools.xjc.reader.Ring;
+import com.sun.tools.xjc.reader.xmlschema.BGMBuilder;
+import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIFactoryMethod;
+import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIInlineBinaryData;
 import com.sun.xml.bind.v2.model.core.ElementInfo;
 import com.sun.xml.xsom.XSElementDecl;
 import com.sun.xml.xsom.XmlString;
-
-import org.xml.sax.Locator;
 
 /**
  * {@link ElementInfo} implementation for the compile-time model.
@@ -123,6 +124,8 @@ public final class CElementInfo extends AbstractCElement
      */
     private /*almost final*/ @Nullable String squeezedName;
 
+    private @Nullable String squeezedNameHelper;
+    
     /**
      * Creates an element in the given parent.
      *
@@ -137,7 +140,11 @@ public final class CElementInfo extends AbstractCElement
         this.parent = parent;
         if(contentType!=null)
             initContentType(contentType, source, defaultValue);
-
+        
+        if(contentType instanceof CClassInfo){
+        	String[] contentTypeStr = contentType.toString().split("\\.");
+        	squeezedNameHelper = contentTypeStr[contentTypeStr.length-1];
+        }
         model.add(this);
     }
 
@@ -189,11 +196,13 @@ public final class CElementInfo extends AbstractCElement
         return parent.getOwnerPackage();
     }
 
-    public CNonElement getContentType() {
+    @Override
+	public CNonElement getContentType() {
         return getProperty().ref().get(0);
     }
 
-    public NType getContentInMemoryType() {
+    @Override
+	public NType getContentInMemoryType() {
         if(getProperty().getAdapter()==null) {
             NType itemType = getContentType().getType();
             if(!property.isCollection())
@@ -205,11 +214,13 @@ public final class CElementInfo extends AbstractCElement
         }
     }
 
-    public CElementPropertyInfo getProperty() {
+    @Override
+	public CElementPropertyInfo getProperty() {
         return property;
     }
 
-    public CClassInfo getScope() {
+    @Override
+	public CClassInfo getScope() {
         if(parent instanceof CClassInfo)
             return (CClassInfo)parent;
         return null;
@@ -218,15 +229,19 @@ public final class CElementInfo extends AbstractCElement
     /**
      * @deprecated why are you calling a method that returns this?
      */
-    public NType getType() {
+    @Deprecated
+	@Override
+	public NType getType() {
         return this;
     }
 
-    public QName getElementName() {
+    @Override
+	public QName getElementName() {
         return tagName;
     }
 
-    public JType toType(Outline o, Aspect aspect) {
+    @Override
+	public JType toType(Outline o, Aspect aspect) {
         if(className==null)
             return type.toType(o,aspect);
         else
@@ -248,16 +263,20 @@ public final class CElementInfo extends AbstractCElement
             b.append(s.getSqueezedName());
         if(className!=null)
             b.append(className);
+        else if(squeezedNameHelper!=null)
+        	b.append( model.getNameConverter().toClassName(squeezedNameHelper));
         else
-            b.append( model.getNameConverter().toClassName(tagName.getLocalPart()));
+        	b.append( model.getNameConverter().toClassName(tagName.getLocalPart()));
         return b.toString();
     }
 
-    public CElementInfo getSubstitutionHead() {
+    @Override
+	public CElementInfo getSubstitutionHead() {
         return substitutionHead;
     }
 
-    public Collection<CElementInfo> getSubstitutionMembers() {
+    @Override
+	public Collection<CElementInfo> getSubstitutionMembers() {
         if(substitutionMembers==null)
             return Collections.emptyList();
         else
@@ -275,11 +294,13 @@ public final class CElementInfo extends AbstractCElement
         substitutionHead.substitutionMembers.add(this);
     }
 
-    public boolean isBoxedType() {
+    @Override
+	public boolean isBoxedType() {
         return false;
     }
 
-    public String fullName() {
+    @Override
+	public String fullName() {
         if(className==null)
             return type.fullName();
         else {
@@ -289,11 +310,13 @@ public final class CElementInfo extends AbstractCElement
         }
     }
 
-    public <T> T accept(Visitor<T> visitor) {
+    @Override
+	public <T> T accept(Visitor<T> visitor) {
         return visitor.onElement(this);
     }
 
-    public JPackage getOwnerPackage() {
+    @Override
+	public JPackage getOwnerPackage() {
         return parent.getOwnerPackage();
     }
 
