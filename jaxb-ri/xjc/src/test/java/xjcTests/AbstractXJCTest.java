@@ -2,6 +2,7 @@ package xjcTests;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,33 +72,35 @@ public class AbstractXJCTest {
 		}
 
 		compiler.setErrorListener(new TestingErrorListener());
-		InputSource inputSource;
+
+        InputSource inputSource = getInputSource(l.getXsd());
+
+        for (File f : getBindings(l)) {
+            compiler.getOptions().addBindFile(getInputSource(f));
+        }
+
+        compiler.parseSchema(inputSource);
+
+        S2JJAXBModel model = compiler.bind();
+        Assert.assertNotNull("model is null", model);
+
+        JCodeModel jModel = model.generateCode(null, null);
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
+        l.handleJCodeModel(jModel, outputDir);
+	}
+
+	private InputSource getInputSource(File file) {
+		InputSource inputSource = null;
 		try {
-			FileInputStream fileInputStream = new FileInputStream(l.getXsd());
+			FileInputStream fileInputStream = new FileInputStream(file);
 			inputSource = new InputSource(fileInputStream);
-			inputSource.setSystemId(l.getXsd().toURI().toString());
-
-			for (File f : getBindings(l)) {
-				FileInputStream fileInputStream2 = new FileInputStream(f);
-				InputSource inputSource2 = new InputSource(fileInputStream2);
-				inputSource2.setSystemId(f.toURI().toString());
-				compiler.getOptions().addBindFile(inputSource2);
-			}
-
-			compiler.parseSchema(inputSource);
-
-			S2JJAXBModel model = compiler.bind();
-			Assert.assertNotNull("model is null", model);
-
-			JCodeModel jModel = model.generateCode(null, null);
-			if (!outputDir.exists()) {
-				outputDir.mkdirs();
-			}
-			l.handleJCodeModel(jModel, outputDir);
-		} catch (Exception e) {
+			inputSource.setSystemId(file.toURI().toString());
+		} catch (FileNotFoundException e){
 			e.printStackTrace();
-			Assert.fail(e.getMessage());
 		}
+		return inputSource;
 	}
 
 	private List<Plugin> getPlugins(Logic l) {
