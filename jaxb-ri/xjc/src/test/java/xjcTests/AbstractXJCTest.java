@@ -93,7 +93,7 @@ public class AbstractXJCTest {
 			if (!outputDir.exists()) {
 				outputDir.mkdirs();
 			}
-			l.writeCode(jModel, outputDir);
+			l.handleJCodeModel(jModel, outputDir);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail(e.getMessage());
@@ -144,8 +144,8 @@ public class AbstractXJCTest {
 		protected void loadPlugins(List<Plugin> plugins) {
 		}
 
-		protected void writeCode(JCodeModel jModel, File outputDir) throws IOException {
-			// jModel.build(outputDir);
+		protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
+			// no-op, consider test passing if it made it this far.
 		}
 	}
 

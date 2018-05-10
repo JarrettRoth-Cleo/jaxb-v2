@@ -54,7 +54,6 @@ public class XJCRestrictionTest extends AbstractXJCTest {
 	}
 
 	@Ignore
-
 	@Test
 	public void testFixedValue() throws Throwable {
 		runTest(new Logic() {
