@@ -41,8 +41,6 @@
 package com.sun.xml.bind.api.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -227,7 +225,8 @@ class NameUtil {
             // Find next break and collect word
             int b = nextBreak(s, i);
             String w = (b == -1) ? s.substring(i) : s.substring(i, b);
-            ss.add(escape(capitalize(w)));
+//            ss.add(escape(capitalize(w)));
+            ss.add(escape(w));
             if (b == -1) break;
             i = b;
         }
