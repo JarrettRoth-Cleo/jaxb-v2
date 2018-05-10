@@ -24,7 +24,7 @@ public class XJCRestrictionTest extends AbstractXJCTest {
 		});
 	}
 
-	// @Ignore
+	@Ignore
 	@Test
 	public void fullRestrictionIssue() throws Throwable {
 		runTest(new Logic() {
