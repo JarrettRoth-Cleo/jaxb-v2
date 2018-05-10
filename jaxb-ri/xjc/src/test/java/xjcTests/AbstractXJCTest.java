@@ -62,33 +62,37 @@ public class AbstractXJCTest {
 		}
 	}
 
-	protected void runTest(Logic l) throws Throwable {
-
-		// System.out.println(outputDir.getAbsolutePath());
-		SchemaCompiler compiler = XJC.createSchemaCompiler();
-
-		for (Plugin plugin : getPlugins(l)) {
-			compiler.getOptions().activePlugins.add(plugin);
-		}
-
-		compiler.setErrorListener(new TestingErrorListener());
-
-        InputSource inputSource = getInputSource(l.getXsd());
-
-        for (File f : getBindings(l)) {
-            compiler.getOptions().addBindFile(getInputSource(f));
-        }
-
-        compiler.parseSchema(inputSource);
-
+	protected void runTest(Logic logic) throws Throwable {
+		InputSource inputSource = getInputSource(logic.getXsd());
+		SchemaCompiler compiler = getInitializedSchemaCompiler(inputSource, logic);
         S2JJAXBModel model = compiler.bind();
         Assert.assertNotNull("model is null", model);
 
-        JCodeModel jModel = model.generateCode(null, null);
-        if (!outputDir.exists()) {
-            outputDir.mkdirs();
-        }
-        l.handleJCodeModel(jModel, outputDir);
+        if(logic.shouldGenerateFiles){
+        	generateFiles(model);
+		}
+
+	}
+	private void generateFiles(S2JJAXBModel model, Logic logic){
+		JCodeModel jModel = model.generateCode(null, null);
+		if (!outputDir.exists()) {
+			outputDir.mkdirs();
+		}
+		logic.handleJCodeModel(jModel, outputDir);
+	}
+
+	private SchemaCompiler getInitializedSchemaCompiler(InputSource xsd,Logic logic){
+		SchemaCompiler compiler = XJC.createSchemaCompiler();
+		compiler.setErrorListener(new TestingErrorListener());
+		//TODO: THIS is how you activate a plugin for post porcessing modeling...
+        for (Plugin plugin : getPlugins(logic)){
+			compiler.getOptions().activePlugins.add(plugin);
+		}
+		for(File f : getBindings(logic)){
+			compiler.getOptions().addBindFile(getInputSource(f));
+		}
+		compiler.parseSchema(xsd);
+		return compiler;
 	}
 
 	private InputSource getInputSource(File file) {
