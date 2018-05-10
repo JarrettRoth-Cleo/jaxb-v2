@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.sun.codemodel.CodeWriter;
 import com.sun.codemodel.JPackage;
 
-public class XJCRestrictionTests extends AbstractXJCTest {
+public class XJCRestrictionTest extends AbstractXJCTest {
 
 	@Ignore
 	@Test

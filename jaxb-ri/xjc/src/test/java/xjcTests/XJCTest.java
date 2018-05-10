@@ -5,7 +5,7 @@ import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class XJCTests extends AbstractXJCTest {
+public class XJCTest extends AbstractXJCTest {
 
     @Ignore
     @Test

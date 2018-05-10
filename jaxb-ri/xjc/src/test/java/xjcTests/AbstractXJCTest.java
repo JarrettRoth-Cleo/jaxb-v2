@@ -145,7 +145,7 @@ public class AbstractXJCTest {
 		}
 
 		protected void writeCode(JCodeModel jModel, File outputDir) throws IOException {
-			jModel.build(outputDir);
+			// jModel.build(outputDir);
 		}
 	}
 
