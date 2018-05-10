@@ -63,7 +63,7 @@ public class AbstractXJCTest {
 
 	protected void runTest(Logic l) throws Throwable {
 
-		System.out.println(outputDir.getAbsolutePath());
+		// System.out.println(outputDir.getAbsolutePath());
 		SchemaCompiler compiler = XJC.createSchemaCompiler();
 
 		for (Plugin plugin : getPlugins(l)) {
