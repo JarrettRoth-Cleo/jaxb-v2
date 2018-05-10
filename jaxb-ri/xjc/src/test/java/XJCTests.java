@@ -93,9 +93,9 @@ public class XJCTests {
 
     private SchemaCompiler getInitializedSchemaCompiler(File xsd, List<File> bindings){
         SchemaCompiler compiler = XJC.createSchemaCompiler();
+        compiler.setErrorListener(new TestingErrorListener());
         //TODO: THIS is how you activate a plugin for post porcessing modeling...
         compiler.getOptions().activePlugins.add(new PostProcessingPlugin());
-        compiler.setErrorListener(new TestingErrorListener());
         for(File f : bindings){
             compiler.getOptions().addBindFile(getInputSource(f));
         }
