@@ -1,22 +1,17 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.codemodel.JCodeModel;
 import com.sun.tools.xjc.api.*;
 import org.junit.*;
 import org.junit.rules.TestName;
-import org.w3c.dom.Attr;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.TypeInfo;
-import org.w3c.dom.UserDataHandler;
+import org.w3c.dom.*;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 
@@ -35,16 +30,17 @@ public class XJCTests {
 	//TODO: there must be a better way to do this
 	private final File resourceDir = new File("src/test/resources");
     private final File destRootDir = new File("src/test/output");
+    private File outputDir;
     @Rule
     public TestName name = new TestName();
     
     @Before
     public void setup(){
-        File outputDir = new File(destRootDir, name.getMethodName());
+        outputDir = new File(destRootDir, name.getMethodName());
     }
 
     @Test
-    public void schemaShouldParseAndProduceModel_test(){
+    public void simpleSchemaParse_test(){
         File xsd = new File(resourceDir,"ImageAttachment.xsd");
         SchemaCompiler compiler = getInitializedSchemaCompiler(xsd, new ArrayList<File>());
         S2JJAXBModel model = compiler.bind();
@@ -64,7 +60,7 @@ public class XJCTests {
     public void schemaShouldPraseAndProduceModelUsingBindings_test(){
         File xsd = new File(resourceDir, "simplified.xsd");
         List<File> bindings = new ArrayList<File>();
-        File bindingFile = new File(resourceDir, "simplifiedbindings.xsd");
+        File bindingFile = new File(resourceDir, "simplifiedBindings.xjb");
         bindings.add(bindingFile);
         SchemaCompiler compiler = getInitializedSchemaCompiler(xsd, bindings);
         S2JJAXBModel model = compiler.bind();
@@ -77,7 +73,7 @@ public class XJCTests {
         File xsd = new File(resourceDir, "simplified.xsd");
         //File bindingsFile = new File(resourceDir, "simplifiedBindings.xjb");
         List<File> bindings = new ArrayList<File>();
-        bindings.add(new File(resourceDir, "simplifiedbindings.xsd"));
+        bindings.add(new File(resourceDir, "simplifiedBindings.xjb"));
         //runTest(xsd,bindingsFile);
         Assert.assertTrue(true); 
     }
@@ -98,7 +94,7 @@ public class XJCTests {
     private SchemaCompiler getInitializedSchemaCompiler(File xsd, List<File> bindings){
         SchemaCompiler compiler = XJC.createSchemaCompiler();
         //TODO: THIS is how you activate a plugin for post porcessing modeling...
-        compiler.getOptions().activePlugins.add(new TestingPlugin2());
+        compiler.getOptions().activePlugins.add(new PostProcessingPlugin());
         compiler.setErrorListener(new TestingErrorListener());
         for(File f : bindings){
             compiler.getOptions().addBindFile(getInputSource(f));
@@ -107,22 +103,17 @@ public class XJCTests {
         return compiler;
     }
 
-    private S2JJAXBModel getModel(File ... bindings){
-        //return compiler.bind();
-        /*
-        This can be ignored for now as it is the final step in building the schema which
-        means it is used to actually generate files.  Its useless without a S2JJAXBmodel
-       -------
-        Assert.assertNotNull("model is null",model);
-
+    //Use this to actually cause files to output to the directory.
+    private void generateFiles(S2JJAXBModel model){
         JCodeModel jModel = model.generateCode(null,null);
         if(!outputDir.exists()){
             outputDir.mkdirs();
         }
-        jModel.build(outputDir);
-        //TODO: delete
-        */
-        return null;
+        try{
+            jModel.build(outputDir);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -158,60 +149,7 @@ public class XJCTests {
         }
     }
 
-
-    private class TestingPlugin extends Plugin{
-
-        @Override
-        public String getOptionName() {
-            return "Quick Test";
-        }
-
-        @Override
-        public String getUsage() {
-            return "PostProcess";
-        }
-
-        @Override
-        public boolean run(Outline outline, Options opt, ErrorHandler errorHandler) throws SAXException {
-            return true;
-        }
-
-        @Override
-		public void postProcessModel(Model model, ErrorHandler errorHandler) {
-            //oh boi
-            Map<NClass,CClassInfo> changesToMake = new HashMap<NClass, CClassInfo>();
-            List<String> usedNames = new ArrayList<String>();
-            Map o = model.beans();
-            for(Map.Entry<NClass, CClassInfo> entry : model.beans().entrySet()){
-                String name  = entry.getValue().toString();
-                if(usedNames.contains(name)){
-                    //TODO: this seems to be adding the correct change to the correct class info.
-                    // Now, how can this be used when generating code?
-                    /*
-                    TODO: will a wrapper be better? The process could build a list of entries to modify, remove them from the model, and add them back in
-                     */
-                    name = findUniquName(usedNames,name);
-                    entry.getValue().getCustomizations().add(new CPluginCustomization(new Woof(buildShortName(name)) ,entry.getValue().getLocator()));
-                    changesToMake.put(entry.getKey(),entry.getValue());
-                    usedNames.add(name);
-                }else{
-                    usedNames.add(name);
-                }
-            }
-            for(Map.Entry<NClass,CClassInfo> entry : changesToMake.entrySet()){
-                model.beans().remove(entry.getKey());
-                //TODO
-               String val = entry.getValue().getCustomizations().get(0).element.getAttribute("anything");
-               buildNewClassInfoWithNewShortName(entry.getValue(),val);
-//                model.beans().put(entry.getKey(),);
-            }
-            System.out.println("Plugin modifying...");
-        }
-
-    }
-
-    
-    private class TestingPlugin2 extends Plugin{
+    private class PostProcessingPlugin extends Plugin{
 
         @Override
         public String getOptionName() {
@@ -230,13 +168,11 @@ public class XJCTests {
 
         @Override
 		public void postProcessModel(Model model, ErrorHandler errorHandler) {
-            //oh boi
         	Map<NClass,CClassInfo> conflicts = findConflicts(model);
-          for(CElementInfo info :  model.getAllElements()){
-        	  org.w3c.dom.Element woof = new Woof("todo");
-        	       	  
-//        	  info.getCustomizations().add(new CPluginCustomization(woof ,info.getLocator()));
-          }
+            for(CElementInfo info :  model.getAllElements()){
+                Element customElement = new CustomElement("todo");
+                info.getCustomizations().add(new CPluginCustomization(customElement ,info.getLocator()));
+            }
         }
 
     }
@@ -249,7 +185,7 @@ public class XJCTests {
             if(usedNames.contains(name)){
      
                 name = findUniquName(usedNames,name);
-                entry.getValue().getCustomizations().add(new CPluginCustomization(new Woof(buildShortName(name)) ,entry.getValue().getLocator()));
+                entry.getValue().getCustomizations().add(new CPluginCustomization(new CustomElement(buildShortName(name)) ,entry.getValue().getLocator()));
                 changesToMake.put(entry.getKey(),entry.getValue());
                 usedNames.add(name);
             }else{
@@ -259,9 +195,6 @@ public class XJCTests {
         return changesToMake;
     }
     
-    private void updateNewClassInfoUseages(NClass newCLass){
-
-    }
 
     private String buildShortName(String fullName){
         String[] parts = fullName.split("\\.");
@@ -291,19 +224,12 @@ public class XJCTests {
         return new CClassInfo(info.model,info.parent(),shortName,info.getLocator(),info.getTypeName(),info.getElementName(),info.getSchemaComponent(),info.getCustomizations());
     }
 
-//    private class Woof2 extends CClassInfo{
-//        public String shortName;
-//        public Woof2(CClassInfo w){
-//            super(w.model,w.getOwnerPackage(),w.)
-//        }
-//    }
 
-
-    //TODO: there HAS to be a better way than fudging it like this...
-    private class Woof implements org.w3c.dom.Element{
-
+    private class CustomElement implements Element {
+        //TODO: there HAS to be a better way than fudging it like this...
         private String overrideName;
-        public Woof(String overrideName){
+
+        public CustomElement(String overrideName){
             this.overrideName = overrideName;
         }
 
