@@ -8,7 +8,7 @@ public class XJCMixedTest extends AbstractXJCTest {
 
 	@Test
 	public void simpleMixedTest() throws Throwable {
-		runTest(new Logic() {
+		runTest(new Logic(false) {
 
 			@Override
 			protected File getXsd() {

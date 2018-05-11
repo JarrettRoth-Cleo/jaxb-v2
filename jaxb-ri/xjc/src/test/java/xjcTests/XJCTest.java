@@ -11,7 +11,7 @@ public class XJCTest extends AbstractXJCTest {
 	@Ignore
 	@Test
 	public void simpleTest() throws Throwable {
-		runTest(new Logic() {
+		runTest(new Logic(false) {
 
 			@Override
 			public File getXsd() {
@@ -23,7 +23,7 @@ public class XJCTest extends AbstractXJCTest {
 	@Ignore
 	@Test
 	public void shouldFailTest() throws Throwable {
-		runTest(new Logic() {
+		runTest(new Logic(false) {
 
 			@Override
 			public File getXsd() {
@@ -37,7 +37,7 @@ public class XJCTest extends AbstractXJCTest {
 	@Test
 	public void shouldFailWithBindings3() throws Throwable {
 
-		runTest(new Logic() {
+		runTest(new Logic(false) {
 
 			@Override
 			public File getXsd() {
