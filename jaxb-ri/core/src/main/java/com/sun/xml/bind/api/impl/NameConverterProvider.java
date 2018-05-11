@@ -23,10 +23,6 @@ public class NameConverterProvider {
 
 	static class Standard extends NameUtil implements NameConverter {
 
-		public Standard() {
-			System.out.println("Standard created...");
-		}
-
 		@Override
 		public String toClassName(String s) {
 			return toMixedCaseName(toWordList(s), true);
