@@ -8,20 +8,81 @@ import javax.lang.model.SourceVersion;
 
 public class NameConverterProvider {
 
-	private static NameConverter nc;
+	private static NameConverter standard;
+	private static NameConverter jaxrpcCompatible;
+	private static NameConverter smart;
 
-	public static void setStandardNameConverter(NameConverter nc) {
-		NameConverterProvider.nc = nc;
+	public static void setStandard(NameConverter nc) {
+		standard = nc;
+	}
+
+	public static void setJaxrpcCompatible(NameConverter nc) {
+		jaxrpcCompatible = nc;
+	}
+
+	public static void setSmart(NameConverter nc) {
+		smart = nc;
 	}
 
 	public static NameConverter getStandard() {
-		if (nc == null) {
-			nc = new Standard();
+		if (standard == null) {
+			standard = new Standard();
 		}
-		return nc;
+		return standard;
 	}
 
-	static class Standard extends NameUtil implements NameConverter {
+	/**
+	 * JAX-PRC compatible name converter implementation.
+	 *
+	 * The only difference is that we treat '_' as a valid character and not as
+	 * a word separator.
+	 */
+	public static final NameConverter getJaxrpcCompatible() {
+		if (jaxrpcCompatible == null) {
+			jaxrpcCompatible = new Standard() {
+				@Override
+				protected boolean isPunct(char c) {
+					return (c == '.' || c == '-' || c == ';' /*
+																 * || c == '_'
+																 */ || c == '\u00b7' || c == '\u0387' || c == '\u06dd' || c == '\u06de');
+				}
+
+				@Override
+				protected boolean isLetter(char c) {
+					return super.isLetter(c) || c == '_';
+				}
+
+				@Override
+				protected int classify(char c0) {
+					if (c0 == '_')
+						return NameUtil.OTHER_LETTER;
+					return super.classify(c0);
+				}
+			};
+		}
+		return jaxrpcCompatible;
+	}
+
+	/**
+	 * Smarter converter used for RELAX NG support.
+	 */
+	public static final NameConverter getSmart() {
+		if (smart == null) {
+			smart = new Standard() {
+				@Override
+				public String toConstantName(String token) {
+					String name = super.toConstantName(token);
+					if (!SourceVersion.isKeyword(name))
+						return name;
+					else
+						return '_' + name;
+				}
+			};
+		}
+		return smart;
+	}
+
+	public static class Standard extends NameUtil implements NameConverter {
 
 		@Override
 		public String toClassName(String s) {
@@ -180,51 +241,6 @@ public class NameConverterProvider {
 
 			return buf.toString();
 		}
-	}
-
-	/**
-	 * JAX-PRC compatible name converter implementation.
-	 *
-	 * The only difference is that we treat '_' as a valid character and not as
-	 * a word separator.
-	 */
-	public static final NameConverter getJaxrpcCompatible() {
-		return new Standard() {
-			@Override
-			protected boolean isPunct(char c) {
-				return (c == '.' || c == '-' || c == ';' /*
-															 * || c == '_'
-															 */ || c == '\u00b7' || c == '\u0387' || c == '\u06dd' || c == '\u06de');
-			}
-
-			@Override
-			protected boolean isLetter(char c) {
-				return super.isLetter(c) || c == '_';
-			}
-
-			@Override
-			protected int classify(char c0) {
-				if (c0 == '_')
-					return NameUtil.OTHER_LETTER;
-				return super.classify(c0);
-			}
-		};
-	}
-
-	/**
-	 * Smarter converter used for RELAX NG support.
-	 */
-	public static final NameConverter getSmart() {
-		return new Standard() {
-			@Override
-			public String toConstantName(String token) {
-				String name = super.toConstantName(token);
-				if (!SourceVersion.isKeyword(name))
-					return name;
-				else
-					return '_' + name;
-			}
-		};
 	}
 
 }
