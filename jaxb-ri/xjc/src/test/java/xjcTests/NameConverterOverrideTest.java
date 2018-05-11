@@ -10,7 +10,6 @@ import com.sun.tools.xjc.BadCommandLineException;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.outline.Outline;
-import com.sun.xml.bind.api.impl.NameConverterProvider.Standard;
 
 public class NameConverterOverrideTest extends AbstractXJCTest {
 
@@ -58,7 +57,7 @@ public class NameConverterOverrideTest extends AbstractXJCTest {
 
 	}
 
-	private class InternalNameConverter extends Standard {
+	private class InternalNameConverter extends com.sun.xml.bind.api.impl.Standard {
 		@Override
 		public String toClassName(String s) {
 			return toMixedCaseName(toWordList(s), true);
