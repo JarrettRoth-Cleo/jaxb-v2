@@ -73,6 +73,10 @@ public class NameConverterOverrideTest extends AbstractXJCTest {
 			return toClassName(token);
 		}
 
+		/**
+		 * Override the base functionality of the capitalize method to return
+		 * the same value so it matches the XSD closer
+		 */
 		@Override
 		public String capitalize(String w) {
 			return w;
