@@ -39,6 +39,7 @@ public class NameConverterProvider {
 	 */
 	public static final NameConverter getJaxrpcCompatible() {
 		if (jaxrpcCompatible == null) {
+			// TODO: somehow extend the dynamic standard value
 			jaxrpcCompatible = new Standard() {
 				@Override
 				protected boolean isPunct(char c) {
@@ -68,6 +69,7 @@ public class NameConverterProvider {
 	 */
 	public static final NameConverter getSmart() {
 		if (smart == null) {
+			// TODO: somehow extend the dynamic standard value
 			smart = new Standard() {
 				@Override
 				public String toConstantName(String token) {
@@ -82,6 +84,7 @@ public class NameConverterProvider {
 		return smart;
 	}
 
+	// TODO: convert this to the value used originally
 	public static class Standard extends NameUtil implements NameConverter {
 
 		@Override
@@ -142,11 +145,12 @@ public class NameConverterProvider {
 
 			// remove trailing file type, if necessary
 			if (tokens.size() > 1) {
-				// for uri's like "www.foo.com" and "foo.com", there is no
-				// trailing
-				// file, so there's no need to look at the last '.' and
-				// substring
-				// otherwise, we loose the "com" (which would be wrong)
+				/*
+				 * for uri's like "www.foo.com" and "foo.com", there is no
+				 * trailing file, so there's no need to look at the last '.' and
+				 * substring otherwise, we loose the "com" (which would be
+				 * wrong)
+				 */
 				String lastToken = tokens.get(tokens.size() - 1);
 				idx = lastToken.lastIndexOf('.');
 				if (idx > 0) {
@@ -190,17 +194,12 @@ public class NameConverterProvider {
 		}
 
 		private static String removeIllegalIdentifierChars(String token) {
-			StringBuilder newToken = new StringBuilder(token.length() + 1); // max
-																			// expected
-																			// length
+			// max expected length
+			StringBuilder newToken = new StringBuilder(token.length() + 1);
 			for (int i = 0; i < token.length(); i++) {
 				char c = token.charAt(i);
-				if (i == 0 && !Character.isJavaIdentifierStart(c)) { // c can't
-																		// be
-																		// used
-																		// as
-																		// FIRST
-																		// char
+				// c can't be used as first char
+				if (i == 0 && !Character.isJavaIdentifierStart(c)) {
 					newToken.append('_');
 				}
 				if (!Character.isJavaIdentifierPart(c)) { // c can't be used
@@ -231,6 +230,7 @@ public class NameConverterProvider {
 			return r;
 		}
 
+		@SuppressWarnings("rawtypes")
 		private static String combine(List r, char sep) {
 			StringBuilder buf = new StringBuilder(r.get(0).toString());
 
