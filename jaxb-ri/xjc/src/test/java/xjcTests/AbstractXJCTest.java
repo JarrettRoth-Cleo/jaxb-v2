@@ -68,8 +68,8 @@ public class AbstractXJCTest {
         S2JJAXBModel model = compiler.bind();
         Assert.assertNotNull("model is null", model);
 
-        if(logic.shouldGenerateFiles){
-        	generateFiles(model);
+        if(logic.shouldGenerateFiles()){
+        	generateFiles(model, logic);
 		}
 
 	}
@@ -78,7 +78,11 @@ public class AbstractXJCTest {
 		if (!outputDir.exists()) {
 			outputDir.mkdirs();
 		}
-		logic.handleJCodeModel(jModel, outputDir);
+		try {
+            logic.handleJCodeModel(jModel, outputDir);
+        } catch (IOException e){
+		    e.printStackTrace();
+        }
 	}
 
 	private SchemaCompiler getInitializedSchemaCompiler(InputSource xsd,Logic logic){
@@ -143,6 +147,12 @@ public class AbstractXJCTest {
 	}
 
 	protected abstract class Logic {
+	    private boolean shouldGenerateFiles;
+
+	    public Logic(boolean shouldGenerateFiles){
+	        this.shouldGenerateFiles = shouldGenerateFiles;
+        }
+
 		protected abstract File getXsd();
 
 		protected void loadBindings(List<File> files) {
@@ -154,6 +164,9 @@ public class AbstractXJCTest {
 		protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
 			// no-op, consider test passing if it made it this far.
 		}
+		protected boolean shouldGenerateFiles(){
+		    return this.shouldGenerateFiles;
+        }
 	}
 
 }
