@@ -8,11 +8,11 @@ import javax.lang.model.SourceVersion;
 
 public class NameConverterProvider {
 
-	private static NameConverter standard;
+	private static Standard standard;
 	private static NameConverter jaxrpcCompatible;
 	private static NameConverter smart;
 
-	public static void setStandard(NameConverter nc) {
+	public static void setStandard(Standard nc) {
 		standard = nc;
 	}
 
@@ -24,7 +24,7 @@ public class NameConverterProvider {
 		smart = nc;
 	}
 
-	public static NameConverter getStandard() {
+	public static Standard getStandard() {
 		if (standard == null) {
 			standard = new Standard();
 		}
@@ -39,25 +39,25 @@ public class NameConverterProvider {
 	 */
 	public static final NameConverter getJaxrpcCompatible() {
 		if (jaxrpcCompatible == null) {
-			// TODO: somehow extend the dynamic standard value
+			final Standard standardNC = getStandard();
+
 			jaxrpcCompatible = new Standard() {
+
 				@Override
 				protected boolean isPunct(char c) {
-					return (c == '.' || c == '-' || c == ';' /*
-																 * || c == '_'
-																 */ || c == '\u00b7' || c == '\u0387' || c == '\u06dd' || c == '\u06de');
+					return (c == '.' || c == '-' || c == ';' || c == '\u00b7' || c == '\u0387' || c == '\u06dd' || c == '\u06de');
 				}
 
 				@Override
 				protected boolean isLetter(char c) {
-					return super.isLetter(c) || c == '_';
+					return standardNC.isLetter(c) || c == '_';
 				}
 
 				@Override
 				protected int classify(char c0) {
 					if (c0 == '_')
 						return NameUtil.OTHER_LETTER;
-					return super.classify(c0);
+					return standardNC.classify(c0);
 				}
 			};
 		}
@@ -69,11 +69,11 @@ public class NameConverterProvider {
 	 */
 	public static final NameConverter getSmart() {
 		if (smart == null) {
-			// TODO: somehow extend the dynamic standard value
+			final Standard standardNC = getStandard();
 			smart = new Standard() {
 				@Override
 				public String toConstantName(String token) {
-					String name = super.toConstantName(token);
+					String name = standardNC.toConstantName(token);
 					if (!SourceVersion.isKeyword(name))
 						return name;
 					else
@@ -84,19 +84,15 @@ public class NameConverterProvider {
 		return smart;
 	}
 
-	// TODO: convert this to the value used originally
 	public static class Standard extends NameUtil implements NameConverter {
-
 		@Override
 		public String toClassName(String s) {
 			return toMixedCaseName(toWordList(s), true);
-			// return s;
 		}
 
 		@Override
 		public String toVariableName(String s) {
-			// return toMixedCaseName(toWordList(s), false);
-			return s;
+			return toMixedCaseName(toWordList(s), false);
 		}
 
 		@Override
@@ -145,12 +141,11 @@ public class NameConverterProvider {
 
 			// remove trailing file type, if necessary
 			if (tokens.size() > 1) {
-				/*
-				 * for uri's like "www.foo.com" and "foo.com", there is no
-				 * trailing file, so there's no need to look at the last '.' and
-				 * substring otherwise, we loose the "com" (which would be
-				 * wrong)
-				 */
+				// for uri's like "www.foo.com" and "foo.com", there is no
+				// trailing
+				// file, so there's no need to look at the last '.' and
+				// substring
+				// otherwise, we loose the "com" (which would be wrong)
 				String lastToken = tokens.get(tokens.size() - 1);
 				idx = lastToken.lastIndexOf('.');
 				if (idx > 0) {
@@ -159,7 +154,8 @@ public class NameConverterProvider {
 				}
 			}
 
-			// tokenize domain name and reverse. Also remove :port if it exists
+			// tokenize domain name and reverse. Also remove :port if it
+			// exists
 			String domain = tokens.get(0);
 			idx = domain.indexOf(':');
 			if (idx >= 0)
@@ -198,7 +194,7 @@ public class NameConverterProvider {
 			StringBuilder newToken = new StringBuilder(token.length() + 1);
 			for (int i = 0; i < token.length(); i++) {
 				char c = token.charAt(i);
-				// c can't be used as first char
+				// c can't be the first char
 				if (i == 0 && !Character.isJavaIdentifierStart(c)) {
 					newToken.append('_');
 				}
@@ -242,5 +238,4 @@ public class NameConverterProvider {
 			return buf.toString();
 		}
 	}
-
 }
