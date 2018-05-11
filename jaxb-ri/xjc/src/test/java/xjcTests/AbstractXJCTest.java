@@ -15,6 +15,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 
 import com.sun.codemodel.JCodeModel;
+import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.api.ErrorListener;
 import com.sun.tools.xjc.api.S2JJAXBModel;
@@ -65,6 +66,8 @@ public class AbstractXJCTest {
 
 		// System.out.println(outputDir.getAbsolutePath());
 		SchemaCompiler compiler = XJC.createSchemaCompiler();
+
+		l.addOptions(compiler.getOptions());
 
 		for (Plugin plugin : getPlugins(l)) {
 			compiler.getOptions().activePlugins.add(plugin);
@@ -137,6 +140,9 @@ public class AbstractXJCTest {
 
 	protected abstract class Logic {
 		protected abstract File getXsd();
+
+		protected void addOptions(Options ops) {
+		}
 
 		protected void loadBindings(List<File> files) {
 		}
