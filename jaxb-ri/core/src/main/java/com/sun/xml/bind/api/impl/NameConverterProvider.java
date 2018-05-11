@@ -14,7 +14,7 @@ public class NameConverterProvider {
 		NameConverterProvider.nc = nc;
 	}
 
-	public static NameConverter getStandardNameConverter() {
+	public static NameConverter getStandard() {
 		if (nc == null) {
 			nc = new Standard();
 		}

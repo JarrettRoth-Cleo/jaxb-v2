@@ -40,13 +40,11 @@
 
 package com.sun.tools.xjc.reader;
 
-import com.sun.xml.bind.api.impl.NameConverter;
+import com.sun.xml.bind.api.impl.NameConverterProvider;
 
-
-public class NameConverterDriver
-{
-    public static void main( String[] args ) {
-        for( int i=0; i<args.length; i++ )
-        System.out.println( NameConverter.standard.toConstantName(args[i]) );
-    }
+public class NameConverterDriver {
+	public static void main(String[] args) {
+		for (int i = 0; i < args.length; i++)
+			System.out.println(NameConverterProvider.getStandard().toConstantName(args[i]));
+	}
 }
