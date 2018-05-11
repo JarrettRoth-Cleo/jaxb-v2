@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.tools.ant.util.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,12 +38,11 @@ import com.sun.xml.bind.api.impl.NameConverter;
 public class AbstractXJCTest {
 
 	protected final File resourceDir = new File("src/test/resources");
-
-	protected final File destRootDir = new File("C:/code/xjcFork/xsds/output");
+	protected final File destRootDir = new File("src/test/output");
 	protected File outputDir;
 
 	// Only leave the generated folders if the 'is.dev' property is set to true
-	protected boolean shouldCleanUpAfter = false;// !Boolean.parseBoolean(System.getProperty("is.dev"));
+	protected boolean shouldCleanUpAfter = true;// !Boolean.parseBoolean(System.getProperty("is.dev"));
 
 	@Rule
 	public TestName name = new TestName();
@@ -55,15 +56,15 @@ public class AbstractXJCTest {
 	 * Clean up the testing output folder. Java 7 Files could do this better
 	 */
 	@After
-	public void cleanUp() {
+	public void tearDown() {
 		if (shouldCleanUpAfter) {
-			cleanUpFolder(outputDir);
-			outputDir.delete();
+            FileUtils.delete(outputDir);
 		}
 	}
 
+        /*
 	private void cleanUpFolder(File f) {
-		for (File file : f.listFiles()) {
+        for (File file : f.listFiles()) {
 			if (file.isDirectory()) {
 				cleanUpFolder(file);
 				file.delete();
@@ -72,6 +73,7 @@ public class AbstractXJCTest {
 			}
 		}
 	}
+		*/
 
 	protected void runTest(Logic logic) throws Throwable {
 		InputSource inputSource = getInputSource(logic.getXsd());

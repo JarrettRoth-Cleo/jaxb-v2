@@ -10,12 +10,12 @@ public class XJCTest extends AbstractXJCTest {
 
 	@Ignore
 	@Test
-	public void simpleTest() throws Throwable {
+	public void simpleSuccess_Test() throws Throwable {
 		runTest(new Logic(false) {
 
 			@Override
 			public File getXsd() {
-				return (new File(resourceDir, "ImageAttachment.xsd"));
+				return (new File(resourceDir, "simpleTest.xsd"));
 			}
 		});
 	}
@@ -27,7 +27,7 @@ public class XJCTest extends AbstractXJCTest {
 
 			@Override
 			public File getXsd() {
-				return new File(resourceDir, "EADS_INVOICING_JUST_PRECISION.XSD");
+				return new File(resourceDir, "simplifiedPrecision.xsd");
 			}
 
 		});
