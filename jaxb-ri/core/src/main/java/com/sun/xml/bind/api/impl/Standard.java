@@ -111,7 +111,7 @@ public class Standard extends NameUtil implements NameConverter {
 		return combine(tokens, '.');
 	}
 
-	private static String removeIllegalIdentifierChars(String token) {
+	protected String removeIllegalIdentifierChars(String token) {
 		// max expected length
 		StringBuilder newToken = new StringBuilder(token.length() + 1);
 		for (int i = 0; i < token.length(); i++) {
@@ -129,7 +129,7 @@ public class Standard extends NameUtil implements NameConverter {
 		return newToken.toString();
 	}
 
-	private static ArrayList<String> tokenize(String str, String sep) {
+	protected ArrayList<String> tokenize(String str, String sep) {
 		StringTokenizer tokens = new StringTokenizer(str, sep);
 		ArrayList<String> r = new ArrayList<String>();
 
@@ -139,7 +139,7 @@ public class Standard extends NameUtil implements NameConverter {
 		return r;
 	}
 
-	private static <T> ArrayList<T> reverse(List<T> a) {
+	protected <T> ArrayList<T> reverse(List<T> a) {
 		ArrayList<T> r = new ArrayList<T>();
 
 		for (int i = a.size() - 1; i >= 0; i--)
@@ -149,7 +149,7 @@ public class Standard extends NameUtil implements NameConverter {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static String combine(List r, char sep) {
+	protected String combine(List r, char sep) {
 		StringBuilder buf = new StringBuilder(r.get(0).toString());
 
 		for (int i = 1; i < r.size(); i++) {

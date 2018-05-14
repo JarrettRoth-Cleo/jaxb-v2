@@ -59,7 +59,7 @@ This [test suite](jaxb-ri/xjc/src/test/java/xjcTests/NameConverterOverrideTest.j
 
 The current instance of the Standard NameConverter used in the test attempts to remove any automatic camel casing so it matches the XSD closer.  This doesn't follow Java naming conventions, but it does match the data closer.
 
-TODO: Possibly, expose and override the `Standard#removeIllegalIdentifierChars` method in order to map Illegal Identifier characters to their full names.
+TODO: Override the `Standard#removeIllegalIdentifierChars` method in in the new  NameConverter in order to map Illegal Identifier characters to their full names.
 Ex: '*' is found in an element name, replace it with 'asterisk'
 
 
