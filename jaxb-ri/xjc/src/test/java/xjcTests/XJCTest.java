@@ -10,7 +10,7 @@ public class XJCTest extends AbstractXJCTest {
 
 	@Ignore
 	@Test
-	public void simpleSuccess_Test() throws Throwable {
+	public void simpleSuccess_test() throws Throwable {
 		runTest(new Logic(false) {
 
 			@Override
@@ -22,12 +22,28 @@ public class XJCTest extends AbstractXJCTest {
 
 	@Ignore
 	@Test
-	public void shouldFailTest() throws Throwable {
+	public void precisionIssueCausesFailure_test() throws Throwable {
 		runTest(new Logic(false) {
 
 			@Override
 			public File getXsd() {
 				return new File(resourceDir, "simplifiedPrecision.xsd");
+			}
+
+		});
+	}
+
+	@Test
+	public void precisionIssueFixedWithBindings_test() throws Throwable{
+		runTest(new Logic(false) {
+			@Override
+			protected File getXsd() {
+				return new File(resourceDir, "simplifiedPrecision.xsd");
+			}
+
+			@Override
+			public void loadBindings(List<File> files) {
+				files.add(new File(resourceDir, "simplifiedBindings.xjb"));
 			}
 
 		});
