@@ -20,7 +20,7 @@ public class NameConverterOverrideTest extends AbstractXJCTest {
 
 			@Override
 			protected File getXsd() {
-				// can be schema
+				// can be any schema
 				return new File(resourceDir, "Mixed.xsd");
 			}
 
