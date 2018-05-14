@@ -55,7 +55,7 @@ Changes were made to the XJC logic to no longer utilize the hard coded NameConve
 
 This [class](jaxb-v2/jaxb-ri/core/src/main/java/com/sun/xml/bind/api/impl/NameConverterProvider.java) was added to be the source of each kind of NameConverter instance available to the XJC project.  
 
-This [test suite](jaxb-v2/jaxb-ri/xjc/src/test/java/xjcTests/NameConverterOverrideTest.java) was created to represent how the standard NameConverter can be implemented.
+This [test suite](../jaxb-v2/jaxb-ri/xjc/src/test/java/xjcTests/NameConverterOverrideTest.java) was created to represent how the standard NameConverter can be implemented.
 
 The current instance of the Standard NameConverter used in the test attempts to remove any automatic camel casing so it matches the XSD closer.  This doesn't follow Java naming conventions, but it does match the data closer.
 
