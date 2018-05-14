@@ -53,9 +53,9 @@ After completing these 2 mvn calls, the XJC jar can be found in jaxb-ri/xjc/xjc/
 
 Changes were made to the XJC logic to no longer utilize the hard coded NameConverter.standard NameConverter instance.  This allows us to change how the class/interface/field names are generated without having to rebuild the entire XJC project.
 
-This [class](jaxb-v2/jaxb-ri/core/src/main/java/com/sun/xml/bind/api/impl/NameConverterProvider.java) was added to be the source of each kind of NameConverter instance available to the XJC project.  
+This [class](jaxb-ri/core/src/main/java/com/sun/xml/bind/api/impl/NameConverterProvider.java) was added to be the source of each kind of NameConverter instance available to the XJC project.  
 
-This [test suite](../jaxb-v2/jaxb-ri/xjc/src/test/java/xjcTests/NameConverterOverrideTest.java) was created to represent how the standard NameConverter can be implemented.
+This [test suite](jaxb-ri/xjc/src/test/java/xjcTests/NameConverterOverrideTest.java) was created to represent how the standard NameConverter can be implemented.
 
 The current instance of the Standard NameConverter used in the test attempts to remove any automatic camel casing so it matches the XSD closer.  This doesn't follow Java naming conventions, but it does match the data closer.
 
