@@ -29,7 +29,7 @@ public class AbstractXJCTest {
 	protected File outputDir;
 
 	// Only leave the generated folders if the 'is.dev' property is set to true
-	protected boolean shouldCleanUpAfter = false;// !Boolean.parseBoolean(System.getProperty("is.dev"));
+	protected boolean shouldCleanUpAfter = !Boolean.parseBoolean(System.getProperty("is.dev"));
 
 	@Rule
 	public TestName name = new TestName();

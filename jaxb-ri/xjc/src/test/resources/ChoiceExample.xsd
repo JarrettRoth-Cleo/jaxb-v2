@@ -1,4 +1,4 @@
-<xs:schema elementFormDefault="qualified" targetNamespace="cleo.clarify.just.restriction.issue.norway" xmlns="cleo.clarify.just.restriction.issue.norway" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema elementFormDefault="qualified" targetNamespace="cleo.clarify.just.choice.issue" xmlns="cleo.clarify.just.choice.issue" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<xs:element name="root" type="ChoiceType"/>
 	<xs:complexType name="ChoiceType">
 		<xs:choice maxOccurs="unbounded" minOccurs="0">
@@ -12,28 +12,28 @@
 			<xs:element name="MaterialGroups">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="MaterialGroups" type="xs:string"/>
+						<xs:element name="materialGroups" type="xs:string"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="MaterialStock">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="MaterialStock" type="xs:string"/>
+						<xs:element name="materialStock" type="xs:string"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="Bussen">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="Bussen" type="xs:string"/>
+						<xs:element name="bussen" type="xs:string"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="Users">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="Users" type="xs:string"/>
+						<xs:element name="users" type="xs:string"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
