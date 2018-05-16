@@ -52,7 +52,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 			@Override
 			protected void loadPlugins(List<Plugin> plugins) {
-				// plugins.add(new ChoiceResolutionPlugin());
+				plugins.add(new ChoiceResolutionPlugin());
 			}
 
 			@Override
