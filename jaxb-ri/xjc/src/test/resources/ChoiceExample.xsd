@@ -37,6 +37,11 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="ExternalChoice" type="ExternalChoice"/>
 		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="ExternalChoice">
+		<xs:sequence><xs:element name="externalChoice" type="xs:string"/></xs:sequence>
 	</xs:complexType>
 </xs:schema>

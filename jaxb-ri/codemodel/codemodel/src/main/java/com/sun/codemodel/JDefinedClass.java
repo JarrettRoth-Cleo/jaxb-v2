@@ -921,4 +921,8 @@ public class JDefinedClass extends JClass implements JDeclaration, JClassContain
 	public JMods mods() {
 		return mods;
 	}
+
+	public JDefinedClass getNestedClass(String name) {
+		return classes.get(name);
+	}
 }
