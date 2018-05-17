@@ -24,6 +24,7 @@ import com.sun.codemodel.JType;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.model.CClassInfo;
+import com.sun.tools.xjc.model.CClassInfoParent;
 import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.model.CTypeInfo;
 import com.sun.tools.xjc.model.Model;
@@ -194,10 +195,19 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 	private JDefinedClass findClass(CTypeInfo typeInfo, JCodeModel jModel) {
 		// TODO: can this be any thing else?
+		// TODO: JCodeModel doesn't work with Nested classes. Fix this...
 		if (typeInfo instanceof CClassInfo) {
 			CClassInfo info = (CClassInfo) typeInfo;
-			String fullName = info.fullName();
-			return jModel._getClass(fullName);
+			CClassInfoParent p = info.parent();
+			if (p instanceof CClassInfoParent.Package) {
+				String fullName = info.fullName();
+				return jModel._getClass(fullName);
+			} else if (p instanceof CClassInfo) {
+				String parentFQN = p.fullName();
+				return jModel._getClass(parentFQN).getNestedClass(info.shortName);
+			} else {
+				System.out.println("TODO: handle this parent type: " + p.getClass());
+			}
 		} else {
 			System.out.println("TODO handle: " + typeInfo.getClass());
 		}
