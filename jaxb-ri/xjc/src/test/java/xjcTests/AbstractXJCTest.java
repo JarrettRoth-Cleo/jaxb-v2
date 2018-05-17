@@ -48,6 +48,8 @@ public class AbstractXJCTest {
 	public void tearDown() {
 		if (shouldCleanUpAfter) {
             FileUtils.delete(outputDir);
+			File f = new File("src/test/resources/genBindings.xjb");
+			FileUtils.delete(f);
 		}
 	}
 
