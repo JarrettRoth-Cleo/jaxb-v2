@@ -74,23 +74,32 @@ public class ChoiceModHandler implements ModelModHandler {
 	 * TODO: should this support something other than JDefinedClass? Would it be
 	 * better to put these interfaces in packages?
 	 * 
+	 * TODO: move this to its own class
+	 * 
 	 * @param baseName
 	 * @param parentClazz
 	 * @return
 	 */
 	private String getUniqueInterfaceName(String baseName, JDefinedClass parentClazz) {
 		// Build a list of existing nested class/interface names
+		List<String> existingNames = buildListOfExistingClassNames(parentClazz);
+		return getUniqueNameFromList(baseName, existingNames);
+	}
+
+	// TODO: handle sub and parent classes in tree
+	// TODO: ensure this handles interface
+	// TODO: only analyze a class once
+	private List<String> buildListOfExistingClassNames(JDefinedClass parentClazz) {
 		JClass[] classes = parentClazz.listClasses();
-		if (classes != null && classes.length >= 1) {
-			List<String> existingNames = new ArrayList<String>(classes.length);
-			// TODO: handle sub and parent classes in tree
-			for (JClass curClass : classes) {
-				existingNames.add(curClass.name());
+		List<String> names = new ArrayList<String>();
+		for (JClass curClass : classes) {
+			names.add(curClass.name());
+			// handle any sub classes
+			if (curClass instanceof JDefinedClass) {
+				names.addAll(buildListOfExistingClassNames((JDefinedClass) curClass));
 			}
-			return getUniqueNameFromList(baseName, existingNames);
-		} else {
-			return baseName;
 		}
+		return names;
 	}
 
 	/**
@@ -161,6 +170,19 @@ public class ChoiceModHandler implements ModelModHandler {
 		return newFieldType;
 	}
 
+	/**
+	 * Create a new class that is defined using Generics.
+	 * 
+	 * ex: ArrayList<String>
+	 * 
+	 * TODO: how to handle a case similar to this:
+	 * 
+	 * ArrayList<GenericType <String>>
+	 * 
+	 * @param narrowClass
+	 * @param newType
+	 * @return
+	 */
 	private JClass buildNarrowedClass(JNarrowedClass narrowClass, JClass newType) {
 		JClass basis = narrowClass.getBasis();
 		List<JClass> args = narrowClass.getArgs();
