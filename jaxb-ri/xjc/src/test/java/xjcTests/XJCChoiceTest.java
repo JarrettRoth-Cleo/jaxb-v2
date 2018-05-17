@@ -112,7 +112,8 @@ public class XJCChoiceTest extends AbstractXJCTest {
 			JDefinedClass clazz = jModel._getClass(choice.parent().toString());
 			JFieldVar field = clazz.fields().get(choice.getName(true));
 
-			// TODO: handle exception...
+			// TODO: ensure interface name is unique by handling
+			// JClassAlreadyExistsException
 			JClass newType = clazz._interface(choice.getName(true) + "_Type");
 
 			// handle the references
