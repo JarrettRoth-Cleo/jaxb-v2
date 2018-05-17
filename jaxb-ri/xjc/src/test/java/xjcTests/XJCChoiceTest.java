@@ -24,7 +24,6 @@ import com.sun.codemodel.JType;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.model.CClassInfo;
-import com.sun.tools.xjc.model.CClassInfoParent;
 import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.model.CTypeInfo;
 import com.sun.tools.xjc.model.Model;
@@ -90,6 +89,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 		@Override
 		public void postProcessModel(Model model, ErrorHandler errorHandler) {
 			for (Map.Entry<NClass, CClassInfo> beanEntry : model.beans().entrySet()) {
+				// TODO: remove this hard coded value.
 				if ("issue.choice.just.clarify.cleo.ChoiceType".equals(beanEntry.getKey().toString())) {
 					CClassInfo info = beanEntry.getValue();
 					for (CPropertyInfo propInfo : info.getProperties()) {
@@ -151,16 +151,13 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 	private JDefinedClass findClass(CTypeInfo typeInfo, JCodeModel jModel) {
 		// System.out.println("TIME TO START");
-		// TODO
-		CClassInfo info = (CClassInfo) typeInfo;
-		CClassInfoParent parent = info.parent();
-		if (parent instanceof CClassInfo) {
-			CClassInfo parentInfo = (CClassInfo) parent;
-			String fqn = parentInfo.toString() + "." + info.shortName;
-			JDefinedClass parentClass = jModel._getClass(parentInfo.toString());
-			return parentClass.getNestedClass(info.shortName);
+		// TODO: can this be any thing else?
+		if (typeInfo instanceof CClassInfo) {
+			CClassInfo info = (CClassInfo) typeInfo;
+			String fullName = info.fullName();
+			return jModel._getClass(fullName);
 		} else {
-			System.out.println("TODO: how to handle packages?");
+			System.out.println("TODO handle: " + typeInfo.getClass());
 		}
 		return null;
 	}
