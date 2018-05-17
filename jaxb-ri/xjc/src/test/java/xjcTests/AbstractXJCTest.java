@@ -51,19 +51,6 @@ public class AbstractXJCTest {
 		}
 	}
 
-        /*
-	private void cleanUpFolder(File f) {
-        for (File file : f.listFiles()) {
-			if (file.isDirectory()) {
-				cleanUpFolder(file);
-				file.delete();
-			} else {
-				file.delete();
-			}
-		}
-	}
-		*/
-
 	protected void runTest(Logic logic) throws Throwable {
 		InputSource inputSource = getInputSource(logic.getXsd());
 		SchemaCompiler compiler = getInitializedSchemaCompiler(inputSource, logic);
@@ -75,6 +62,7 @@ public class AbstractXJCTest {
 		}
 
 	}
+
 	private void generateFiles(S2JJAXBModel model, Logic logic){
 		JCodeModel jModel = model.generateCode(null, null);
 		if (!outputDir.exists()) {
