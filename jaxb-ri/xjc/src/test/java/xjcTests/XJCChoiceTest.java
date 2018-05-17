@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -68,24 +67,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 				}
 				jModel.build(outputDir);
 			}
-		});
-	}
-
-	@Ignore
-	@Test
-	public void runSimpleChoiceWithBindings() throws Throwable {
-		runTest(new Logic() {
-
-			@Override
-			protected File getXsd() {
-				return new File(resourceDir, "ChoiceExample.xsd");
-			}
-
-			@Override
-			protected void loadBindings(List<File> files) {
-				files.add(new File(resourceDir, "ChoiceExampleBindings.xjb"));
-			}
-
 		});
 	}
 
