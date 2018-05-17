@@ -1,8 +1,10 @@
 package xjcTests;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.javafx.binding.StringFormatter;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -45,27 +47,19 @@ public class XJCTest extends AbstractXJCTest {
 			public void loadBindings(List<File> files) {
 				files.add(new File(resourceDir, "simplifiedBindings.xjb"));
 			}
-
 		});
 	}
 
-	@Ignore
-	@Test
-	public void shouldFailWithBindings3() throws Throwable {
-
-		runTest(new Logic(false) {
-
-			@Override
-			public File getXsd() {
-				return new File(resourceDir, "EADS_INVOICING_JUST_PRECISION.XSD");
-			}
-
-			@Override
-			public void loadBindings(List<File> files) {
-				files.add(new File(resourceDir, "Just_precision_bindings.xjb"));
-			}
-
-		});
-	}
-
+	private String generateXjbHeader(String schemaLocation){
+	    String versionEncoding = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        String bindingHeader = String.format("<jxb:bindings schemaLocation=\"%s.xsd\" version=\"2.1\" xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", schemaLocation);
+        return String.format("%s \n %s ",versionEncoding, bindingHeader);
+    }
+    private String generateBinding(String element){
+	    return String.format("");
+    }
+    private String generateXjbEnd(){
+	    return "</jxb:bindings>";
+    }
 }
+
