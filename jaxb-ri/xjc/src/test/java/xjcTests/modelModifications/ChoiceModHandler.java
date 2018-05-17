@@ -120,7 +120,6 @@ public class ChoiceModHandler implements ModelModHandler {
 
 	private JDefinedClass findClass(CTypeInfo typeInfo, JCodeModel jModel) {
 		// TODO: can this be any thing else?
-		// TODO: JCodeModel doesn't work with Nested classes. Fix this...
 		if (typeInfo instanceof CClassInfo) {
 			CClassInfo info = (CClassInfo) typeInfo;
 			CClassInfoParent p = info.parent();
