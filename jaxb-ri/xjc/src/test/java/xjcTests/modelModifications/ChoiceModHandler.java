@@ -19,6 +19,14 @@ import com.sun.tools.xjc.model.CClassInfoParent;
 import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.model.CTypeInfo;
 
+/**
+ * JCodeModel modification handler for a choice definition.
+ * 
+ * This process will implement a new Marker interface for a field that contains
+ * a choice. Each referenced definition implements this new interface to be
+ * utilized in a Ruleset switch statement.
+ *
+ */
 public class ChoiceModHandler implements ModelModHandler {
 
 	private final CPropertyInfo info;

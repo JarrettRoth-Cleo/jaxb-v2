@@ -8,6 +8,10 @@ import com.sun.tools.xjc.model.CPropertyInfo;
 
 import xjcTests.modelModifications.ModelModHandler.ModelModificationException;
 
+/**
+ * Manager/Cache of all the JCodeModel modifications that need to be ran before
+ * the Java Code is generated.
+ */
 public class ModelModificationsManager {
 
 	private final List<ModelModHandler> handlers = new ArrayList<ModelModHandler>();
