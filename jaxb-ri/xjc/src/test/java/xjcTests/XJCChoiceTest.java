@@ -38,7 +38,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 	private ModelModificationsManager manager = new ModelModificationsManager();
 
-	// @Ignore
 	@Test
 	public void runSimpleChoiceTest() throws Throwable {
 		runTest(new Logic() {
@@ -112,9 +111,8 @@ public class XJCChoiceTest extends AbstractXJCTest {
 			JDefinedClass clazz = jModel._getClass(choice.parent().toString());
 			JFieldVar field = clazz.fields().get(choice.getName(true));
 
-			// TODO: ensure interface name is unique by handling
-			// JClassAlreadyExistsException
-			JClass newType = clazz._interface(choice.getName(true) + "_Type");
+			String interfaceName = getUniqueInterfaceName(choice.getName(true) + "_Type", clazz);
+			JClass newType = clazz._interface(interfaceName);
 
 			// handle the references
 			for (CTypeInfo info : choice.ref()) {
@@ -135,6 +133,51 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 	}
 
+	/**
+	 * Iterates over the list of defined nested classes/interfaces and will
+	 * return a unique name for a new interface
+	 * 
+	 * TODO: should this support something other than JDefinedClass? Would it be
+	 * better to put these interfaces in packages?
+	 * 
+	 * @param baseName
+	 * @param parentClazz
+	 * @return
+	 */
+	private String getUniqueInterfaceName(String baseName, JDefinedClass parentClazz) {
+		// Build a list of existing nested class/interface names
+		JClass[] classes = parentClazz.listClasses();
+		if (classes != null && classes.length >= 1) {
+			List<String> existingNames = new ArrayList<String>(classes.length);
+			// TODO: handle sub and parent classes in tree
+			for (JClass curClass : classes) {
+				existingNames.add(curClass.name());
+			}
+			return getUniqueNameFromList(baseName, existingNames);
+		} else {
+			return baseName;
+		}
+	}
+
+	/**
+	 * Build a unique name using the baseName + counter
+	 * 
+	 * TODO: use NamingUtil in Clarify
+	 * 
+	 * @param baseName
+	 * @param existingNames
+	 * @return
+	 */
+	private String getUniqueNameFromList(String baseName, List<String> existingNames) {
+		int counter = 0;
+		String modifiedName = baseName;
+		// TODO: make case insensitive
+		while (existingNames.contains(modifiedName)) {
+			modifiedName += ++counter;
+		}
+		return modifiedName;
+	}
+
 	private void modifyPropertyMethod(JMethod m, JClass fieldClass, JClass newType) {
 		// set the return type
 		m.type(fieldClass);
@@ -150,7 +193,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 	}
 
 	private JDefinedClass findClass(CTypeInfo typeInfo, JCodeModel jModel) {
-		// System.out.println("TIME TO START");
 		// TODO: can this be any thing else?
 		if (typeInfo instanceof CClassInfo) {
 			CClassInfo info = (CClassInfo) typeInfo;
@@ -172,7 +214,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 		if (field.type() instanceof JNarrowedClass) {
 			JNarrowedClass narrowClass = (JNarrowedClass) field.type();
 			newFieldType = buildNarrowedClass(narrowClass, newType);
-
 		}
 		return newFieldType;
 	}
