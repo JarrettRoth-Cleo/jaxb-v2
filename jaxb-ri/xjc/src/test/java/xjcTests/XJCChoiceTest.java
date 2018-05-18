@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -30,6 +31,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 	private ModelModificationsManager manager = new ModelModificationsManager();
 
 	@Test
+	@Ignore
 	public void runSimpleChoiceTest() throws Throwable {
 		runTest(new ChoiceTestLogic() {
 
@@ -41,6 +43,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 	}
 
 	@Test
+	// @Ignore
 	// TODO: need to make this have nested classes like a pleb
 	public void overridingParentInterfaceTest() throws Throwable {
 		runTest(new ChoiceTestLogic() {
@@ -51,20 +54,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 			}
 
 		});
-	}
-
-	private void runManager(JCodeModel jModel, File outputDir, boolean genCode) throws IOException {
-		try {
-			manager.modify(jModel);
-		} catch (ModelModificationException e) {
-			Assert.fail();
-		}
-		if (genCode) {
-			if (!outputDir.exists()) {
-				outputDir.mkdirs();
-			}
-			jModel.build(outputDir);
-		}
 	}
 
 	class ChoiceResolutionPlugin extends Plugin {
@@ -87,22 +76,31 @@ public class XJCChoiceTest extends AbstractXJCTest {
 		@Override
 		public void postProcessModel(Model model, ErrorHandler errorHandler) {
 			for (Map.Entry<NClass, CClassInfo> beanEntry : model.beans().entrySet()) {
-				// TODO: remove this hard coded value.
-				// if
-				// ("issue.choice.just.clarify.cleo.ChoiceType".equals(beanEntry.getKey().toString()))
-				// {
 				CClassInfo info = beanEntry.getValue();
 				for (CPropertyInfo propInfo : info.getProperties()) {
-					ParticleImpl comp = (ParticleImpl) propInfo.getSchemaComponent();
-					ModelGroupImpl term = (ModelGroupImpl) comp.getTerm();
-
-					if ("CHOICE".equals(term.getCompositor().name())) {
+					if (isPropertyChoice(propInfo)) {
 						manager.addChoice(propInfo);
 					}
-					// }
 				}
 			}
 		}
+
+		private boolean isPropertyChoice(CPropertyInfo propInfo) {
+			// TODO: is this the only way a property can be a choice?
+			// TODO:should these checks use the Impls?
+			if (!(propInfo.getSchemaComponent() instanceof ParticleImpl)) {
+				return false;
+			}
+			ParticleImpl comp = (ParticleImpl) propInfo.getSchemaComponent();
+
+			if (!(comp.getTerm() instanceof ModelGroupImpl)) {
+				return false;
+			}
+			ModelGroupImpl term = (ModelGroupImpl) comp.getTerm();
+
+			return "CHOICE".equals(term.getCompositor().name());
+		}
+
 	}
 
 	private abstract class ChoiceTestLogic extends Logic {
@@ -114,6 +112,20 @@ public class XJCChoiceTest extends AbstractXJCTest {
 		@Override
 		protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
 			runManager(jModel, outputDir, true);
+		}
+
+		private void runManager(JCodeModel jModel, File outputDir, boolean genCode) throws IOException {
+			try {
+				manager.modify(jModel);
+			} catch (ModelModificationException e) {
+				Assert.fail();
+			}
+			if (genCode) {
+				if (!outputDir.exists()) {
+					outputDir.mkdirs();
+				}
+				jModel.build(outputDir);
+			}
 		}
 	}
 

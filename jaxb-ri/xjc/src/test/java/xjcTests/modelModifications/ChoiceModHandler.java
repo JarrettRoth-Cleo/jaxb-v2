@@ -38,7 +38,7 @@ public class ChoiceModHandler implements ModelModHandler {
 	// TODO: method-ise this
 	@Override
 	public void handle(JCodeModel model) throws ModelModificationException {
-		JDefinedClass clazz = model._getClass(info.parent().toString());
+		JDefinedClass clazz = getClassByTypeInfo(model, info.parent());
 		JFieldVar field = clazz.fields().get(info.getName(true));
 
 		String interfaceName = getUniqueInterfaceName(info.getName(true) + "_Type", clazz);
@@ -51,7 +51,7 @@ public class ChoiceModHandler implements ModelModHandler {
 
 		// handle the references
 		for (CTypeInfo info : info.ref()) {
-			JDefinedClass definedClass = findClass(info, model);
+			JDefinedClass definedClass = getClassByTypeInfo(model, info);
 			// TODO
 			if (definedClass != null)
 				definedClass._implements(newType);
@@ -64,7 +64,42 @@ public class ChoiceModHandler implements ModelModHandler {
 		// handle the method
 		JMethod m = clazz.getMethod("get" + field.name(), new JType[0]);
 		modifyPropertyMethod(m, fieldClass, newType);
+	}
 
+	/**
+	 * Get the Defined class from the JCodeModel instance. This will handle
+	 * nested classes.
+	 * 
+	 * @param model
+	 * @param fqn
+	 * @return
+	 */
+	private JDefinedClass getClassByTypeInfo(JCodeModel model, CTypeInfo typeInfo) {
+		if (typeInfo instanceof CClassInfo) {
+			CClassInfo info = (CClassInfo) typeInfo;
+			if (isParentPackage(info)) {
+				String fullName = info.fullName();
+				return model._getClass(fullName);
+			}
+
+			CClassInfoParent parent = info.parent();
+
+			String packageVal = parent.getOwnerPackage().name();
+			String typeFqn = typeInfo.toString();
+			String[] nestedClassPathParts = typeFqn.substring(packageVal.length() + 1).split("\\.");
+
+			String currentFqn = packageVal + "." + nestedClassPathParts[0];
+
+			JDefinedClass returnClass = model._getClass(currentFqn);
+			for (int i = 1; i < nestedClassPathParts.length; i++) {
+				returnClass = returnClass.getNestedClass(nestedClassPathParts[i]);
+			}
+
+			return returnClass;
+		}
+
+		// TODO
+		return null;
 	}
 
 	/**
@@ -135,27 +170,6 @@ public class ChoiceModHandler implements ModelModHandler {
 
 	}
 
-	private JDefinedClass findClass(CTypeInfo typeInfo, JCodeModel jModel) {
-		// TODO: can this be any thing else?
-		if (typeInfo instanceof CClassInfo) {
-			CClassInfo info = (CClassInfo) typeInfo;
-			CClassInfoParent p = info.parent();
-			if (p instanceof CClassInfoParent.Package) {
-				String fullName = info.fullName();
-				return jModel._getClass(fullName);
-			} else if (p instanceof CClassInfo) {
-				String parentFQN = p.fullName();
-				// TODO: handle multiple levels of nesting...
-				return jModel._getClass(parentFQN).getNestedClass(info.shortName);
-			} else {
-				System.out.println("TODO: handle this parent type: " + p.getClass());
-			}
-		} else {
-			System.out.println("TODO handle: " + typeInfo.getClass());
-		}
-		return null;
-	}
-
 	/**
 	 * Gets the type for the field and for the method..
 	 * 
@@ -197,6 +211,10 @@ public class ChoiceModHandler implements ModelModHandler {
 		}
 
 		return new JNarrowedClass(basis, newArgs);
+	}
+
+	private boolean isParentPackage(CClassInfo cci) {
+		return cci.parent() instanceof CClassInfoParent.Package;
 	}
 
 }
