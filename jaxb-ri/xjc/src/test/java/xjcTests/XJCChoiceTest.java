@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -31,7 +30,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 	private ModelModificationsManager manager;
 
 	@Test
-	@Ignore
+	// @Ignore
 	public void runSimpleChoiceTest() throws Throwable {
 		runTest(new ChoiceTestLogic() {
 
@@ -39,18 +38,63 @@ public class XJCChoiceTest extends AbstractXJCTest {
 			protected File getXsd() {
 				return new File(choiceResourcesDir, "ChoiceExample.xsd");
 			}
+
+			@Override
+			protected boolean genCode() {
+				return false;
+			}
 		});
 	}
 
 	@Test
 	// @Ignore
-	// TODO: need to make this have nested classes like a pleb
 	public void overridingParentInterfaceTest() throws Throwable {
+		// This tests that a nested class with the same name as the expected
+		// generated choice type marker interface
 		runTest(new ChoiceTestLogic() {
 
 			@Override
 			protected File getXsd() {
 				return new File(choiceResourcesDir, "ChoiceExampleWithNameResolution.xsd");
+			}
+
+			@Override
+			protected boolean genCode() {
+				return false;
+			}
+
+		});
+	}
+
+	@Test
+	public void primitiveTypesTest() throws Throwable {
+		runTest(new ChoiceTestLogic() {
+
+			@Override
+			protected File getXsd() {
+				return new File(choiceResourcesDir, "ChoiceExampleWithPrimitveTypes.xsd");
+			}
+
+			@Override
+			protected boolean genCode() {
+				return false;
+			}
+
+		});
+	}
+
+	@Test
+	public void primitiveWithComplexTypeReferencesTest() throws Throwable {
+		runTest(new ChoiceTestLogic() {
+
+			@Override
+			protected File getXsd() {
+				return new File(choiceResourcesDir, "ChoiceExampleWithPrimitveAndComplexTypeReferences.xsd");
+			}
+
+			@Override
+			protected boolean genCode() {
+				return true;
 			}
 
 		});
@@ -112,22 +156,24 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 		@Override
 		protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
-			runManager(jModel, outputDir, true);
+			runManager(jModel, outputDir);
 		}
 
-		private void runManager(JCodeModel jModel, File outputDir, boolean genCode) throws IOException {
+		private void runManager(JCodeModel jModel, File outputDir) throws IOException {
 			try {
 				manager.modify(jModel);
 			} catch (ModelModificationException e) {
 				Assert.fail();
 			}
-			if (genCode) {
+			if (genCode()) {
 				if (!outputDir.exists()) {
 					outputDir.mkdirs();
 				}
 				jModel.build(outputDir);
 			}
 		}
+
+		protected abstract boolean genCode();
 	}
 
 }
