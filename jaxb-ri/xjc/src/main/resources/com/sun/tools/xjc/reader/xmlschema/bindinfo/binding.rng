@@ -218,7 +218,7 @@
     <cc:java-body>
       private Locator loc;
       private Map globalConvs = new HashMap();
-      private NameConverter nameConverter = NameConverter.standard;
+      private NameConverter nameConverter = NameConverterProvider.getStandard();
       private String enableJavaNamingConvention = "true";
       private String fixedAttrToConstantProperty = "false";
       private String needIsSetMethod = "false";

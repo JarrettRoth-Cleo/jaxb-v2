@@ -41,41 +41,39 @@
 package com.sun.tools.xjc.api;
 
 import com.sun.tools.xjc.api.impl.s2j.SchemaCompilerImpl;
-import com.sun.xml.bind.api.impl.NameConverter;
+import com.sun.xml.bind.api.impl.NameConverterProvider;
 
 /**
- * Entry point to the programatic API to access
- * schema compiler (XJC) and schema generator (schemagen).
+ * Entry point to the programatic API to access schema compiler (XJC) and schema
+ * generator (schemagen).
  *
- * @author
- *     Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
+ * @author Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
  */
 public final class XJC {
 
-    /**
-     * Gets a fresh {@link SchemaCompiler}.
-     * 
-     * @return
-     *      always return non-null object.
-     */
-    public static SchemaCompiler createSchemaCompiler() {
-        return new SchemaCompilerImpl();
-    }
+	/**
+	 * Gets a fresh {@link SchemaCompiler}.
+	 * 
+	 * @return always return non-null object.
+	 */
+	public static SchemaCompiler createSchemaCompiler() {
+		return new SchemaCompilerImpl();
+	}
 
-    /**
-     * Computes the namespace URI -> package name conversion
-     * as specified by the JAXB spec.
-     *
-     * @param namespaceUri
-     *      Namespace URI. Can be empty, but must not be null.
-     * @return
-     *      A Java package name (e.g., "foo.bar"). "" to represent the root package.
-     *      This method returns null if the method fails to derive the package name
-     *      (there are certain namespace URIs with which this algorithm does not
-     *      work --- such as ":::" as the URI.)
-     */
-    public static String getDefaultPackageName( String namespaceUri ) {
-        if(namespaceUri==null)   throw new IllegalArgumentException();
-        return NameConverter.standard.toPackageName( namespaceUri );
-    }
+	/**
+	 * Computes the namespace URI -> package name conversion as specified by the
+	 * JAXB spec.
+	 *
+	 * @param namespaceUri
+	 *            Namespace URI. Can be empty, but must not be null.
+	 * @return A Java package name (e.g., "foo.bar"). "" to represent the root
+	 *         package. This method returns null if the method fails to derive
+	 *         the package name (there are certain namespace URIs with which
+	 *         this algorithm does not work --- such as ":::" as the URI.)
+	 */
+	public static String getDefaultPackageName(String namespaceUri) {
+		if (namespaceUri == null)
+			throw new IllegalArgumentException();
+		return NameConverterProvider.getStandard().toPackageName(namespaceUri);
+	}
 }

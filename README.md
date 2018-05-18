@@ -48,3 +48,19 @@ Generating XJC dependencies:
 
 After completing these 2 mvn calls, the XJC jar can be found in jaxb-ri/xjc/xjc/target and all dependencies can be found in jaxb-ri/xjc/xjc/target/dependencies.  All need to be added to the xsd.importwizard plugin.
 
+
+### Overriding the Default NameConverter
+
+Changes were made to the XJC logic to no longer utilize the hard coded NameConverter.standard NameConverter instance.  This allows us to change how the class/interface/field names are generated without having to rebuild the entire XJC project.
+
+This [class](jaxb-ri/core/src/main/java/com/sun/xml/bind/api/impl/NameConverterProvider.java) was added to be the source of each kind of NameConverter instance available to the XJC project.  
+
+This [test suite](jaxb-ri/xjc/src/test/java/xjcTests/NameConverterOverrideTest.java) was created to represent how the standard NameConverter can be implemented.
+
+The current instance of the Standard NameConverter used in the test attempts to remove any automatic camel casing so it matches the XSD closer.  This doesn't follow Java naming conventions, but it does match the data closer.
+
+TODO: Override the `Standard#removeIllegalIdentifierChars` method in in the new  NameConverter in order to map Illegal Identifier characters to their full names.
+Ex: '*' is found in an element name, replace it with 'asterisk'
+
+
+
