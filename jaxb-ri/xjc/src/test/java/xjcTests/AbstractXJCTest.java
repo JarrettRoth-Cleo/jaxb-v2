@@ -11,16 +11,27 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import com.sun.codemodel.JCodeModel;
+import com.sun.tools.xjc.BadCommandLineException;
+import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.api.ErrorListener;
 import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
 import com.sun.tools.xjc.api.XJC;
+import com.sun.tools.xjc.outline.Outline;
+import com.sun.xml.bind.api.impl.NameConverter;
 
+/**
+ * 
+ * This class essentially defines how the wizard would use the XJC project
+ *
+ */
 public class AbstractXJCTest {
 
 	protected final File resourceDir = new File("src/test/resources");
@@ -66,8 +77,13 @@ public class AbstractXJCTest {
 		// System.out.println(outputDir.getAbsolutePath());
 		SchemaCompiler compiler = XJC.createSchemaCompiler();
 
+		Options ops = compiler.getOptions();
+
+		addCustomNameCovnerter(ops);
+		l.addOptions(ops);
+
 		for (Plugin plugin : getPlugins(l)) {
-			compiler.getOptions().activePlugins.add(plugin);
+			ops.activePlugins.add(plugin);
 		}
 
 		compiler.setErrorListener(new TestingErrorListener());
@@ -81,7 +97,7 @@ public class AbstractXJCTest {
 				FileInputStream fileInputStream2 = new FileInputStream(f);
 				InputSource inputSource2 = new InputSource(fileInputStream2);
 				inputSource2.setSystemId(f.toURI().toString());
-				compiler.getOptions().addBindFile(inputSource2);
+				ops.addBindFile(inputSource2);
 			}
 
 			compiler.parseSchema(inputSource);
@@ -112,6 +128,22 @@ public class AbstractXJCTest {
 		return bindings;
 	}
 
+	private void addCustomNameCovnerter(Options ops) {
+		try {
+			ops.setNameConverter(getTestingNameConverter(), getTestingNameConverterPlugin());
+		} catch (BadCommandLineException e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	protected NameConverter getTestingNameConverter() {
+		return new InternalNameConverter();
+	}
+
+	protected Plugin getTestingNameConverterPlugin() {
+		return new LinkedPlugin();
+	}
+
 	private class TestingErrorListener implements ErrorListener {
 		@Override
 		public void error(SAXParseException exception) {
@@ -135,8 +167,57 @@ public class AbstractXJCTest {
 		}
 	}
 
+	private class LinkedPlugin extends Plugin {
+
+		@Override
+		public String getOptionName() {
+			return "linkedPlugin";
+		}
+
+		@Override
+		public String getUsage() {
+			return "EVERYWHERE";
+		}
+
+		@Override
+		public boolean run(Outline outline, Options opt, ErrorHandler errorHandler) throws SAXException {
+			// always enable for internal calls.
+			return true;
+		}
+
+	}
+
+	private class InternalNameConverter extends com.sun.xml.bind.api.impl.Standard {
+		@Override
+		public String toClassName(String s) {
+			return toMixedCaseName(toWordList(s), true);
+		}
+
+		@Override
+		public String toVariableName(String s) {
+			return s;
+		}
+
+		@Override
+		public String toInterfaceName(String token) {
+			return toClassName(token);
+		}
+
+		/**
+		 * Override the base functionality of the capitalize method to return
+		 * the same value so it matches the XSD closer
+		 */
+		@Override
+		public String capitalize(String w) {
+			return w;
+		}
+	}
+
 	protected abstract class Logic {
 		protected abstract File getXsd();
+
+		protected void addOptions(Options ops) {
+		}
 
 		protected void loadBindings(List<File> files) {
 		}
