@@ -25,6 +25,8 @@ import xjcTests.modelModifications.ModelModHandler.ModelModificationException;
 import xjcTests.modelModifications.ModelModificationsManager;
 
 public class XJCChoiceTest extends AbstractXJCTest {
+	private File choiceResourcesDir = new File(resourceDir, "choice");
+
 	private ModelModificationsManager manager = new ModelModificationsManager();
 
 	@Test
@@ -33,7 +35,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 			@Override
 			protected File getXsd() {
-				return new File(resourceDir, "ChoiceExample.xsd");
+				return new File(choiceResourcesDir, "ChoiceExample.xsd");
 			}
 
 			@Override
@@ -56,7 +58,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 			@Override
 			protected File getXsd() {
-				return new File(resourceDir, "ChoiceExampleWithNameResolution.xsd");
+				return new File(choiceResourcesDir, "ChoiceExampleWithNameResolution.xsd");
 			}
 
 			@Override
