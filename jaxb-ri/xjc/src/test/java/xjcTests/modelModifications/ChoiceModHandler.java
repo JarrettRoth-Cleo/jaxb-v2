@@ -39,36 +39,56 @@ public class ChoiceModHandler implements ModelModHandler {
 		this.interfaceTypeName = interfaceTypeName;
 	}
 
-	// TODO: method-ise this
 	@Override
 	public void handle(JCodeModel model) throws ModelModificationException {
+		// Load information
 		JDefinedClass clazz = getClassByTypeInfo(model, info.parent());
 		JFieldVar field = clazz.fields().get(info.getName(true));
+		JClass newType = initNewInterface(clazz);
+		JClass fieldClass = buildFieldType(newType, field);
 
-		// String interfaceName = getUniqueInterfaceName(info.getName(true) +
-		// "_Type", clazz);
-		JClass newType;
+		// Update all references.
+		updateField(field, fieldClass);
+		updateFieldMethod(clazz, field.name(), fieldClass, newType);
+		updateReferences(model, newType);
+	}
+
+	private JClass initNewInterface(JDefinedClass clazz) throws ModelModificationException {
 		try {
-			newType = clazz._interface(interfaceTypeName);
+			return clazz._interface(interfaceTypeName);
 		} catch (JClassAlreadyExistsException e) {
 			throw new ModelModificationException();
 		}
+	}
 
-		// handle the references
+	/**
+	 * Update any information for the field.
+	 * 
+	 * @param field
+	 * @param fieldClass
+	 */
+	private void updateField(JFieldVar field, JClass fieldClass) {
+		field.type(fieldClass);
+	}
+
+	private void updateFieldMethod(JDefinedClass clazz, String fieldName, JClass fieldClass, JClass newType) {
+		JMethod m = clazz.getMethod("get" + fieldName, new JType[0]);
+		modifyPropertyMethod(m, fieldClass, newType);
+	}
+
+	/**
+	 * Update the referenced choice options to extend the correct value.
+	 * 
+	 * @param model
+	 * @param newType
+	 */
+	private void updateReferences(JCodeModel model, JClass newType) {
 		for (CTypeInfo info : info.ref()) {
 			JDefinedClass definedClass = getClassByTypeInfo(model, info);
-			// TODO
-			if (definedClass != null)
+			if (definedClass != null) {
 				definedClass._implements(newType);
+			}
 		}
-
-		// handle the field
-		JClass fieldClass = buildFieldType(newType, field);
-		field.type(fieldClass);
-
-		// handle the method
-		JMethod m = clazz.getMethod("get" + field.name(), new JType[0]);
-		modifyPropertyMethod(m, fieldClass, newType);
 	}
 
 	/**
