@@ -30,7 +30,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 	private ModelModificationsManager manager;
 
 	@Test
-	// @Ignore
 	public void runSimpleChoiceTest() throws Throwable {
 		runTest(new ChoiceTestLogic() {
 
@@ -47,7 +46,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 	}
 
 	@Test
-	// @Ignore
 	public void overridingParentInterfaceTest() throws Throwable {
 		// This tests that a nested class with the same name as the expected
 		// generated choice type marker interface
@@ -94,7 +92,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 			@Override
 			protected boolean genCode() {
-				return true;
+				return false;
 			}
 
 		});
