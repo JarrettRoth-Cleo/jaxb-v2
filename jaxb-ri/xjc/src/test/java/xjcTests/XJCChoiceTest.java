@@ -31,44 +31,23 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 	@Test
 	public void runSimpleChoiceTest() throws Throwable {
-		runTest(new Logic() {
+		runTest(new ChoiceTestLogic() {
 
 			@Override
 			protected File getXsd() {
 				return new File(choiceResourcesDir, "ChoiceExample.xsd");
 			}
-
-			@Override
-			protected void loadPlugins(List<Plugin> plugins) {
-				plugins.add(new ChoiceResolutionPlugin());
-			}
-
-			@Override
-			protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
-				runManager(jModel, outputDir, false);
-			}
-
 		});
 	}
 
 	@Test
 	// TODO: need to make this have nested classes like a pleb
 	public void overridingParentInterfaceTest() throws Throwable {
-		runTest(new Logic() {
+		runTest(new ChoiceTestLogic() {
 
 			@Override
 			protected File getXsd() {
 				return new File(choiceResourcesDir, "ChoiceExampleWithNameResolution.xsd");
-			}
-
-			@Override
-			protected void loadPlugins(List<Plugin> plugins) {
-				plugins.add(new ChoiceResolutionPlugin());
-			}
-
-			@Override
-			protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
-				runManager(jModel, outputDir, true);
 			}
 
 		});
@@ -123,6 +102,18 @@ public class XJCChoiceTest extends AbstractXJCTest {
 					// }
 				}
 			}
+		}
+	}
+
+	private abstract class ChoiceTestLogic extends Logic {
+		@Override
+		protected void loadPlugins(List<Plugin> plugins) {
+			plugins.add(new ChoiceResolutionPlugin());
+		}
+
+		@Override
+		protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
+			runManager(jModel, outputDir, true);
 		}
 	}
 
