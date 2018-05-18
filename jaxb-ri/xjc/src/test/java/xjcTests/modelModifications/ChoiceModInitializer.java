@@ -7,13 +7,13 @@ import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.model.Model;
 
-public class ChoiceModIntilizer {
+public class ChoiceModInitializer {
 
 	// TODO: this might need to be moved to another class so other initializers
 	// can use it
 	private List<String> existingBeanNames = new ArrayList<String>();
 
-	public ChoiceModIntilizer(Model m) {
+	public ChoiceModInitializer(Model m) {
 		// Cache the model's existing names
 		for (CClassInfo info : m.beans().values()) {
 			// TODO: is just the Class name enough?

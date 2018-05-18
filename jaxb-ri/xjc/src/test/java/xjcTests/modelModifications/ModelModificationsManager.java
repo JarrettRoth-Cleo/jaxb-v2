@@ -16,10 +16,10 @@ import xjcTests.modelModifications.ModelModHandler.ModelModificationException;
 public class ModelModificationsManager {
 
 	private final List<ModelModHandler> handlers = new ArrayList<ModelModHandler>();
-	private final ChoiceModIntilizer choiceModIntilizer;
+	private final ChoiceModInitializer choiceModIntilizer;
 
 	public ModelModificationsManager(Model m) {
-		choiceModIntilizer = new ChoiceModIntilizer(m);
+		choiceModIntilizer = new ChoiceModInitializer(m);
 	}
 
 	// TODO: possibly abstract this and only accept handlers
