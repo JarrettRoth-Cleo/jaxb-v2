@@ -98,6 +98,23 @@ public class XJCChoiceTest extends AbstractXJCTest {
 		});
 	}
 
+	@Test
+	public void multiLayerChoiceTest() throws Throwable {
+		runTest(new ChoiceTestLogic() {
+
+			@Override
+			protected boolean genCode() {
+				return true;
+			}
+
+			@Override
+			protected File getXsd() {
+				return new File(choiceResourcesDir, "MultiLayerChoiceExample.xml");
+			}
+
+		});
+	}
+
 	class ChoiceResolutionPlugin extends Plugin {
 
 		@Override
