@@ -28,7 +28,7 @@ import xjcTests.modelModifications.ModelModificationsManager;
 public class XJCChoiceTest extends AbstractXJCTest {
 	private File choiceResourcesDir = new File(resourceDir, "choice");
 
-	private ModelModificationsManager manager = new ModelModificationsManager();
+	private ModelModificationsManager manager;
 
 	@Test
 	@Ignore
@@ -75,6 +75,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 		@Override
 		public void postProcessModel(Model model, ErrorHandler errorHandler) {
+			manager = new ModelModificationsManager(model);
 			for (Map.Entry<NClass, CClassInfo> beanEntry : model.beans().entrySet()) {
 				CClassInfo info = beanEntry.getValue();
 				for (CPropertyInfo propInfo : info.getProperties()) {

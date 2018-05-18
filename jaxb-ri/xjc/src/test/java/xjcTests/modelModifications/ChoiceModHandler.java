@@ -30,9 +30,13 @@ import com.sun.tools.xjc.model.CTypeInfo;
 public class ChoiceModHandler implements ModelModHandler {
 
 	private final CPropertyInfo info;
+	private final String interfaceTypeName;
 
-	public ChoiceModHandler(CPropertyInfo info) {
+	// TODO: possibly use the Model (not JCodeModel) to determine what interface
+	// name to use...
+	public ChoiceModHandler(CPropertyInfo info, String interfaceTypeName) {
 		this.info = info;
+		this.interfaceTypeName = interfaceTypeName;
 	}
 
 	// TODO: method-ise this
@@ -41,10 +45,11 @@ public class ChoiceModHandler implements ModelModHandler {
 		JDefinedClass clazz = getClassByTypeInfo(model, info.parent());
 		JFieldVar field = clazz.fields().get(info.getName(true));
 
-		String interfaceName = getUniqueInterfaceName(info.getName(true) + "_Type", clazz);
+		// String interfaceName = getUniqueInterfaceName(info.getName(true) +
+		// "_Type", clazz);
 		JClass newType;
 		try {
-			newType = clazz._interface(interfaceName);
+			newType = clazz._interface(interfaceTypeName);
 		} catch (JClassAlreadyExistsException e) {
 			throw new ModelModificationException();
 		}
@@ -100,60 +105,6 @@ public class ChoiceModHandler implements ModelModHandler {
 
 		// TODO
 		return null;
-	}
-
-	/**
-	 * Iterates over the list of defined nested classes/interfaces and will
-	 * return a unique name for a new interface
-	 * 
-	 * TODO: should this support something other than JDefinedClass? Would it be
-	 * better to put these interfaces in packages?
-	 * 
-	 * TODO: move this to its own class
-	 * 
-	 * @param baseName
-	 * @param parentClazz
-	 * @return
-	 */
-	private String getUniqueInterfaceName(String baseName, JDefinedClass parentClazz) {
-		// Build a list of existing nested class/interface names
-		List<String> existingNames = buildListOfExistingClassNames(parentClazz);
-		return getUniqueNameFromList(baseName, existingNames);
-	}
-
-	// TODO: handle sub and parent classes in tree
-	// TODO: ensure this handles interface
-	// TODO: only analyze a class once
-	private List<String> buildListOfExistingClassNames(JDefinedClass parentClazz) {
-		JClass[] classes = parentClazz.listClasses();
-		List<String> names = new ArrayList<String>();
-		for (JClass curClass : classes) {
-			names.add(curClass.name());
-			// handle any sub classes
-			if (curClass instanceof JDefinedClass) {
-				names.addAll(buildListOfExistingClassNames((JDefinedClass) curClass));
-			}
-		}
-		return names;
-	}
-
-	/**
-	 * Build a unique name using the baseName + counter
-	 * 
-	 * TODO: use NamingUtil in Clarify
-	 * 
-	 * @param baseName
-	 * @param existingNames
-	 * @return
-	 */
-	private String getUniqueNameFromList(String baseName, List<String> existingNames) {
-		int counter = 0;
-		String modifiedName = baseName;
-		// TODO: make case insensitive
-		while (existingNames.contains(modifiedName)) {
-			modifiedName += ++counter;
-		}
-		return modifiedName;
 	}
 
 	private void modifyPropertyMethod(JMethod m, JClass fieldClass, JClass newType) {

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.sun.codemodel.JCodeModel;
 import com.sun.tools.xjc.model.CPropertyInfo;
+import com.sun.tools.xjc.model.Model;
 
 import xjcTests.modelModifications.ModelModHandler.ModelModificationException;
 
@@ -15,10 +16,15 @@ import xjcTests.modelModifications.ModelModHandler.ModelModificationException;
 public class ModelModificationsManager {
 
 	private final List<ModelModHandler> handlers = new ArrayList<ModelModHandler>();
+	private final ChoiceModIntilizer choiceModIntilizer;
+
+	public ModelModificationsManager(Model m) {
+		choiceModIntilizer = new ChoiceModIntilizer(m);
+	}
 
 	// TODO: possibly abstract this and only accept handlers
 	public void addChoice(CPropertyInfo propInfo) {
-		handlers.add(new ChoiceModHandler(propInfo));
+		handlers.add(choiceModIntilizer.intitialize(propInfo));
 	}
 
 	public void modify(JCodeModel jModel) throws ModelModificationException {
