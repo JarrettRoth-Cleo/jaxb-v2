@@ -9,26 +9,24 @@ import com.sun.tools.xjc.model.Model;
 
 public class ChoiceModIntilizer {
 
+	// TODO: this might need to be moved to another class so other initializers
+	// can use it
 	private List<String> existingBeanNames = new ArrayList<String>();
 
 	public ChoiceModIntilizer(Model m) {
 		// Cache the model's existing names
 		for (CClassInfo info : m.beans().values()) {
-			existingBeanNames.add(info.fullName());
+			// TODO: is just the Class name enough?
+			existingBeanNames.add(info.shortName);
 		}
 	}
 
 	public ChoiceModHandler intitialize(CPropertyInfo info) {
 		String baseName = info.getName(true) + "_Type";
-		String typeName = getUniqueInterfaceName(baseName);
+		String typeName = getUniqueNameFromList(baseName, existingBeanNames);
 
 		existingBeanNames.add(typeName);
 		return new ChoiceModHandler(info, typeName);
-	}
-
-	// TODO: use naming util
-	private String getUniqueInterfaceName(String baseName) {
-		return getUniqueNameFromList(baseName, existingBeanNames);
 	}
 
 	/**
@@ -45,6 +43,7 @@ public class ChoiceModIntilizer {
 		String modifiedName = baseName;
 		// TODO: make case insensitive
 		while (existingNames.contains(modifiedName)) {
+			// TODO: this is wrong
 			modifiedName += ++counter;
 		}
 		return modifiedName;
