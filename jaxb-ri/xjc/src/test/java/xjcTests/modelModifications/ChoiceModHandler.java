@@ -32,8 +32,6 @@ public class ChoiceModHandler implements ModelModHandler {
 	private final CPropertyInfo info;
 	private final String interfaceTypeName;
 
-	// TODO: possibly use the Model (not JCodeModel) to determine what interface
-	// name to use...
 	public ChoiceModHandler(CPropertyInfo info, String interfaceTypeName) {
 		this.info = info;
 		this.interfaceTypeName = interfaceTypeName;
