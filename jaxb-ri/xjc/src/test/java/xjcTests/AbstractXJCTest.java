@@ -211,6 +211,12 @@ public class AbstractXJCTest {
 		public String capitalize(String w) {
 			return w;
 		}
+
+		// maintain the underscores...
+		@Override
+		protected boolean isPunct(char c) {
+			return super.isPunct(c) && c != '_';
+		}
 	}
 
 	protected abstract class Logic {
