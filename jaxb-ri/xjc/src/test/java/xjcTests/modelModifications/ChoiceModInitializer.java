@@ -1,6 +1,5 @@
 package xjcTests.modelModifications;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.sun.tools.xjc.model.CClassInfo;
@@ -9,23 +8,25 @@ import com.sun.tools.xjc.model.Model;
 
 public class ChoiceModInitializer {
 
-	// TODO: this might need to be moved to another class so other initializers
-	// can use it
-	private List<String> existingBeanNames = new ArrayList<String>();
+	private final BeanNameManager nameManager;
 
-	public ChoiceModInitializer(Model m) {
-		// Cache the model's existing names
+	public ChoiceModInitializer(Model m, BeanNameManager nameManager) {
+		this.nameManager = nameManager;
+		init(m);
+	}
+
+	private void init(Model m) {
 		for (CClassInfo info : m.beans().values()) {
-			// TODO: is just the Class name enough?
-			existingBeanNames.add(info.shortName);
+			nameManager.addBean(info);
 		}
 	}
 
 	public ChoiceModHandler intitialize(CPropertyInfo info) {
 		String baseName = info.getName(true) + "_Type";
-		String typeName = getUniqueNameFromList(baseName, existingBeanNames);
+		String typeName = getUniqueNameFromList(baseName, nameManager.getBeanShortNames());
 
-		existingBeanNames.add(typeName);
+		String typeFqn = ((CClassInfo) info.parent()).fullName() + "." + typeName;
+		nameManager.addNewBeanName(typeFqn);
 		return new ChoiceModHandler(info, typeName);
 	}
 
@@ -39,12 +40,12 @@ public class ChoiceModInitializer {
 	 * @return
 	 */
 	private String getUniqueNameFromList(String baseName, List<String> existingNames) {
-		int counter = 0;
+		int counter = 1;
 		String modifiedName = baseName;
 		// TODO: make case insensitive
 		while (existingNames.contains(modifiedName)) {
-			// TODO: this is wrong
-			modifiedName += ++counter;
+			counter++;
+			modifiedName = baseName + Integer.toString(counter);
 		}
 		return modifiedName;
 	}

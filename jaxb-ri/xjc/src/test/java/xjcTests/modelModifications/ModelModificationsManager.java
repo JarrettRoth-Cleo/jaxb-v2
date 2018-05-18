@@ -19,7 +19,8 @@ public class ModelModificationsManager {
 	private final ChoiceModInitializer choiceModIntilizer;
 
 	public ModelModificationsManager(Model m) {
-		choiceModIntilizer = new ChoiceModInitializer(m);
+		BeanNameManager nameManager = new BeanNameManager();
+		choiceModIntilizer = new ChoiceModInitializer(m, nameManager);
 	}
 
 	// TODO: possibly abstract this and only accept handlers
