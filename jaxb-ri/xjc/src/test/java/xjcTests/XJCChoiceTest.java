@@ -121,7 +121,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 			@Override
 			protected boolean genCode() {
-				return false;
+				return true;
 			}
 
 			@Override

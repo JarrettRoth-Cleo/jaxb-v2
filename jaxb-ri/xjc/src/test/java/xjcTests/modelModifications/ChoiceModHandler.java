@@ -67,11 +67,13 @@ public class ChoiceModHandler implements ModelModHandler {
 	 */
 	private void updateField(JFieldVar field, JClass fieldClass) {
 		field.type(fieldClass);
+		field.annotate(InferHide.class);
 	}
 
 	private void updateFieldMethod(JDefinedClass clazz, String fieldName, JClass fieldClass, JClass newType) {
 		JMethod m = clazz.getMethod("get" + fieldName, new JType[0]);
 		modifyPropertyMethod(m, fieldClass, newType);
+		m.annotate(InferHide.class);
 	}
 
 	/**
@@ -184,6 +186,11 @@ public class ChoiceModHandler implements ModelModHandler {
 
 	private boolean isParentPackage(CClassInfo cci) {
 		return cci.parent() instanceof CClassInfoParent.Package;
+	}
+
+	// TODO: Make public when in Clarify
+	private @interface InferHide {
+
 	}
 
 }
