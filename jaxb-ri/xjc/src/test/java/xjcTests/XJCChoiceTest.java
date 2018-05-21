@@ -75,7 +75,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 			@Override
 			protected boolean genCode() {
-				return false;
+				return true;
 			}
 
 		});
@@ -127,6 +127,25 @@ public class XJCChoiceTest extends AbstractXJCTest {
 			@Override
 			protected File getXsd() {
 				return new File(choiceResourcesDir, "BloodworthASN.XSD");
+			}
+
+		});
+	}
+
+	@Test
+	public void unboundedPrimitiveTypesTest() throws Throwable {
+		runTest(new ChoiceTestLogic() {
+
+			@Override
+			protected boolean genCode() {
+				return true;
+			}
+
+			@Override
+			protected File getXsd() {
+				// This xsd generates a list for serializable where classes
+				// cannot be mapped to an interface
+				return new File(choiceResourcesDir, "ChoiceExampleWithPrimitveTypes_unbounded.xsd");
 			}
 
 		});
