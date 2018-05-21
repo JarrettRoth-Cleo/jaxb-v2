@@ -104,12 +104,29 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 			@Override
 			protected boolean genCode() {
-				return true;
+				return false;
 			}
 
 			@Override
 			protected File getXsd() {
 				return new File(choiceResourcesDir, "MultiLayerChoiceExample.xml");
+			}
+
+		});
+	}
+
+	@Test
+	public void bloodworthASNTest() throws Throwable {
+		runTest(new ChoiceTestLogic() {
+
+			@Override
+			protected boolean genCode() {
+				return false;
+			}
+
+			@Override
+			protected File getXsd() {
+				return new File(choiceResourcesDir, "BloodworthASN.XSD");
 			}
 
 		});
