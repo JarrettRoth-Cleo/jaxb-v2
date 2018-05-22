@@ -35,7 +35,7 @@ public class MyChoiceContextBuilder extends CTBuilder {
 		ModelGroupImpl term = (ModelGroupImpl) comp.getTerm();
 
 		// True if the particle is an unbounded choice
-		return term.getCompositor() == XSModelGroup.CHOICE && comp.isRepeated();
+		return term.getCompositor() == XSModelGroup.CHOICE;
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class MyChoiceContextBuilder extends CTBuilder {
 			public void particle(XSParticle p) {
 				// determine the binding of this complex type.
 
-				MyParticleBinder binder = new MyParticleBinder();
+				MyParticleBinder binder = new MyParticleBinder(isUnbounded(ct));
 				builder.recordBindingMode(ct, binder.checkFallback(p) ? FALLBACK_CONTENT : NORMAL);
 
 				binder.build(p);
@@ -80,5 +80,14 @@ public class MyChoiceContextBuilder extends CTBuilder {
 
 		// adds attributes and we are through.
 		green.attContainer(ct);
+	}
+
+	private boolean isUnbounded(XSComplexType ct) {
+		XSContentType propInfo = ct.getContentType();
+		if (!(propInfo instanceof ParticleImpl)) {
+			return false;
+		}
+		ParticleImpl comp = (ParticleImpl) propInfo;
+		return comp.isRepeated();
 	}
 }
