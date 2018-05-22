@@ -299,10 +299,13 @@ public class MyParticleBinder extends ParticleBinder {
 		public void particle(XSParticle p) {
 			XSTerm t = p.getTerm();
 			if (marked(p)) {
-				BIProperty cust = BIProperty.getCustomization(p);
-				CPropertyInfo prop = cust.createElementOrReferenceProperty(getLabel(p), false, p, RawTypeSetBuilder.build(p, insideOptionalParticle));
-				getCurrentBean().addProperty(prop);
+				// BIProperty cust = BIProperty.getCustomization(p);
+				// CPropertyInfo prop =
+				// cust.createElementOrReferenceProperty(getLabel(p), false, p,
+				// RawTypeSetBuilder.build(p, insideOptionalParticle));
+				// getCurrentBean().addProperty(prop);
 
+				// Add other fields to the bean...
 				if (t.isModelGroup()) {
 					for (XSParticle p3 : t.asModelGroup().getChildren()) {
 						particle(p3);
@@ -310,19 +313,19 @@ public class MyParticleBinder extends ParticleBinder {
 				}
 
 			} else {
+
 				MyOverridePartical2 p2 = new MyOverridePartical2(p, isUnbounded);
 				CPropertyInfo prop2 = createElement(getTermName(t), p2, RawTypeSetBuilder.build(p2, insideOptionalParticle));
 				getCurrentBean().addProperty(prop2);
 
 				// repeated model groups should have been marked already
-				// assert !p.isRepeated();
-				//
-				// boolean oldIOP = insideOptionalParticle;
-				// insideOptionalParticle |=
-				// BigInteger.ZERO.equals(p.getMinOccurs());
-				// // this is an unmarked particle
-				// t.visit(this);
-				// insideOptionalParticle = oldIOP;
+				assert !p.isRepeated();
+
+				boolean oldIOP = insideOptionalParticle;
+				insideOptionalParticle |= BigInteger.ZERO.equals(p.getMinOccurs());
+				// this is an unmarked particle
+				t.visit(this);
+				insideOptionalParticle = oldIOP;
 			}
 		}
 
@@ -345,7 +348,7 @@ public class MyParticleBinder extends ParticleBinder {
 
 		private CPropertyInfo createElement(String defaultName, XSParticle source, RawTypeSet types) {
 			BIProperty cust = BIProperty.getCustomization(source);
-			return cust.createElementProperty(defaultName, false, source, types);
+			return cust.createReferenceProperty(defaultName, false, source, types, false, false, false, false);
 		}
 
 		private String getTermName(XSTerm t) {
