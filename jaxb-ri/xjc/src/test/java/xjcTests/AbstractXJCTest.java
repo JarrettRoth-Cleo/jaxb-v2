@@ -116,9 +116,19 @@ public class AbstractXJCTest {
 	}
 
 	private class TestingErrorListener implements ErrorListener {
+		private List<String> errorItems = new ArrayList<>();
+
+		public List<String> getErrorItems(){
+			return this.errorItems;
+		}
+		public void addErrorItems(String item){
+			this.errorItems.add(item);
+		}
+
 		@Override
 		public void error(SAXParseException exception) {
 			System.out.println("ERROR: " + exception.getLocalizedMessage());
+			String errorItem = exception.getLocalizedMessage();
 			exception.printStackTrace();
 		}
 
