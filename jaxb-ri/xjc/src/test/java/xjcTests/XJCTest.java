@@ -11,13 +11,13 @@ import com.sun.javafx.binding.StringFormatter;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.xml.sax.SAXParseException;
 
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 
 public class XJCTest extends AbstractXJCTest {
 
-	@Ignore
 	@Test
 	public void simpleSuccess_test() throws Throwable {
 		runTest(new Logic(false) {
@@ -29,17 +29,16 @@ public class XJCTest extends AbstractXJCTest {
 		});
 	}
 
-	@Ignore
 	@Test
 	public void precisionIssueCausesFailure_test() throws Throwable {
-		runTest(new Logic(false) {
+			runTest(new Logic(false) {
 
-			@Override
-			public File getXsd() {
-				return new File(resourceDir, "simplifiedPrecision.xsd");
-			}
+				@Override
+				public File getXsd() {
+					return new File(resourceDir, "simplifiedPrecision.xsd");
+				}
 
-		});
+			});
 	}
 
 	@Test
