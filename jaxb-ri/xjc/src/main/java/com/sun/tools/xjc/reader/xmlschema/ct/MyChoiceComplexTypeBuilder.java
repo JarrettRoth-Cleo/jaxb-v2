@@ -34,7 +34,7 @@ public class MyChoiceComplexTypeBuilder extends CTBuilder {
 		}
 		ModelGroupImpl term = (ModelGroupImpl) comp.getTerm();
 
-		// True if the particle is an unbounded choice
+		// True if the particle is a choice
 		return term.getCompositor() == XSModelGroup.CHOICE;
 	}
 

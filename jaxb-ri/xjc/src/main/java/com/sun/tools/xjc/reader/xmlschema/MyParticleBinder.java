@@ -8,33 +8,17 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.namespace.NamespaceContext;
-
-import org.xml.sax.Locator;
-
 import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.tools.xjc.model.CPropertyInfo;
+import com.sun.tools.xjc.reader.RawTypeSet;
 import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIProperty;
-import com.sun.xml.xsom.ForeignAttributes;
-import com.sun.xml.xsom.XSAnnotation;
-import com.sun.xml.xsom.XSComponent;
-import com.sun.xml.xsom.XSContentType;
 import com.sun.xml.xsom.XSElementDecl;
 import com.sun.xml.xsom.XSModelGroup;
 import com.sun.xml.xsom.XSModelGroupDecl;
 import com.sun.xml.xsom.XSParticle;
-import com.sun.xml.xsom.XSSchema;
-import com.sun.xml.xsom.XSSchemaSet;
-import com.sun.xml.xsom.XSSimpleType;
 import com.sun.xml.xsom.XSTerm;
 import com.sun.xml.xsom.XSWildcard;
-import com.sun.xml.xsom.impl.ModelGroupImpl;
-import com.sun.xml.xsom.parser.SchemaDocument;
-import com.sun.xml.xsom.visitor.XSContentTypeFunction;
-import com.sun.xml.xsom.visitor.XSContentTypeVisitor;
-import com.sun.xml.xsom.visitor.XSFunction;
 import com.sun.xml.xsom.visitor.XSTermVisitor;
-import com.sun.xml.xsom.visitor.XSVisitor;
 
 // This will only be used with choice types....hopefully
 /*
@@ -61,11 +45,7 @@ public class MyParticleBinder extends ParticleBinder {
 		Checker checker = checkCollision(p, forcedProps);
 
 		Builder b = new Builder(checker.markedParticles);
-
-		ModelGroupImpl term = (ModelGroupImpl) p.getTerm();
-		for (XSParticle particle : term.getChildren()) {
-			b.particle(particle);
-		}
+		b.particle(p);
 
 	}
 
@@ -316,14 +296,43 @@ public class MyParticleBinder extends ParticleBinder {
 			return markedParticles.get(p);
 		}
 
-		// Do both
 		public void particle(XSParticle p) {
-			MyOverridePartical p2 = new MyOverridePartical(p);
-			XSTerm t = p2.getTerm();
+			XSTerm t = p.getTerm();
+			if (marked(p)) {
+				BIProperty cust = BIProperty.getCustomization(p);
+				CPropertyInfo prop = cust.createElementOrReferenceProperty(getLabel(p), false, p, RawTypeSetBuilder.build(p, insideOptionalParticle));
+				getCurrentBean().addProperty(prop);
 
-			BIProperty cust = BIProperty.getCustomization(p);
-			CPropertyInfo prop = cust.createElementOrReferenceProperty(getTermName(t), false, p2,
-					RawTypeSetBuilder.build(p2, insideOptionalParticle));
+				if (t.isModelGroup()) {
+					for (XSParticle p3 : t.asModelGroup().getChildren()) {
+						particle(p3);
+					}
+				}
+
+			} else {
+				MyOverridePartical2 p2 = new MyOverridePartical2(p, isUnbounded);
+				CPropertyInfo prop2 = createElement(getTermName(t), p2, RawTypeSetBuilder.build(p2, insideOptionalParticle));
+				getCurrentBean().addProperty(prop2);
+
+				// repeated model groups should have been marked already
+				// assert !p.isRepeated();
+				//
+				// boolean oldIOP = insideOptionalParticle;
+				// insideOptionalParticle |=
+				// BigInteger.ZERO.equals(p.getMinOccurs());
+				// // this is an unmarked particle
+				// t.visit(this);
+				// insideOptionalParticle = oldIOP;
+			}
+		}
+
+		// Do both
+		public void particle2(XSParticle p) {
+			XSTerm t = p.getTerm();
+			// if (!t.isModelGroup()) {
+			MyOverridePartical2 p2 = new MyOverridePartical2(p, isUnbounded);
+
+			CPropertyInfo prop = createElement(getTermName(t), p2, RawTypeSetBuilder.build(p2, insideOptionalParticle));
 			getCurrentBean().addProperty(prop);
 
 			boolean oldIOP = insideOptionalParticle;
@@ -331,6 +340,12 @@ public class MyParticleBinder extends ParticleBinder {
 			// this is an unmarked particle
 			t.visit(this);
 			insideOptionalParticle = oldIOP;
+			// }
+		}
+
+		private CPropertyInfo createElement(String defaultName, XSParticle source, RawTypeSet types) {
+			BIProperty cust = BIProperty.getCustomization(source);
+			return cust.createElementProperty(defaultName, false, source, types);
 		}
 
 		private String getTermName(XSTerm t) {
@@ -368,123 +383,6 @@ public class MyParticleBinder extends ParticleBinder {
 
 			insideOptionalParticle = oldIOP;
 		}
-	}
-
-	// TODO: move ths wrapper outside of this class.
-	private class MyOverridePartical implements XSParticle {
-
-		private XSParticle w;
-
-		private MyOverridePartical(XSParticle wrapped) {
-			this.w = wrapped;
-		}
-
-		@Override
-		public XSSimpleType asSimpleType() {
-			// TODO Auto-generated method stub
-			return w.asSimpleType();
-		}
-
-		@Override
-		public XSParticle asParticle() {
-			return this;
-		}
-
-		@Override
-		public XSContentType asEmpty() {
-			return w.asEmpty();
-		}
-
-		@Override
-		public <T> T apply(XSContentTypeFunction<T> function) {
-			return w.apply(function);
-		}
-
-		@Override
-		public void visit(XSContentTypeVisitor visitor) {
-			w.visit(visitor);
-		}
-
-		@Override
-		public XSAnnotation getAnnotation() {
-			return w.getAnnotation();
-		}
-
-		@Override
-		public XSAnnotation getAnnotation(boolean createIfNotExist) {
-			return w.getAnnotation(createIfNotExist);
-		}
-
-		@Override
-		public List<? extends ForeignAttributes> getForeignAttributes() {
-			return w.getForeignAttributes();
-		}
-
-		@Override
-		public String getForeignAttribute(String nsUri, String localName) {
-			return w.getForeignAttribute(nsUri, localName);
-		}
-
-		@Override
-		public Locator getLocator() {
-			return w.getLocator();
-		}
-
-		@Override
-		public XSSchema getOwnerSchema() {
-			return w.getOwnerSchema();
-		}
-
-		@Override
-		public XSSchemaSet getRoot() {
-			return w.getRoot();
-		}
-
-		@Override
-		public SchemaDocument getSourceDocument() {
-			return w.getSourceDocument();
-		}
-
-		@Override
-		public Collection<XSComponent> select(String scd, NamespaceContext nsContext) {
-			return w.select(scd, nsContext);
-		}
-
-		@Override
-		public XSComponent selectSingle(String scd, NamespaceContext nsContext) {
-			return w.selectSingle(scd, nsContext);
-		}
-
-		@Override
-		public void visit(XSVisitor visitor) {
-			w.visit(visitor);
-		}
-
-		@Override
-		public <T> T apply(XSFunction<T> function) {
-			return w.apply(function);
-		}
-
-		@Override
-		public BigInteger getMinOccurs() {
-			return w.getMinOccurs();
-		}
-
-		@Override
-		public BigInteger getMaxOccurs() {
-			return isUnbounded ? BigInteger.TEN : w.getMaxOccurs();
-		}
-
-		@Override
-		public boolean isRepeated() {
-			return isUnbounded;
-		}
-
-		@Override
-		public XSTerm getTerm() {
-			return w.getTerm();
-		}
-
 	}
 
 }
