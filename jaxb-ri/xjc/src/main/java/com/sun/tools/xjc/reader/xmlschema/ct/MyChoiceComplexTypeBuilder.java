@@ -19,7 +19,7 @@ import com.sun.xml.xsom.impl.ParticleImpl;
 import com.sun.xml.xsom.visitor.XSContentTypeVisitor;
 
 //TODO: if this works better than the reaction plugin, make things public and configurable....somehow
-public class MyChoiceContextBuilder extends CTBuilder {
+public class MyChoiceComplexTypeBuilder extends CTBuilder {
 
 	@Override
 	boolean isApplicable(XSComplexType ct) {
