@@ -217,6 +217,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 				Assert.fail();
 			}
 			if (genCode()) {
+				System.out.println(outputDir.getAbsolutePath());
 				if (!outputDir.exists()) {
 					outputDir.mkdirs();
 				}
