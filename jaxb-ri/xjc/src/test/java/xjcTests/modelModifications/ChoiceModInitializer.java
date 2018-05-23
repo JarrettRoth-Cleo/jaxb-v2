@@ -21,13 +21,13 @@ public class ChoiceModInitializer {
 		}
 	}
 
-	public ChoiceModHandler intitialize(CPropertyInfo info) {
+	public ModelModHandler intitialize(CPropertyInfo info) {
 		String baseName = info.getName(true) + "_Type";
 		String typeName = getUniqueNameFromList(baseName, nameManager.getBeanShortNames());
 
 		String typeFqn = ((CClassInfo) info.parent()).fullName() + "." + typeName;
 		nameManager.addNewBeanName(typeFqn);
-		return new ChoiceModHandler(info, typeName);
+		return new ChoiceModHandler2(info, typeName);
 	}
 
 	/**
