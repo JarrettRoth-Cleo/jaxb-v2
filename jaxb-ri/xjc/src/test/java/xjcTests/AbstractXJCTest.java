@@ -53,15 +53,14 @@ public class AbstractXJCTest {
 		}
 	}
 
-	protected void runTest(Logic logic) throws Throwable {
+	S2JJAXBModel runTest(Logic logic) {
 		InputSource inputSource = getInputSource(logic.getXsd());
 		SchemaCompiler compiler = getInitializedSchemaCompiler(inputSource, logic);
         S2JJAXBModel model = compiler.bind();
-        Assert.assertNotNull("model is null", model);
-
         if(logic.shouldGenerateFiles()){
         	generateFiles(model, logic);
 		}
+		return model;
 
 	}
 
@@ -80,7 +79,7 @@ public class AbstractXJCTest {
 	private SchemaCompiler getInitializedSchemaCompiler(InputSource xsd,Logic logic){
 		SchemaCompiler compiler = XJC.createSchemaCompiler();
 		compiler.setErrorListener(new TestingErrorListener());
-		//TODO: THIS is how you activate a plugin for post porcessing modeling...
+		//TODO: THIS is how you activate a plugin for post processing modeling...
         for (Plugin plugin : getPlugins(logic)){
 			compiler.getOptions().activePlugins.add(plugin);
 		}
@@ -121,6 +120,7 @@ public class AbstractXJCTest {
 		public List<String> getErrorItems(){
 			return this.errorItems;
 		}
+
 		public void addErrorItems(String item){
 			this.errorItems.add(item);
 		}
@@ -157,15 +157,14 @@ public class AbstractXJCTest {
 
 		protected abstract File getXsd();
 
-		protected void loadBindings(List<File> files) {
-		}
+		protected void loadBindings(List<File> files) { }
 
-		protected void loadPlugins(List<Plugin> plugins) {
-		}
+		protected void loadPlugins(List<Plugin> plugins) { }
 
 		protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
 			// no-op, consider test passing if it made it this far.
 		}
+
 		protected boolean shouldGenerateFiles(){
 		    return this.shouldGenerateFiles;
         }
