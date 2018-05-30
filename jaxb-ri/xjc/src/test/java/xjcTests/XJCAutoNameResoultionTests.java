@@ -78,20 +78,5 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 			}
 		}
 
-		// TODO
-		private void checkBeanName() {
-
-		}
-
-		// TODO
-		private void checkChoice() {
-
-		}
-
-		// TODO
-		private void checkMixed() {
-
-		}
-
 	}
 }
