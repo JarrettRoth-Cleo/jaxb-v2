@@ -74,7 +74,6 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 			for (CClassInfo info : m.beans().values()) {
 				String fullName = info.fullName();
 				if (nameManager.contains(fullName)) {
-					// TODO: add some kind of resolution logic
 					fullName = nameManager.getUniqueFullName(fullName);
 					String systemId = info.getLocator().getSystemId();
 					Map<Integer, String> systemBindings = allBindings.get(systemId);
