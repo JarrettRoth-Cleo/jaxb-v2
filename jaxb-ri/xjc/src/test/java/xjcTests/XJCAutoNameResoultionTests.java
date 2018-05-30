@@ -20,6 +20,7 @@ import xjcTests.temp.BeanNameManager;
 import xjcTests.temp.LineBindingsProvider;
 import xjcTests.temp.NameResolutionBindingsProvider;
 
+//TODO: attempt to utilize the generated annotations with a retry... this may need multiple logic instances
 public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 	@Test
 	public void xjcRunsPlugin_test() throws Throwable {

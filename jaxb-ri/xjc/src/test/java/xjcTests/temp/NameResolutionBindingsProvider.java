@@ -12,8 +12,8 @@ import com.sun.xml.xsom.impl.ComplexTypeImpl;
  */
 public class NameResolutionBindingsProvider {
 
-	// TODO: return a bindings request for a name change to the bean
 	public LineBindingsProvider buildResolutions(String newFullName, CClassInfo bean) {
+		// TODO: how to handle other cases than just nested types?
 		int element = getElementLineNumber(bean) - 1;
 		int complexType = getComplexTypeElementLineNumber(bean) - 1;
 		return new AnnClassNameResolutionContainer(element, complexType, newFullName);
