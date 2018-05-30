@@ -31,38 +31,37 @@ public class NameResolutionBindingsProvider {
 	private class AnnClassNameResolutionContainer implements LineBindingsProvider {
 
 		int eleLineNum, complexTypeLineNum;
-		String fullName;
+		String shortName;
 
-		// TODO: this should be shortname
-		public AnnClassNameResolutionContainer(int eleLineNum, int complexTypeLieNum, String fullName) {
+		public AnnClassNameResolutionContainer(int eleLineNum, int complexTypeLieNum, String shortName) {
 			this.eleLineNum = eleLineNum;
 			this.complexTypeLineNum = complexTypeLieNum;
-			this.fullName = fullName;
+			this.shortName = shortName;
 		}
 
 		@Override
 		public void addBindings(Map<Integer, String> m) {
-			m.put(eleLineNum, buildElementBinding(fullName));
-			m.put(complexTypeLineNum, buildComplexTypeBinding(fullName));
+			m.put(eleLineNum, buildElementBinding(shortName));
+			m.put(complexTypeLineNum, buildComplexTypeBinding(shortName));
 		}
 
 		// TODO: use actual XML builder
-		private String buildElementBinding(String fullName) {
+		private String buildElementBinding(String shortName) {
 			StringBuilder builder = new StringBuilder();
 			builder.append("<xs:annotation xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\">");
 			builder.append("<xs:appinfo>");
-			builder.append("<jxb:propery name=\"").append(fullName).append("\" />");
+			builder.append("<jxb:propery name=\"").append(shortName).append("\" />");
 			builder.append("</xs:appinfo>");
 			builder.append("</xs:annotation>");
 			return builder.toString();
 		}
 
-		private String buildComplexTypeBinding(String fullName) {
+		private String buildComplexTypeBinding(String shortName) {
 			StringBuilder builder = new StringBuilder();
 			builder.append("<xs:annotation xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\">");
 			builder.append("<xs:appinfo>");
-			builder.append("<jxb:class name=\"").append(fullName).append("\" />");
-			builder.append("<jxb:property name=\"").append(fullName).append("\" />");
+			builder.append("<jxb:class name=\"").append(shortName).append("\" />");
+			builder.append("<jxb:property name=\"").append(shortName).append("\" />");
 			builder.append("</xs:appinfo>");
 			builder.append("</xs:annotation>");
 			return builder.toString();
