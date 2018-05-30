@@ -59,7 +59,7 @@ public class BeanNameManager {
 		return modName;
 	}
 
-	private String getShortNameFromFullName(String fullName) {
+	public String getShortNameFromFullName(String fullName) {
 		String[] nameParts = fullName.split("\\.");
 		String shortName = nameParts[nameParts.length - 1];
 		return shortName;

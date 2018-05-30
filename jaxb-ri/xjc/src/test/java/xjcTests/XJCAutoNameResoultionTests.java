@@ -1,7 +1,10 @@
 package xjcTests;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.junit.Test;
 import org.xml.sax.ErrorHandler;
@@ -14,6 +17,8 @@ import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.outline.Outline;
 
 import xjcTests.temp.BeanNameManager;
+import xjcTests.temp.LineBindingsProvider;
+import xjcTests.temp.NameResolutionBindingsProvider;
 
 public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 	@Test
@@ -63,19 +68,34 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 		public void postProcessModel(Model m, ErrorHandler errorHandler) {
 			super.postProcessModel(m, errorHandler);
 
+			NameResolutionBindingsProvider provider = new NameResolutionBindingsProvider();
+			Map<String, Map<Integer, String>> allBindings = new HashMap<>();
+
 			for (CClassInfo info : m.beans().values()) {
 				String fullName = info.fullName();
 				if (nameManager.contains(fullName)) {
 					// TODO: add some kind of resolution logic
 					fullName = nameManager.getUniqueFullName(fullName);
+					String systemId = info.getLocator().getSystemId();
+					Map<Integer, String> systemBindings = allBindings.get(systemId);
+					if (systemBindings == null) {
+						systemBindings = new HashMap<>();
+						allBindings.put(systemId, systemBindings);
+					}
+					LineBindingsProvider bindings = provider.buildResolutions(nameManager.getShortNameFromFullName(fullName), info);
+					bindings.addBindings(systemBindings);
 				}
 				nameManager.addNewBeanName(fullName);
 			}
 
-			// TODO: delete this debugging code.
-			for (String s : nameManager.getBeanFullNames()) {
-				System.out.println(s);
+			// Delete this debugging nonsense:
+			for (Entry<String, Map<Integer, String>> map : allBindings.entrySet()) {
+				System.out.println(map.getKey() + ":");
+				for (Entry<Integer, String> is : map.getValue().entrySet()) {
+					System.out.println("\t" + is.getKey() + ": " + is.getValue());
+				}
 			}
+
 		}
 
 	}
