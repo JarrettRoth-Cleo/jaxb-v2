@@ -75,8 +75,8 @@ public class AbstractXJCTest {
 		try {
 			logic.handleJCodeModel(jcodeModel, outputDir);
 		} catch (IOException e) {
-			Assert.fail(e.getMessage());
 			e.printStackTrace();
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -227,12 +227,12 @@ public class AbstractXJCTest {
 		protected void loadPlugins(List<Plugin> plugins) {
 		}
 
-		protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
-			// no-op, consider test passing if it made it this far.
-		}
-
 		protected void handleS2JJAXBModel(S2JJAXBModel model) {
 
+		}
+
+		protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
+			// no-op, consider test passing if it made it this far.
 		}
 
 	}
