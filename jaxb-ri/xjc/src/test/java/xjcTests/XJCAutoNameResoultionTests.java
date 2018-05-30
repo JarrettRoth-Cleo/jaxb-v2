@@ -26,7 +26,9 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 
 			@Override
 			protected void loadPlugins(List<Plugin> plugins) {
-				XJCPostProcessPlugin ppPlugin = new XJCPostProcessPlugin();
+				BeanNameManager nm = new BeanNameManager();
+
+				BeanNameConflictPlugin ppPlugin = new BeanNameConflictPlugin(nm);
 				plugins.add(ppPlugin);
 			}
 
@@ -35,8 +37,12 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 
 	}
 
-	private class XJCPostProcessPlugin extends Plugin {
-		BeanNameManager nameManager = new BeanNameManager();
+	private class BeanNameConflictPlugin extends Plugin {
+		private final BeanNameManager nameManager;
+
+		BeanNameConflictPlugin(BeanNameManager nameManager) {
+			this.nameManager = nameManager;
+		}
 
 		@Override
 		public String getOptionName() {
@@ -56,15 +62,36 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 		@Override
 		public void postProcessModel(Model m, ErrorHandler errorHandler) {
 			super.postProcessModel(m, errorHandler);
+
 			for (CClassInfo info : m.beans().values()) {
-				nameManager.addBean(info);
+				String fullName = info.fullName();
+				if (nameManager.contains(fullName)) {
+					// TODO: add some kind of resolution logic
+					fullName = nameManager.getUniqueFullName(fullName);
+				}
+				nameManager.addNewBeanName(fullName);
+			}
+
+			// TODO: delete this debugging code.
+			for (String s : nameManager.getBeanFullNames()) {
+				System.out.println(s);
 			}
 		}
 
-		private void init(Model m) {
-			for (CClassInfo info : m.beans().values()) {
-				nameManager.addBean(info);
-			}
+		// TODO
+		private void checkBeanName() {
+
 		}
+
+		// TODO
+		private void checkChoice() {
+
+		}
+
+		// TODO
+		private void checkMixed() {
+
+		}
+
 	}
 }

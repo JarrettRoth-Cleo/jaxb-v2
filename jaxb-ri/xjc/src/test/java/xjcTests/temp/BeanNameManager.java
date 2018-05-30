@@ -34,12 +34,35 @@ public class BeanNameManager {
 	 * @param typeFqn
 	 */
 	public void addNewBeanName(String typeFqn) {
-		String[] nameParts = typeFqn.split("\\.");
-		String shortName = nameParts[nameParts.length - 1];
+		String shortName = getShortNameFromFullName(typeFqn);
 
 		beanShortNames.add(shortName);
 		beanFullNames.add(typeFqn);
+	}
 
+	public boolean contains(String fullName) {
+		for (String s : beanFullNames) {
+			if (s.equalsIgnoreCase(fullName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public String getUniqueFullName(String originalFullName) {
+		String modName = originalFullName;
+		int c = 1;
+
+		while (contains(modName)) {
+			modName = originalFullName + (++c);
+		}
+		return modName;
+	}
+
+	private String getShortNameFromFullName(String fullName) {
+		String[] nameParts = fullName.split("\\.");
+		String shortName = nameParts[nameParts.length - 1];
+		return shortName;
 	}
 
 }
