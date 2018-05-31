@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,10 +14,11 @@ import org.junit.Test;
 import com.sun.codemodel.JCodeModel;
 import com.sun.tools.xjc.Plugin;
 
-import xjcTests.temp.AnnotationsAdder;
 import xjcTests.temp.BeanNameManager;
+import xjcTests.temp.LineBindingsProvider;
 import xjcTests.temp.NameBindingsManager;
 import xjcTests.temp.NameResolutionPlugin;
+import xjcTests.temp.external.ExternalBindingsBuilder;
 
 //TODO: attempt to utilize the generated annotations with a retry... this may need multiple logic instances
 public class XJCAutoNameResoultionTests extends AbstractXJCTest {
@@ -37,7 +37,7 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 
 		// Assert.assertEquals(2, m.getSystemIds().size());
 		String onlySystemId = m.getSystemIds().iterator().next();
-		Map<Integer, String> bindings = m.getBindingsForSystemId(onlySystemId);
+		List<LineBindingsProvider> bindings = m.getBindingsForSystemId(onlySystemId);
 
 		// Assert.assertEquals(1, bindings.size());
 
@@ -62,10 +62,10 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 		}
 
 		String orgSystemId = getSystemIDForFile(originalFile);
-		Map<Integer, String> bindings = m.getBindingsForSystemId(orgSystemId);
+		List<LineBindingsProvider> bindings = m.getBindingsForSystemId(orgSystemId);
 
-		AnnotationsAdder adder = new AnnotationsAdder(copiedFile, bindings);
-		adder.doIt();
+		ExternalBindingsBuilder ebb = new ExternalBindingsBuilder(m);
+		ebb.buildDoc();
 		return copiedFile;
 	}
 
