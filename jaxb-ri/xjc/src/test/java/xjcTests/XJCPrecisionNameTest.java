@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
+import com.sun.codemodel.JCodeModel;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.api.S2JJAXBModel;
@@ -76,6 +77,14 @@ public class XJCPrecisionNameTest extends AbstractXJCTest {
 			@Override
 			protected void handleS2JJAXBModel(S2JJAXBModel model) {
 				assertNotNull(model);
+			}
+
+			@Override
+			protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
+				if (!outputDir.exists()) {
+					outputDir.mkdirs();
+				}
+				jModel.build(outputDir);
 			}
 		});
 	}

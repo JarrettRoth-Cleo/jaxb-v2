@@ -33,6 +33,7 @@ public class NameResolutionBindingsProvider {
 		int eleLineNum, complexTypeLineNum;
 		String shortName;
 
+		// TODO: this needs to be the line of the sequence+1
 		public AnnClassNameResolutionContainer(int eleLineNum, int complexTypeLieNum, String shortName) {
 			this.eleLineNum = eleLineNum;
 			this.complexTypeLineNum = complexTypeLieNum;
@@ -41,16 +42,19 @@ public class NameResolutionBindingsProvider {
 
 		@Override
 		public void addBindings(Map<Integer, String> m) {
-			m.put(eleLineNum, buildElementBinding(shortName));
-			m.put(complexTypeLineNum, buildComplexTypeBinding(shortName));
+			m.put(eleLineNum, buildCompactBinding(shortName));
+			// m.put(complexTypeLineNum, buildComplexTypeBinding(shortName));
 		}
 
 		// TODO: use actual XML builder
 		private String buildElementBinding(String shortName) {
 			StringBuilder builder = new StringBuilder();
-			builder.append("<xs:annotation xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\">");
+			builder.append(
+					"<xs:annotation xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\" version=\"2.1\">");
 			builder.append("<xs:appinfo>");
-			builder.append("<jxb:propery name=\"").append(shortName).append("\" />");
+			builder.append("<jxb:bindings node=\"//*[local-name()='element' and @name='Precision']\">");
+			builder.append("<jxb:property name=\"").append(shortName).append("\" />");
+			builder.append("</jxb:bindings>");
 			builder.append("</xs:appinfo>");
 			builder.append("</xs:annotation>");
 			return builder.toString();
@@ -58,10 +62,29 @@ public class NameResolutionBindingsProvider {
 
 		private String buildComplexTypeBinding(String shortName) {
 			StringBuilder builder = new StringBuilder();
-			builder.append("<xs:annotation xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\">");
-			builder.append("<xs:appinfo>");
+			builder.append("<xsd:annotation>");
+			builder.append("<xsd:appinfo>");
+			builder.append("<jxb:bindings node=\"//*[local-name()='element' and @name='Precision']/*[local-name()='complexType']\">");
 			builder.append("<jxb:class name=\"").append(shortName).append("\" />");
 			builder.append("<jxb:property name=\"").append(shortName).append("\" />");
+			builder.append("</jxb:bindings>");
+			builder.append("</xsd:appinfo>");
+			builder.append("</xsd:annotation>");
+			return builder.toString();
+		}
+
+		private String buildCompactBinding(String shortName) {
+			StringBuilder builder = new StringBuilder();
+			builder.append(
+					"<xs:annotation xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\" version=\"2.1\">");
+			builder.append("<xs:appinfo>");
+			builder.append("<jxb:bindings node=\"//*[local-name()='element' and @name='Precision']\">");
+			builder.append("<jxb:property name=\"").append(shortName).append("\" />");
+			builder.append("<jxb:bindings node=\"./*[local-name()='complexType']\">");
+			builder.append("<jxb:class name=\"").append(shortName).append("\" />");
+			builder.append("<jxb:property name=\"").append(shortName).append("\" />");
+			builder.append("</jxb:bindings>");
+			builder.append("</jxb:bindings>");
 			builder.append("</xs:appinfo>");
 			builder.append("</xs:annotation>");
 			return builder.toString();
