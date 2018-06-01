@@ -2,7 +2,6 @@ package xjcTests.temp.external;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +49,7 @@ public class ExternalBindingsBuilder {
 			prov.addBindings(doc.getRootElement(), jaxbNs, xsdNS, c.getElementLoader());
 		}
 
-		return buildDocInputSource(doc);
+		return buildDocInputSource(doc, systemId);
 	}
 
 	private Document buildRootDoc(String systemId) {
@@ -67,7 +66,7 @@ public class ExternalBindingsBuilder {
 		return doc;
 	}
 
-	private InputSource buildDocInputSource(Document doc) {
+	private InputSource buildDocInputSource(Document doc, String systemId) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
 		// XMLWriter does not implement AutoCloseable
@@ -91,12 +90,7 @@ public class ExternalBindingsBuilder {
 		}
 
 		InputSource source = new InputSource(new ByteArrayInputStream(outputStream.toByteArray()));
-		// TODO
-		File f = new File("C:/temp/xjc/bindingsTesting/simplifiedPrecision.xsd");
-		source.setSystemId(f.toURI().toString() + "_bindings");
-
-		// System.out.println("doc: " + doc.asXML());
-
+		source.setSystemId(systemId + "_bindings");
 		return source;
 	}
 
