@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -30,6 +31,7 @@ import com.sun.tools.xjc.outline.Outline;
 public class XJCPrecisionNameTest extends AbstractXJCTest {
 
 	@Test
+	@Ignore
 	public void simpleSuccess_test() throws Throwable {
 		runTest(new Logic() {
 			@Override
@@ -45,6 +47,7 @@ public class XJCPrecisionNameTest extends AbstractXJCTest {
 	}
 
 	@Test
+	@Ignore
 	public void precisionIssueCausesFailure_test() throws Throwable {
 		runTest(new Logic() {
 
@@ -62,6 +65,7 @@ public class XJCPrecisionNameTest extends AbstractXJCTest {
 	}
 
 	@Test
+	@Ignore
 	public void precisionIssueFixedWithBindings_test() throws Throwable {
 		runTest(new Logic() {
 			@Override
@@ -90,6 +94,7 @@ public class XJCPrecisionNameTest extends AbstractXJCTest {
 	}
 
 	@Test
+	@Ignore
 	public void precisionIssueFixedWithManuallyGeneratedBindingsFile_test() throws Throwable {
 		runTest(new Logic() {
 			@Override
@@ -124,6 +129,7 @@ public class XJCPrecisionNameTest extends AbstractXJCTest {
 	}
 
 	@Test
+	@Ignore
 	public void xjcRunsPlugin_test() throws Throwable {
 		Logic logic = new Logic() {
 			@Override
