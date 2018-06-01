@@ -1,4 +1,4 @@
-package xjcTests.temp;
+package xjcTests.temp.autoNameResolution;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -8,6 +8,8 @@ import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.outline.Outline;
+
+import xjcTests.temp.BeanNameManager;
 
 public class NameResolutionPlugin extends Plugin {
 	private final BeanNameManager nameManager;

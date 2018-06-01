@@ -1,9 +1,7 @@
-package xjcTests.temp.external;
+package xjcTests.temp.autoNameResolution;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import xjcTests.temp.Dom4JElementLoader;
 
 public class Dom4JElementLoaderManager {
 	private Map<String, Dom4JElementLoader> elementLoaders;

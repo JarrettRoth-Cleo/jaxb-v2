@@ -1,4 +1,4 @@
-package xjcTests.temp.external;
+package xjcTests.temp.autoNameResolution;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,9 +14,7 @@ import org.dom4j.QName;
 import org.dom4j.io.XMLWriter;
 import org.xml.sax.InputSource;
 
-import xjcTests.temp.LineBindingsProvider;
-import xjcTests.temp.NameBindingsManager;
-import xjcTests.temp.NameBindingsManager.BindingsContainer;
+import xjcTests.temp.autoNameResolution.NameBindingsManager.BindingsContainer;
 
 /**
  * Class that will generate an external bindings document

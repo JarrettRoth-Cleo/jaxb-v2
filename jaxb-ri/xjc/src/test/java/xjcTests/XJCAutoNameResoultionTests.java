@@ -12,10 +12,10 @@ import com.sun.codemodel.JCodeModel;
 import com.sun.tools.xjc.Plugin;
 
 import xjcTests.temp.BeanNameManager;
-import xjcTests.temp.LineBindingsProvider;
-import xjcTests.temp.NameBindingsManager;
-import xjcTests.temp.NameResolutionPlugin;
-import xjcTests.temp.external.ExternalBindingsBuilder;
+import xjcTests.temp.autoNameResolution.ExternalBindingsBuilder;
+import xjcTests.temp.autoNameResolution.LineBindingsProvider;
+import xjcTests.temp.autoNameResolution.NameBindingsManager;
+import xjcTests.temp.autoNameResolution.NameResolutionPlugin;
 
 //TODO: attempt to utilize the generated annotations with a retry... this may need multiple logic instances
 public class XJCAutoNameResoultionTests extends AbstractXJCTest {

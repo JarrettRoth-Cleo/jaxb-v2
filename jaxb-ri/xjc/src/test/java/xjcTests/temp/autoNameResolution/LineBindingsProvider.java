@@ -1,4 +1,4 @@
-package xjcTests.temp;
+package xjcTests.temp.autoNameResolution;
 
 import java.util.Stack;
 

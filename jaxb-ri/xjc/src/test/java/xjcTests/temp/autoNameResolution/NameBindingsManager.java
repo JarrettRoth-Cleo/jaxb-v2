@@ -1,4 +1,4 @@
-package xjcTests.temp;
+package xjcTests.temp.autoNameResolution;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import xjcTests.temp.Dom4JElementLoader.DomLoadingException;
+import xjcTests.temp.autoNameResolution.Dom4JElementLoader.DomLoadingException;
 
 public class NameBindingsManager {
 	Map<String, BindingsContainer> allBindings = new HashMap<>();

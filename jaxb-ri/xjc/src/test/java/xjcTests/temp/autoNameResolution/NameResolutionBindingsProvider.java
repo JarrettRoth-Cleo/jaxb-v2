@@ -1,4 +1,4 @@
-package xjcTests.temp;
+package xjcTests.temp.autoNameResolution;
 
 import org.dom4j.Element;
 import org.dom4j.Namespace;
