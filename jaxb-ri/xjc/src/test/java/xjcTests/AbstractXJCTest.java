@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class AbstractXJCTest {
 	protected File outputDir;
 
 	// Only leave the generated folders if the 'is.dev' property is set to true
-	protected boolean shouldCleanUpAfter = true;// !Boolean.parseBoolean(System.getProperty("is.dev"));
+	protected boolean shouldCleanUpAfter = !Boolean.parseBoolean(System.getProperty("is.dev"));
 
 	@Rule
 	public TestName name = new TestName();
@@ -58,59 +57,46 @@ public class AbstractXJCTest {
 	@After
 	public void tearDown() {
 		if (shouldCleanUpAfter) {
-            FileUtils.delete(outputDir);
+			FileUtils.delete(outputDir);
 			File f = new File("src/test/resources/genBindings.xjb");
 			FileUtils.delete(f);
 		}
 	}
 
-	S2JJAXBModel runTest(Logic logic) {
+	protected void runTest(Logic logic) {
 		InputSource inputSource = getInputSource(logic.getXsd());
 		SchemaCompiler compiler = getInitializedSchemaCompiler(inputSource, logic);
-        S2JJAXBModel model = compiler.bind();
-        if(logic.shouldGenerateFiles()){
-        	generateFiles(model, logic);
-		}
-		return model;
+		S2JJAXBModel model = compiler.bind();
 
-	}
+		logic.handleS2JJAXBModel(model);
 
-	private void generateFiles(S2JJAXBModel model, Logic logic){
-		JCodeModel jModel = model.generateCode(null, null);
-		if (!outputDir.exists()) {
-			outputDir.mkdirs();
-		}
+		// TODO: how are plugins used here?
+		JCodeModel jcodeModel = model.generateCode(null, null);
 		try {
-            logic.handleJCodeModel(jModel, outputDir);
-        } catch (IOException e){
-		    e.printStackTrace();
-        }
+			logic.handleJCodeModel(jcodeModel, outputDir);
+		} catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail(e.getMessage());
+		}
 	}
 
-	private SchemaCompiler getInitializedSchemaCompiler(InputSource xsd,Logic logic){
+	@SuppressWarnings("deprecation")
+	private SchemaCompiler getInitializedSchemaCompiler(InputSource xsd, Logic logic) {
 		SchemaCompiler compiler = XJC.createSchemaCompiler();
 		compiler.setErrorListener(new TestingErrorListener());
-		//TODO: THIS is how you activate a plugin for post processing modeling...
-        for (Plugin plugin : getPlugins(logic)){
+		// TODO: THIS is how you activate a plugin for post processing
+		// modeling...
+		for (Plugin plugin : getPlugins(logic)) {
 			compiler.getOptions().activePlugins.add(plugin);
 		}
-		for(File f : getBindings(logic)){
-			compiler.getOptions().addBindFile(getInputSource(f));
+		for (InputSource f : getBindingSources(logic)) {
+			compiler.getOptions().addBindFile(f);
 		}
+
+		addCustomNameCovnerter(compiler.getOptions());
+
 		compiler.parseSchema(xsd);
 		return compiler;
-	}
-
-	private InputSource getInputSource(File file) {
-		InputSource inputSource = null;
-		try {
-			FileInputStream fileInputStream = new FileInputStream(file);
-			inputSource = new InputSource(fileInputStream);
-			inputSource.setSystemId(file.toURI().toString());
-		} catch (FileNotFoundException e){
-			e.printStackTrace();
-		}
-		return inputSource;
 	}
 
 	private List<Plugin> getPlugins(Logic l) {
@@ -119,10 +105,31 @@ public class AbstractXJCTest {
 		return plugins;
 	}
 
+	private List<InputSource> getBindingSources(Logic l) {
+		List<InputSource> sources = new ArrayList<>();
+		l.loadBindingSources(sources);
+		for (File f : getBindings(l)) {
+			sources.add(getInputSource(f));
+		}
+		return sources;
+	}
+
 	private List<File> getBindings(Logic l) {
 		List<File> bindings = new ArrayList<File>();
-		l.loadBindings(bindings);
+		l.loadBindingFiles(bindings);
 		return bindings;
+	}
+
+	private InputSource getInputSource(File file) {
+		InputSource inputSource = null;
+		try {
+			FileInputStream fileInputStream = new FileInputStream(file);
+			inputSource = new InputSource(fileInputStream);
+			inputSource.setSystemId(file.toURI().toString());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return inputSource;
 	}
 
 	private void addCustomNameCovnerter(Options ops) {
@@ -144,11 +151,11 @@ public class AbstractXJCTest {
 	private class TestingErrorListener implements ErrorListener {
 		private List<String> errorItems = new ArrayList<>();
 
-		public List<String> getErrorItems(){
+		public List<String> getErrorItems() {
 			return this.errorItems;
 		}
 
-		public void addErrorItems(String item){
+		public void addErrorItems(String item) {
 			this.errorItems.add(item);
 		}
 
@@ -222,25 +229,27 @@ public class AbstractXJCTest {
 	}
 
 	protected abstract class Logic {
-	    private boolean shouldGenerateFiles;
-
-	    public Logic(boolean shouldGenerateFiles){
-	        this.shouldGenerateFiles = shouldGenerateFiles;
-        }
 
 		protected abstract File getXsd();
 
-		protected void loadBindings(List<File> files) { }
+		protected void loadBindingFiles(List<File> files) {
+		}
 
-		protected void loadPlugins(List<Plugin> plugins) { }
+		protected void loadBindingSources(List<InputSource> sources) {
+
+		}
+
+		protected void loadPlugins(List<Plugin> plugins) {
+		}
+
+		protected void handleS2JJAXBModel(S2JJAXBModel model) {
+
+		}
 
 		protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
 			// no-op, consider test passing if it made it this far.
 		}
 
-		protected boolean shouldGenerateFiles(){
-		    return this.shouldGenerateFiles;
-        }
 	}
 
 }

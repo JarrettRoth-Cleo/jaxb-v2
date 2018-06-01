@@ -15,7 +15,7 @@ public class XJCRestrictionTest extends AbstractXJCTest {
 	@Ignore
 	@Test
 	public void restrictionIssue() throws Throwable {
-		runTest(new Logic(false) {
+		runTest(new Logic() {
 
 			@Override
 			public File getXsd() {
@@ -27,7 +27,7 @@ public class XJCRestrictionTest extends AbstractXJCTest {
 	@Ignore
 	@Test
 	public void fullRestrictionIssue() throws Throwable {
-		runTest(new Logic(false) {
+		runTest(new Logic() {
 
 			@Override
 			public File getXsd() {
@@ -39,7 +39,7 @@ public class XJCRestrictionTest extends AbstractXJCTest {
 	@Ignore
 	@Test
 	public void codeWriterTests() throws Throwable {
-		runTest(new Logic(false) {
+		runTest(new Logic() {
 			@Override
 			public File getXsd() {
 				return new File(resourceDir, "JustRestrictionIssue.xsd");
@@ -56,7 +56,7 @@ public class XJCRestrictionTest extends AbstractXJCTest {
 	@Ignore
 	@Test
 	public void testFixedValue() throws Throwable {
-		runTest(new Logic(false) {
+		runTest(new Logic() {
 
 			@Override
 			protected File getXsd() {
