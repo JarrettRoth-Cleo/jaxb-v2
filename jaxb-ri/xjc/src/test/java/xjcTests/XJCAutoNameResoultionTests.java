@@ -1,11 +1,7 @@
 package xjcTests;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URI;
-import java.nio.file.Files;
 import java.util.List;
 
 import org.junit.Assert;
@@ -38,7 +34,7 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 
 		// Assert.assertEquals(2, m.getSystemIds().size());
 		String onlySystemId = m.getSystemIds().iterator().next();
-		List<LineBindingsProvider> bindings = m.getBindingsForSystemId(onlySystemId);
+		List<LineBindingsProvider> bindings = m.getBindingsForSystemId(onlySystemId).getBindings();
 
 		// Assert.assertEquals(1, bindings.size());
 
@@ -63,6 +59,14 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 				sources.addAll(bindingSources);
 			}
 
+			@Override
+			protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
+				if (!outputDir.exists()) {
+					outputDir.mkdirs();
+				}
+				jModel.build(outputDir);
+			}
+
 		};
 
 		runTest(l1);
@@ -73,33 +77,9 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 	}
 
 	private List<InputSource> buildBindings(File originalFile, NameBindingsManager m) throws Exception {
-		File copiedFile = new File("C:/temp/xjc/bindingsTesting", originalFile.getName());
-		refreshFile(copiedFile);
-		try (OutputStream o = new FileOutputStream(copiedFile)) {
-			Files.copy(originalFile.toPath(), o);
-		}
-
 		ExternalBindingsBuilder ebb = new ExternalBindingsBuilder(m);
 		List<InputSource> bindings = ebb.buildDoc();
 		return bindings;
-	}
-
-	/**
-	 * Convert a File instance into a system ID generted by XJC
-	 * 
-	 * @param f
-	 * @return
-	 */
-	private String getSystemIDForFile(File f) {
-		URI uri = f.toURI();
-		return uri.toString();
-	}
-
-	private void refreshFile(File f) throws IOException {
-		if (f.exists()) {
-			f.delete();
-		}
-		f.createNewFile();
 	}
 
 	/**

@@ -15,10 +15,9 @@ import org.dom4j.QName;
 import org.dom4j.io.XMLWriter;
 import org.xml.sax.InputSource;
 
-import xjcTests.temp.Dom4JElementLoader;
-import xjcTests.temp.Dom4JElementLoader.DomLoadingException;
 import xjcTests.temp.LineBindingsProvider;
 import xjcTests.temp.NameBindingsManager;
+import xjcTests.temp.NameBindingsManager.BindingsContainer;
 
 /**
  * Class that will generate an external bindings document
@@ -45,16 +44,10 @@ public class ExternalBindingsBuilder {
 
 	private InputSource buildDoc(String systemId) {
 		Document doc = buildRootDoc(systemId);
-		// TODO: pass this in somehow
-		Dom4JElementLoader loader = null;
-		try {
-			loader = new Dom4JElementLoader(new File("C:/temp/xjc/bindingsTesting/simplifiedPrecision.xsd"));
-		} catch (DomLoadingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		for (LineBindingsProvider prov : manager.getBindingsForSystemId(systemId)) {
-			prov.addBindings(doc.getRootElement(), jaxbNs, xsdNS, loader);
+
+		BindingsContainer c = manager.getBindingsForSystemId(systemId);
+		for (LineBindingsProvider prov : c.getBindings()) {
+			prov.addBindings(doc.getRootElement(), jaxbNs, xsdNS, c.getElementLoader());
 		}
 
 		return buildDocInputSource(doc);

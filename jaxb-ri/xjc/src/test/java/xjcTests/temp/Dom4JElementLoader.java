@@ -31,23 +31,23 @@ import org.xml.sax.XMLReader;
 public class Dom4JElementLoader {
 
 	private final File f;
-	private final Map<Integer, Element> xpaths;
+	private final Map<Integer, Element> elements;
 
 	public Dom4JElementLoader(File f) throws DomLoadingException {
 		this.f = f;
-		this.xpaths = new HashMap<>();
+		this.elements = new HashMap<>();
 
 		load();
 	}
 
 	public String getPath(Integer i) {
-		Element e = xpaths.get(i);
+		Element e = elements.get(i);
 
 		return e == null ? "" : e.getPath();
 	}
 
 	public Element getElement(Integer i) {
-		return xpaths.get(i);
+		return elements.get(i);
 	}
 
 	private void load() throws DomLoadingException {
@@ -63,7 +63,7 @@ public class Dom4JElementLoader {
 		doc.accept(new VisitorSupport() {
 			@Override
 			public void visit(Element node) {
-				xpaths.put(((LocationAwareElement) node).getLineNumber() - 1, node);
+				elements.put(((LocationAwareElement) node).getLineNumber() - 1, node);
 			}
 		});
 
