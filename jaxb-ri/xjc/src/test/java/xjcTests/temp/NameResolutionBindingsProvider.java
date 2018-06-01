@@ -16,8 +16,6 @@ public class NameResolutionBindingsProvider {
 	public LineBindingsProvider buildResolutions(String newShortName, CClassInfo bean) {
 		// TODO: how to handle other cases than just nested types?
 		int complexType = getComplexTypeElementLineNumber(bean) - 1;
-
-		new XPathFromClassInfoBuilder().build(bean);
 		return new AnnClassNameResolutionContainer(complexType, newShortName);
 	}
 
@@ -27,12 +25,10 @@ public class NameResolutionBindingsProvider {
 
 	private class AnnClassNameResolutionContainer extends LineBindingsProvider {
 
-		int complexTypeLineNum;
-		String shortName;
+		private int complexTypeLineNum;
+		private String shortName;
 
-		// TODO: this needs to be the line of the sequence+1
 		public AnnClassNameResolutionContainer(int complexTypeLieNum, String shortName) {
-
 			this.complexTypeLineNum = complexTypeLieNum;
 			this.shortName = shortName;
 		}
