@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.InputSource;
 
@@ -12,8 +13,8 @@ import com.sun.codemodel.JCodeModel;
 import com.sun.tools.xjc.Plugin;
 
 import xjcTests.temp.BeanNameManager;
-import xjcTests.temp.autoNameResolution.ExternalBindingsBuilder;
 import xjcTests.temp.autoNameResolution.BindingsProvider;
+import xjcTests.temp.autoNameResolution.ExternalBindingsBuilder;
 import xjcTests.temp.autoNameResolution.NameBindingsManager;
 import xjcTests.temp.autoNameResolution.NameResolutionPlugin;
 
@@ -22,6 +23,7 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 	private File workingDir = new File("C:/temp/xjc/bindingsTesting");
 
 	@Test
+	@Ignore
 	public void xjcRunsPlugin_test() throws Throwable {
 		BeanNameManager nm = new BeanNameManager();
 		final File f = new File(resourceDir, "simplifiedPrecision.xsd");
