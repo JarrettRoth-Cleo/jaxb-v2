@@ -13,7 +13,7 @@ import com.sun.tools.xjc.model.CClassInfo;
  */
 public class NameResolutionBindingsProvider {
 
-	public LineBindingsProvider buildResolutions(String newShortName, CClassInfo bean) {
+	public BindingsProvider buildResolutions(String newShortName, CClassInfo bean) {
 		// TODO: how to handle other cases than just nested types?
 		int complexType = getComplexTypeElementLineNumber(bean) - 1;
 		return new AnnClassNameResolutionContainer(complexType, newShortName);
@@ -23,7 +23,7 @@ public class NameResolutionBindingsProvider {
 		return info.getSchemaComponent().getLocator().getLineNumber();
 	}
 
-	private class AnnClassNameResolutionContainer extends LineBindingsProvider {
+	private class AnnClassNameResolutionContainer extends BindingsProvider {
 
 		private int complexTypeLineNum;
 		private String shortName;

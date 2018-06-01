@@ -13,7 +13,7 @@ import com.sun.tools.xjc.Plugin;
 
 import xjcTests.temp.BeanNameManager;
 import xjcTests.temp.autoNameResolution.ExternalBindingsBuilder;
-import xjcTests.temp.autoNameResolution.LineBindingsProvider;
+import xjcTests.temp.autoNameResolution.BindingsProvider;
 import xjcTests.temp.autoNameResolution.NameBindingsManager;
 import xjcTests.temp.autoNameResolution.NameResolutionPlugin;
 
@@ -34,7 +34,7 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 
 		// Assert.assertEquals(2, m.getSystemIds().size());
 		String onlySystemId = m.getSystemIds().iterator().next();
-		List<LineBindingsProvider> bindings = m.getBindingsForSystemId(onlySystemId).getBindings();
+		List<BindingsProvider> bindings = m.getBindingsForSystemId(onlySystemId).getBindings();
 
 		// Assert.assertEquals(1, bindings.size());
 

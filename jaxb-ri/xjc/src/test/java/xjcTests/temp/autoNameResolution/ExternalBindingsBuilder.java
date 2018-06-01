@@ -43,7 +43,7 @@ public class ExternalBindingsBuilder {
 		Document doc = buildRootDoc(systemId);
 
 		BindingsContainer c = manager.getBindingsForSystemId(systemId);
-		for (LineBindingsProvider prov : c.getBindings()) {
+		for (BindingsProvider prov : c.getBindings()) {
 			prov.addBindings(doc.getRootElement(), jaxbNs, xsdNS, c.getElementLoader());
 		}
 

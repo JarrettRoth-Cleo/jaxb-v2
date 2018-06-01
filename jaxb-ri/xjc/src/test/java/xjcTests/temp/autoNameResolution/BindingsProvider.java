@@ -6,7 +6,7 @@ import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
 
-public abstract class LineBindingsProvider {
+public abstract class BindingsProvider {
 
 	protected QName buildBindingsQName(Namespace jaxbNS) {
 		return new QName("bindings", jaxbNS);

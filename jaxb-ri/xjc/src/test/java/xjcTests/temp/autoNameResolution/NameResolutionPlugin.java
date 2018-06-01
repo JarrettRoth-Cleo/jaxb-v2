@@ -46,7 +46,7 @@ public class NameResolutionPlugin extends Plugin {
 			if (nameManager.contains(fullName)) {
 				fullName = nameManager.getUniqueFullName(fullName);
 				String systemId = info.getLocator().getSystemId();
-				LineBindingsProvider bindings = provider.buildResolutions(nameManager.getShortNameFromFullName(fullName), info);
+				BindingsProvider bindings = provider.buildResolutions(nameManager.getShortNameFromFullName(fullName), info);
 
 				bindingsManager.addBindings(systemId, bindings);
 			}

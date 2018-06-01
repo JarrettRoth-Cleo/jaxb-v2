@@ -43,13 +43,13 @@ public class NameBindingsManager {
 		return f;
 	}
 
-	public void addBindings(String systemId, LineBindingsProvider bindings) {
+	public void addBindings(String systemId, BindingsProvider bindings) {
 		getBindingsForSystemId(systemId).addBindings(bindings);
 	}
 
 	public static class BindingsContainer {
 		private final File forFile;
-		private final List<LineBindingsProvider> bindings;
+		private final List<BindingsProvider> bindings;
 		private Dom4JElementLoader loader;
 
 		private BindingsContainer(File f) {
@@ -57,11 +57,11 @@ public class NameBindingsManager {
 			bindings = new ArrayList<>();
 		}
 
-		private void addBindings(LineBindingsProvider p) {
+		private void addBindings(BindingsProvider p) {
 			bindings.add(p);
 		}
 
-		public List<LineBindingsProvider> getBindings() {
+		public List<BindingsProvider> getBindings() {
 			return bindings;
 		}
 
