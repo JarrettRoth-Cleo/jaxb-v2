@@ -51,6 +51,8 @@ These next steps are where this process starts to fall apart.  The maven logic f
 
 First, copy the XJC library `xjc/target/jaxb-xjc-2.2.11.jar`
 Next, copy the XJC dependencies that did not get generated:
+* dtd-parser
+* jaxb-api
 * istack-commons-runtime
 * istack-commons-tools
 * relaxngDatatype
