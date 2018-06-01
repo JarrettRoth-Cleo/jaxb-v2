@@ -35,15 +35,40 @@ To add all necessary classes to the XSD import wizard, you must build the projec
 
 Generating the project's deliverables:
 
+This process can be defined as "clunky" at best.
+
+First, rebuild the entire project so new deliverables are generated:
+
 1. cd jaxb-ri
 2. mvn package
 
-This will run all tests and generate deliverables for each module.
-
-Generating XJC dependencies:
-
+Next, download the dependencies for the xjc project:
 1. cd jaxb-ri/xjc
-2. mvn dependency:copy-dependencies -DincludeScope=runtime
+2. remove any jars located in the target/dependency dircectory
+3. Copy dependencies into the target/dependency directory: `mvn dependency:copy-dependencies -DincludeScope=runtime`
+
+These next steps are where this process starts to fall apart.  The maven logic for copying dependencies seems to only download the libraries from the local maven repo, not the project like we want.
+
+First, copy the XJC library `xjc/target/jaxb-xjc-2.2.11.jar`
+Next, copy the XJC dependencies that did not get generated:
+* istack-commons-runtime
+* istack-commons-tools
+* relaxngDatatype
+* rngom
+* xml-apis
+* xsom
+
+*Note*: if these values are already in the product, they shouldn't need to be changed
+
+Lastly, copy out the generated dependencies from the other modules to satisfy the XJC dependecies:
+*Note*: these paths are relative to the jaxb-ri project root
+
+* codemodel\codemodel\target\codemodel-2.2.11.jar
+* core\target\jaxb-core-2.2.11.jar
+* txw\runtime\target\txw2-2.2.11.jar
+
+All of these libraries need to be placed in the Clairfy XSD import wizard plugin for all of the changes to take effect.
+
 
 
 After completing these 2 mvn calls, the XJC jar can be found in jaxb-ri/xjc/xjc/target and all dependencies can be found in jaxb-ri/xjc/xjc/target/dependencies.  All need to be added to the xsd.importwizard plugin.
