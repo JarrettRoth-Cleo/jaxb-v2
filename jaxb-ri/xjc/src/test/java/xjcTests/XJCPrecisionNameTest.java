@@ -70,7 +70,7 @@ public class XJCPrecisionNameTest extends AbstractXJCTest {
 			}
 
 			@Override
-			public void loadBindings(List<File> files) {
+			public void loadBindingFiles(List<File> files) {
 				files.add(new File(resourceDir, "simplifiedBindings.xjb"));
 			}
 
@@ -98,7 +98,7 @@ public class XJCPrecisionNameTest extends AbstractXJCTest {
 			}
 
 			@Override
-			protected void loadBindings(List<File> files) {
+			protected void loadBindingFiles(List<File> files) {
 
 				try {
 					FileWriter writer = new FileWriter("src/test/resources/genBindings.xjb");

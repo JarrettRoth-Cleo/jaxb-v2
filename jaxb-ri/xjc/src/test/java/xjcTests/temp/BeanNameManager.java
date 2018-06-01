@@ -40,6 +40,8 @@ public class BeanNameManager {
 		beanFullNames.add(typeFqn);
 	}
 
+	// TODO: this only checks if there are same fqns, this may need to change to
+	// checking names in the parent(s)
 	public boolean contains(String fullName) {
 		for (String s : beanFullNames) {
 			if (s.equalsIgnoreCase(fullName)) {

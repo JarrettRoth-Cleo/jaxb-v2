@@ -80,6 +80,7 @@ public class AbstractXJCTest {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private SchemaCompiler getInitializedSchemaCompiler(InputSource xsd, Logic logic) {
 		SchemaCompiler compiler = XJC.createSchemaCompiler();
 		compiler.setErrorListener(new TestingErrorListener());
@@ -88,13 +89,35 @@ public class AbstractXJCTest {
 		for (Plugin plugin : getPlugins(logic)) {
 			compiler.getOptions().activePlugins.add(plugin);
 		}
-		for (File f : getBindings(logic)) {
-			compiler.getOptions().addBindFile(getInputSource(f));
+		for (InputSource f : getBindingSources(logic)) {
+			compiler.getOptions().addBindFile(f);
 		}
+
 		addCustomNameCovnerter(compiler.getOptions());
 
 		compiler.parseSchema(xsd);
 		return compiler;
+	}
+
+	private List<Plugin> getPlugins(Logic l) {
+		List<Plugin> plugins = new ArrayList<Plugin>();
+		l.loadPlugins(plugins);
+		return plugins;
+	}
+
+	private List<InputSource> getBindingSources(Logic l) {
+		List<InputSource> sources = new ArrayList<>();
+		l.loadBindingSources(sources);
+		for (File f : getBindings(l)) {
+			sources.add(getInputSource(f));
+		}
+		return sources;
+	}
+
+	private List<File> getBindings(Logic l) {
+		List<File> bindings = new ArrayList<File>();
+		l.loadBindingFiles(bindings);
+		return bindings;
 	}
 
 	private InputSource getInputSource(File file) {
@@ -107,18 +130,6 @@ public class AbstractXJCTest {
 			e.printStackTrace();
 		}
 		return inputSource;
-	}
-
-	private List<Plugin> getPlugins(Logic l) {
-		List<Plugin> plugins = new ArrayList<Plugin>();
-		l.loadPlugins(plugins);
-		return plugins;
-	}
-
-	private List<File> getBindings(Logic l) {
-		List<File> bindings = new ArrayList<File>();
-		l.loadBindings(bindings);
-		return bindings;
 	}
 
 	private void addCustomNameCovnerter(Options ops) {
@@ -221,7 +232,11 @@ public class AbstractXJCTest {
 
 		protected abstract File getXsd();
 
-		protected void loadBindings(List<File> files) {
+		protected void loadBindingFiles(List<File> files) {
+		}
+
+		protected void loadBindingSources(List<InputSource> sources) {
+
 		}
 
 		protected void loadPlugins(List<Plugin> plugins) {

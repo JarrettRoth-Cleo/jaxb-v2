@@ -1,6 +1,9 @@
 package xjcTests.temp.external;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +12,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
+import org.dom4j.io.XMLWriter;
 import org.xml.sax.InputSource;
 
 import xjcTests.temp.Dom4JElementLoader;
@@ -52,9 +56,8 @@ public class ExternalBindingsBuilder {
 		for (LineBindingsProvider prov : manager.getBindingsForSystemId(systemId)) {
 			prov.addBindings(doc.getRootElement(), jaxbNs, xsdNS, loader);
 		}
-		System.out.println(doc.asXML());
 
-		return null;
+		return buildDocInputSource(doc);
 	}
 
 	private Document buildRootDoc(String systemId) {
@@ -69,6 +72,39 @@ public class ExternalBindingsBuilder {
 		rootBindingsElement.addAttribute("schemaLocation", systemId);
 
 		return doc;
+	}
+
+	private InputSource buildDocInputSource(Document doc) {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+		// XMLWriter does not implement AutoCloseable
+		// TODO
+		XMLWriter xmlWriter = null;
+		try {
+			xmlWriter = new XMLWriter(outputStream);
+			xmlWriter.write(doc);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (xmlWriter != null) {
+				try {
+					xmlWriter.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		InputSource source = new InputSource(new ByteArrayInputStream(outputStream.toByteArray()));
+		// TODO
+		File f = new File("C:/temp/xjc/bindingsTesting/simplifiedPrecision.xsd");
+		source.setSystemId(f.toURI().toString() + "_bindings");
+
+		// System.out.println("doc: " + doc.asXML());
+
+		return source;
 	}
 
 }

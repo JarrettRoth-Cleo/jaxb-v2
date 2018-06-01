@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.xml.sax.InputSource;
 
 import com.sun.codemodel.JCodeModel;
 import com.sun.tools.xjc.Plugin;
@@ -27,7 +28,7 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 	@Test
 	public void xjcRunsPlugin_test() throws Throwable {
 		BeanNameManager nm = new BeanNameManager();
-		File f = new File(resourceDir, "simplifiedPrecision.xsd");
+		final File f = new File(resourceDir, "simplifiedPrecision.xsd");
 		NameResolutionPlugin p = new NameResolutionPlugin(nm);
 
 		Logic l1 = buildTestLogic(f, p, false);
@@ -41,32 +42,46 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 
 		// Assert.assertEquals(1, bindings.size());
 
-		File modifiedFile = addAnnotationsToSchema(f, m);
+		final List<InputSource> bindingSources = buildBindings(f, m);
 		nm = new BeanNameManager();
-		p = new NameResolutionPlugin(nm);
+		final NameResolutionPlugin another = new NameResolutionPlugin(nm);
 
-		l1 = buildTestLogic(modifiedFile, p, true);
+		l1 = new Logic() {
+
+			@Override
+			protected File getXsd() {
+				return f;
+			}
+
+			@Override
+			protected void loadPlugins(List<Plugin> plugins) {
+				plugins.add(another);
+			}
+
+			@Override
+			protected void loadBindingSources(List<InputSource> sources) {
+				sources.addAll(bindingSources);
+			}
+
+		};
 
 		runTest(l1);
 
-		m = p.getBindingsManger();
+		m = another.getBindingsManger();
 		Assert.assertEquals(0, m.getSystemIds().size());
 
 	}
 
-	private File addAnnotationsToSchema(File originalFile, NameBindingsManager m) throws Exception {
+	private List<InputSource> buildBindings(File originalFile, NameBindingsManager m) throws Exception {
 		File copiedFile = new File("C:/temp/xjc/bindingsTesting", originalFile.getName());
 		refreshFile(copiedFile);
 		try (OutputStream o = new FileOutputStream(copiedFile)) {
 			Files.copy(originalFile.toPath(), o);
 		}
 
-		String orgSystemId = getSystemIDForFile(originalFile);
-		List<LineBindingsProvider> bindings = m.getBindingsForSystemId(orgSystemId);
-
 		ExternalBindingsBuilder ebb = new ExternalBindingsBuilder(m);
-		ebb.buildDoc();
-		return copiedFile;
+		List<InputSource> bindings = ebb.buildDoc();
+		return bindings;
 	}
 
 	/**
