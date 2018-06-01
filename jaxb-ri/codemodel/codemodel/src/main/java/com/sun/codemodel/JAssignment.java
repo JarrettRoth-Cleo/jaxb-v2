@@ -40,33 +40,38 @@
 
 package com.sun.codemodel;
 
-
 /**
  * Assignment statements, which are also expressions.
  */
 public class JAssignment extends JExpressionImpl implements JStatement {
 
-    JAssignmentTarget lhs;
-    JExpression rhs;
-    String op = "";
+	JAssignmentTarget lhs;
+	JExpression rhs;
+	String op = "";
 
-    JAssignment(JAssignmentTarget lhs, JExpression rhs) {
-        this.lhs = lhs;
-        this.rhs = rhs;
-    }
+	JAssignment(JAssignmentTarget lhs, JExpression rhs) {
+		this.lhs = lhs;
+		this.rhs = rhs;
+	}
 
-    JAssignment(JAssignmentTarget lhs, JExpression rhs, String op) {
-        this.lhs = lhs;
-        this.rhs = rhs;
-        this.op = op;
-    }
+	JAssignment(JAssignmentTarget lhs, JExpression rhs, String op) {
+		this.lhs = lhs;
+		this.rhs = rhs;
+		this.op = op;
+	}
 
-    public void generate(JFormatter f) {
-        f.g(lhs).p(op + '=').g(rhs);
-    }
+	public JExpression getRhs() {
+		return rhs;
+	}
 
-    public void state(JFormatter f) {
-        f.g(this).p(';').nl();
-    }
+	@Override
+	public void generate(JFormatter f) {
+		f.g(lhs).p(op + '=').g(rhs);
+	}
+
+	@Override
+	public void state(JFormatter f) {
+		f.g(this).p(';').nl();
+	}
 
 }

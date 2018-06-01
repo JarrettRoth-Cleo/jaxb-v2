@@ -1,0 +1,11 @@
+<xsd:schema elementFormDefault="qualified" targetNamespace="cleo.clarify.just.choice.issue" xmlns="cleo.clarify.choicePrimitive.types.test" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:element name="choiceExample">
+   <xsd:complexType>
+      <xsd:choice>
+         <xsd:element name="option1" type="xsd:string" />
+         <xsd:element name="option2" type="xsd:int" />
+         <xsd:element name="option3" type="xsd:short" maxOccurs="2" minOccurs="2" />
+      </xsd:choice>
+   </xsd:complexType>
+</xsd:element>
+</xsd:schema>

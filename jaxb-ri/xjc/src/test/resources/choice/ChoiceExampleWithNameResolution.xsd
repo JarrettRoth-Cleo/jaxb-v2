@@ -1,0 +1,61 @@
+<xs:schema elementFormDefault="qualified" targetNamespace="cleo.clarify.just.choice.issue" xmlns="cleo.clarify.just.choice.issue" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="root" type="RootType"/>
+	<xs:complexType name="RootType">
+		<xs:sequence>
+			<xs:element name="RelatiesOrMaterialGroupsOrMaterialStock_Type">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DefinitionAbove" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ChoiceType">
+				<xs:complexType>
+					<xs:choice maxOccurs="unbounded" minOccurs="0">
+						<xs:element name="Relaties">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="relaties" type="xs:string"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="MaterialGroups">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="materialGroups" type="xs:string"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="MaterialStock">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="materialStock" type="xs:string"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Bussen">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="bussen" type="xs:string"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Users">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="users" type="xs:string"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="ExternalChoice" type="ExternalChoice"/>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ExternalChoice">
+		<xs:sequence>
+			<xs:element name="externalChoice" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

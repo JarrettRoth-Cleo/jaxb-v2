@@ -75,15 +75,15 @@ class NameUtil {
 		return c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' || Character.isLetter(c);
 	}
 
-	private String toLowerCase(String s) {
+	protected String toLowerCase(String s) {
 		return s.toLowerCase(Locale.ENGLISH);
 	}
 
-	private String toUpperCase(char c) {
+	protected String toUpperCase(char c) {
 		return String.valueOf(c).toUpperCase(Locale.ENGLISH);
 	}
 
-	private String toUpperCase(String s) {
+	protected String toUpperCase(String s) {
 		return s.toUpperCase(Locale.ENGLISH);
 	}
 

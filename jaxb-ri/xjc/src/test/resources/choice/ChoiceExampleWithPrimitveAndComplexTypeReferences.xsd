@@ -1,0 +1,24 @@
+<xs:schema elementFormDefault="qualified" targetNamespace="cleo.clarify.just.choice.issue" xmlns="cleo.clarify.just.choice.issue" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:element name="choiceExample">
+      <xs:complexType>
+         <xs:choice>
+            <xs:element name="option1" type="xs:string"/>
+            <xs:element name="option2" type="xs:int"/>
+            <xs:element maxOccurs="2" minOccurs="2" name="option3" type="xs:short"/>
+            <xs:element name="option4" type="ExternalChoice"/>
+            <xs:element name="option5">
+               <xs:complexType>
+                  <xs:sequence>
+                     <xs:element name="testingString" type="xs:string"/>
+                  </xs:sequence>
+               </xs:complexType>
+            </xs:element>
+         </xs:choice>
+      </xs:complexType>
+   </xs:element>
+   <xs:complexType name="ExternalChoice">
+      <xs:sequence>
+         <xs:element name="externalChoice" type="xs:string"/>
+      </xs:sequence>
+   </xs:complexType>
+</xs:schema>

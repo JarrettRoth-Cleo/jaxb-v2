@@ -1,0 +1,149 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="ASN">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element type="xs:byte" name="PurposeCode"/>
+        <xs:element type="xs:int" name="ShipmentID"/>
+        <xs:element type="xs:int" name="ASNDate"/>
+        <xs:element type="xs:short" name="ASNTime"/>
+        <xs:element type="xs:string" name="TransactionTypeCode"/>
+        <xs:element name="HEADER">
+          <xs:complexType>
+            <xs:choice maxOccurs="unbounded" minOccurs="0">
+              <xs:element type="xs:string" name="NumberOfPallets"/>
+              <xs:element type="xs:string" name="NumberOfCases"/>
+              <xs:element type="xs:string" name="NumberOfCartons"/>
+              <xs:element type="xs:string" name="GrossWeight"/>
+              <xs:element type="xs:string" name="GrossWeightUofM"/>
+              <xs:element type="xs:string" name="SCAC"/>
+              <xs:element type="xs:string" name="TransportationMethod"/>
+              <xs:element type="xs:string" name="ShipmentStatusCode"/>
+              <xs:element type="xs:string" name="EquipmentCode"/>
+              <xs:element type="xs:string" name="EquipmentInitial"/>
+              <xs:element type="xs:string" name="EquipmentNumber"/>
+              <xs:element type="xs:string" name="TrackingNumber"/>
+              <xs:element type="xs:string" name="BOL"/>
+              <xs:element type="xs:string" name="PROInvoice"/>
+              <xs:element type="xs:string" name="MasterBOL"/>
+              <xs:element type="xs:string" name="SealNumber"/>
+              <xs:element type="xs:int" name="ShippedDate"/>
+              <xs:element type="xs:int" name="EstimatedDelivery"/>
+              <xs:element type="xs:string" name="ShipToName"/>
+              <xs:element type="xs:string" name="ShipToGLN"/>
+              <xs:element type="xs:string" name="ShipToDEANumber"/>
+              <xs:element type="xs:string" name="ShipToCode"/>
+              <xs:element type="xs:string" name="ShipToAddress"/>
+              <xs:element type="xs:string" name="ShipToCity"/>
+              <xs:element type="xs:string" name="ShipToState"/>
+              <xs:element type="xs:short" name="ShipToZip"/>
+              <xs:element type="xs:string" name="ShipToStateLicenseID"/>
+              <xs:element type="xs:string" name="ShipToNAB_VAWD"/>
+              <xs:element type="xs:string" name="BillToName"/>
+              <xs:element type="xs:string" name="BillToGLN"/>
+              <xs:element type="xs:string" name="BillToDEANumber"/>
+              <xs:element type="xs:string" name="BillToCode"/>
+              <xs:element type="xs:string" name="BillToAddress"/>
+              <xs:element type="xs:string" name="BillToCity"/>
+              <xs:element type="xs:string" name="BillToState"/>
+              <xs:element type="xs:short" name="BillToZip"/>
+              <xs:element type="xs:string" name="BillToStateLicenseID"/>
+              <xs:element type="xs:string" name="BillToNAB_VAWD"/>
+              <xs:element type="xs:string" name="ShipFromName"/>
+              <xs:element type="xs:string" name="ShipFromGLN"/>
+              <xs:element type="xs:string" name="ShipFromDEANumber"/>
+              <xs:element type="xs:string" name="ShipFromAddress"/>
+              <xs:element type="xs:string" name="ShipFromCity"/>
+              <xs:element type="xs:string" name="ShipFromState"/>
+              <xs:element type="xs:string" name="ShipFromZip"/>
+              <xs:element type="xs:string" name="ShipFromStateLicenseID"/>
+              <xs:element type="xs:string" name="ShipFromNAB_VAWD"/>
+              <xs:element type="xs:string" name="SellerName"/>
+              <xs:element type="xs:string" name="SellerGLN"/>
+              <xs:element type="xs:string" name="SellerDEANumber"/>
+              <xs:element type="xs:string" name="SellerCode"/>
+              <xs:element type="xs:string" name="SellerAddress"/>
+              <xs:element type="xs:string" name="SellerCity"/>
+              <xs:element type="xs:string" name="SellerState"/>
+              <xs:element type="xs:string" name="SellerZip"/>
+              <xs:element type="xs:string" name="SellerStateLicenseID"/>
+              <xs:element type="xs:string" name="SellerNAB_VAWD"/>
+              <xs:element type="xs:string" name="TransactionStatement"/>
+              <xs:element type="xs:string" name="DirectPurchaseStatement"/>
+              <xs:element type="xs:string" name="BOLNumber"/>
+              <xs:element type="xs:int" name="CustomerPO"/>
+              <xs:element type="xs:int" name="PODate"/>
+              <xs:element type="xs:string" name="SellerInvoice"/>
+              <xs:element type="xs:string" name="SellerInvoiceDate"/>
+              <xs:element type="xs:string" name="VendorOrder"/>
+              <xs:element type="xs:string" name="VendorOrderDate"/>
+              <xs:element name="DETAILS">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="PALLET" maxOccurs="unbounded" minOccurs="0">
+                      <xs:complexType>
+                        <xs:choice maxOccurs="unbounded" minOccurs="0">
+                          <xs:element type="xs:string" name="TareSSCC"/>
+                          <xs:element type="xs:string" name="PalletNumber"/>
+                          <xs:element type="xs:string" name="Pack"/>
+                          <xs:element type="xs:string" name="PackSize"/>
+                          <xs:element type="xs:string" name="PackSizeUofM"/>
+                          <xs:element type="xs:string" name="PackGrossVolume"/>
+                          <xs:element type="xs:string" name="PackGrossVolumeUofM"/>
+                          <xs:element type="xs:string" name="SerialNumber"/>
+                          <xs:element type="xs:string" name="PackSSCC"/>
+                          <xs:element type="xs:byte" name="ASNLine"/>
+                          <xs:element type="xs:long" name="ItemNumber"/>
+                          <xs:element type="xs:string" name="UPCCode"/>
+                          <xs:element type="xs:short" name="REFNumber"/>
+                          <xs:element type="xs:string" name="LotNumber"/>
+                          <xs:element type="xs:string" name="OrderLine"/>
+                          <xs:element type="xs:short" name="QtyShipped"/>
+                          <xs:element type="xs:string" name="UOM"/>
+                          <xs:element type="xs:string" name="QtyShippedToDate"/>
+                          <xs:element type="xs:string" name="QtyOrdered"/>
+                          <xs:element type="xs:string" name="QtyOrderedUOM"/>
+                          <xs:element type="xs:string" name="ItemDescription"/>
+                          <xs:element type="xs:int" name="SellerOrder"/>
+                          <xs:element type="xs:string" name="ExpirationDate"/>
+                          <xs:element type="xs:string" name="ManufacturerName"/>
+                          <xs:element type="xs:string" name="ManufacturerDEANumber"/>
+                          <xs:element type="xs:string" name="ManufacturerAddress1"/>
+                          <xs:element type="xs:string" name="ManufacturerAddress2"/>
+                          <xs:element type="xs:string" name="ManufacturerCity"/>
+                          <xs:element type="xs:string" name="ManufacturerState"/>
+                          <xs:element type="xs:int" name="ManufacturerZip"/>
+                          <xs:element type="xs:string" name="ManufacturerDeliveryREFDate"/>
+                          <xs:element type="xs:string" name="ManufacturerREFNumber"/>
+                          <xs:element type="xs:string" name="DistributorName"/>
+                          <xs:element type="xs:string" name="DistributorDEANumber"/>
+                          <xs:element type="xs:string" name="DistributorAddress1"/>
+                          <xs:element type="xs:string" name="DistributorAddress2"/>
+                          <xs:element type="xs:string" name="DistributorCity"/>
+                          <xs:element type="xs:string" name="DistributorState"/>
+                          <xs:element type="xs:string" name="DistributorZip"/>
+                          <xs:element type="xs:string" name="DistributorDeliveryREFDate"/>
+                          <xs:element type="xs:string" name="DistributorREFNumber"/>
+                          <xs:element type="xs:string" name="Supplier_DistributorName"/>
+                          <xs:element type="xs:string" name="Supplier_DistributorDEANumber"/>
+                          <xs:element type="xs:string" name="Supplier_DistributorAddress1"/>
+                          <xs:element type="xs:string" name="Supplier_DistributorAddress2"/>
+                          <xs:element type="xs:string" name="Supplier_DistributorCity"/>
+                          <xs:element type="xs:string" name="Supplier_DistributorState"/>
+                          <xs:element type="xs:string" name="Supplier_DistributorZip"/>
+                          <xs:element type="xs:string" name="Supplier_DistributorDeliveryREFDate"/>
+                          <xs:element type="xs:string" name="Supplier_DistributorREFNumber"/>
+                          <xs:element type="xs:string" name="DirectPurchase"/>
+                        </xs:choice>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element type="xs:byte" name="TotalOrderLine"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
