@@ -11,9 +11,10 @@ public class XJCMixedTest extends AbstractXJCTest {
 	@Ignore
 	public void simpleMixedTest() throws Throwable {
 		runTest(new Logic() {
-
+ 
 			@Override
 			protected File getXsd() {
+				
 				return new File(resourceDir, "Mixed.xsd");
 			}
 

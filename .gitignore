@@ -45,6 +45,7 @@
 **/.project
 **/.settings
 **/.classpath 
+**/bin/**
 
 # Testing resources
 /**CustomerInvoice**/
