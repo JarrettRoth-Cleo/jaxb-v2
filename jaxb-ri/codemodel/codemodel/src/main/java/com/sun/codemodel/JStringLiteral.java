@@ -43,21 +43,22 @@ package com.sun.codemodel;
 /**
  * String literal.
  * 
- * @author
- *     Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
+ * @author Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
  */
 public class JStringLiteral extends JExpressionImpl {
 
-    public final String str;
-    
+	public String str;
 
-    JStringLiteral(String what) {
-        this.str = what;
-    
-    }
-   
-    
-    public void generate(JFormatter f) {
-    	f.p(JExpr.quotify('"', str));
-    }
+	JStringLiteral(String what) {
+		this.str = what;
+
+	}
+
+	public void generate(JFormatter f) {
+		f.p(JExpr.quotify('"', str));
+	}
+
+	public void setStr(String str) {
+		this.str = str;
+	}
 }
