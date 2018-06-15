@@ -465,6 +465,7 @@ public final class JBlock implements JGenerable, JStatement {
 
 	public void reset() {
 		content.clear();
+		pos = 0;
 	}
 
 }
