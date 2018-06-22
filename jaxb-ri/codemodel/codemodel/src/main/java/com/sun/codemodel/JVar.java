@@ -186,6 +186,11 @@ public class JVar extends JExpressionImpl implements JDeclaration, JAssignmentTa
 		return TypedAnnotationWriter.create(clazz, this);
 	}
 
+	public JAnnotationUse annotate(JAnnotationUse ann) {
+		annotations.add(ann);
+		return ann;
+	}
+
 	public boolean removeAnnotation(JAnnotationUse annotation) {
 		return this.annotations.remove(annotation);
 	}
