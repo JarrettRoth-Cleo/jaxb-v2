@@ -1,58 +1,22 @@
-<xs:schema elementFormDefault="qualified" targetNamespace="cleo.clarify.just.restriction.issue.d04923" xmlns="cleo.clarify.just.restriction.issue.d04923" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:element name="root" type="InvoiceType"/>
-	<xs:complexType name="InvoiceType">
-		<xs:complexContent>
-			<xs:extension base="DocumentType">
-				<xs:sequence>
-					<xs:element maxOccurs="unbounded" name="invoiceLines" type="InvoiceLineListType"/>
-				</xs:sequence>
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
-	<xs:complexType name="DocumentType">
-		<xs:attribute name="timestamp" type="xs:string" use="optional"/>
-	</xs:complexType>
-	<xs:complexType name="InvoiceLineListType">
-		<xs:sequence>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="invoiceLine" type="InvoiceLineType"/>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="InvoiceLineType">
-		<xs:sequence>
-			<xs:element minOccurs="0" name="references" type="InvoiceReferenceListType"/>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="InvoiceReferenceListType">
-		<xs:sequence>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="relationship" type="SalesOrderPartyRelationshipType"/>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="SalesOrderPartyRelationshipType">
+<xs:schema xmlns="http://boehringer-ingelheim.com/finance/1" xmlns:bi="http://boehringer-ingelheim.com/finance/1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://boehringer-ingelheim.com/finance/1" elementFormDefault="qualified" version="1.1">
+
+<xs:element name="Root" type="BankAccountPartyRelationshipType"/> 
+
+<xs:complexType name="BankAccountPartyRelationshipType">
 		<xs:simpleContent>
 			<xs:extension base="PartyIdentifierType">
-				<xs:attribute name="role" type="SalesOrderPartyRelationshipRoleType" use="optional"/>
+				<xs:attribute name="relationship" use="required" type="xs:string"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	<xs:simpleType name="SalesOrderPartyRelationshipRoleType">
-		<xs:union memberTypes="SalesOrderPartyRelationshipRoleEnum NonNullStringType"/>
-	</xs:simpleType>
-	<xs:simpleType name="SalesOrderPartyRelationshipRoleEnum">
-		<xs:restriction base="NonNullStringType">
-			<xs:enumeration value="Bill To"/>
-			<xs:enumeration value="Order Entered By"/>
-			<xs:enumeration value="Payer"/>
-			<xs:enumeration value="Sell To"/>
-			<xs:enumeration value="Ship To"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:complexType name="PartyIdentifierType">
+
+<xs:complexType name="PartyIdentifierType">
 		<xs:annotation>
 			<xs:documentation>Describes a party identifier, including its restriction to known identification schemes.</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
 			<xs:restriction base="IdentifierType">
-				<xs:attribute name="taxExemptionPercentage" type="xs:int" use="optional">
+				<xs:attribute name="taxExemptionPercentage" use="optional" type="xs:integer">
 					<xs:annotation>
 						<xs:documentation>Review with Hannes</xs:documentation>
 					</xs:annotation>
@@ -60,22 +24,35 @@
 			</xs:restriction>
 		</xs:simpleContent>
 	</xs:complexType>
-	<xs:complexType abstract="true" name="IdentifierType">
+
+	<xs:complexType name="IdentifierType" abstract="true">
 		<xs:simpleContent>
 			<xs:extension base="NonNullStringType">
-				<xs:attribute name="active" type="xs:boolean" use="optional"/>
-				<xs:anyAttribute/>
+				<xs:attribute name="active" use="optional" type="xs:boolean"/>
 				<xs:attribute name="scheme" use="optional" type="xs:anySimpleType">
 					<xs:annotation>
 						<xs:documentation>The type of identification scheme.</xs:documentation>
 					</xs:annotation>
 				</xs:attribute>
+				<xs:attribute name="schemeAgency" use="optional" type="xs:anySimpleType">
+					<xs:annotation>
+						<xs:documentation>The owner of the identifier scheme.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="schemeInstance" use="optional" type="xs:anySimpleType">
+					<xs:annotation>
+						<xs:documentation>The instance of the scheme (in cases where there are regional or country instances.)</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:anyAttribute/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
+
 	<xs:simpleType name="NonNullStringType">
 		<xs:restriction base="xs:string">
 			<xs:minLength value="1"/>
 		</xs:restriction>
 	</xs:simpleType>
+
 </xs:schema>
