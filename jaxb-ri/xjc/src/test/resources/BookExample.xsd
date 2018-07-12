@@ -1,4 +1,4 @@
-<xs:schema xmlns="http://boehringer-ingelheim.com/finance/1" xmlns:bi="http://boehringer-ingelheim.com/finance/1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://boehringer-ingelheim.com/finance/1" elementFormDefault="qualified" version="1.1">
+<xs:schema xmlns="test" xmlns:bi="test" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="test" elementFormDefault="qualified" version="1.1">
 
 <xs:element name="Root" type="physicalAddressType"/> 
 
