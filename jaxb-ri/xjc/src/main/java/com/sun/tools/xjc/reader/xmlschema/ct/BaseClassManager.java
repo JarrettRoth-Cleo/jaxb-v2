@@ -39,8 +39,8 @@ public class BaseClassManager {
 	/**
 	 * Because no classes will be removed, this could be pretty straight forward
 	 * 
-	 * TODO: handles only extension correctly, the relation for restiction is
-	 * lost
+	 * TODO: handles only extension correctly, the relation for simple type
+	 * restiction is lost
 	 */
 	public void setBaseClass(CClassInfo extendingClass, CClass parentClass) {
 		CClassInfo newClassInfo = null;

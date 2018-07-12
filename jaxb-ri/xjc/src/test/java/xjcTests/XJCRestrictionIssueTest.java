@@ -18,11 +18,38 @@ import com.sun.tools.xjc.outline.Outline;
 public class XJCRestrictionIssueTest extends AbstractXJCTest {
 	@Test
 	// TODO: get actual testing here...
-	public void simpleTest() throws Throwable {
+	public void simpleTypeRestrictionAndExtensionTest() throws Throwable {
 		runTest(new Logic() {
 			@Override
 			protected File getXsd() {
 				return new File(resourceDir, "JustRestrictionIssue.xsd");
+			}
+
+			protected void loadBindingFiles(List<File> files) {
+				files.add(new File(resourceDir, "restrictionBindings.xjb"));
+			}
+
+			protected void loadPlugins(List<Plugin> plugins) {
+				plugins.add(new PostProcessPlugin());
+			}
+
+			protected void handleJCodeModel(JCodeModel jModel, File outputDir) throws IOException {
+				System.out.println(outputDir.getAbsolutePath());
+				if (!outputDir.exists()) {
+					outputDir.mkdirs();
+				}
+				jModel.build(outputDir);
+			}
+		});
+	}
+
+	@Test
+	// TODO: get actual testing here...
+	public void complexTypeRestriction() throws Throwable {
+		runTest(new Logic() {
+			@Override
+			protected File getXsd() {
+				return new File(resourceDir, "BookExample.xsd");
 			}
 
 			protected void loadBindingFiles(List<File> files) {
