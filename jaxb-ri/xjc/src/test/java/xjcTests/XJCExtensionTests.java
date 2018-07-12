@@ -17,12 +17,14 @@ import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.outline.Outline;
 
 public class XJCExtensionTests extends AbstractXJCTest {
+	private File extensionsResourceDir = new File(resourceDir, "extensions");
+
 	@Test
 	public void simpleTypeRestrictionAndExtensionTest() throws Throwable {
 		runTest(new XJCExtensionLogic() {
 			@Override
 			protected File getXsd() {
-				return new File(resourceDir, "JustRestrictionIssue.xsd");
+				return new File(extensionsResourceDir, "JustRestrictionIssue.xsd");
 			}
 
 			@Override
@@ -52,7 +54,7 @@ public class XJCExtensionTests extends AbstractXJCTest {
 		runTest(new XJCExtensionLogic() {
 			@Override
 			protected File getXsd() {
-				return new File(resourceDir, "BookExampleRestriction.xsd");
+				return new File(extensionsResourceDir, "BookExampleRestriction.xsd");
 			}
 
 			@Override
@@ -77,7 +79,7 @@ public class XJCExtensionTests extends AbstractXJCTest {
 		runTest(new XJCExtensionLogic() {
 			@Override
 			protected File getXsd() {
-				return new File(resourceDir, "BookExampleExtension.xsd");
+				return new File(extensionsResourceDir, "BookExampleExtension.xsd");
 			}
 
 			@Override
