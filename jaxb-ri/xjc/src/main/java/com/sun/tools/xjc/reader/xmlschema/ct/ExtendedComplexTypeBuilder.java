@@ -40,74 +40,67 @@
 
 package com.sun.tools.xjc.reader.xmlschema.ct;
 
-
 import com.sun.tools.xjc.model.CClass;
+import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.xml.xsom.XSComplexType;
 import com.sun.xml.xsom.XSContentType;
 import com.sun.xml.xsom.XSType;
 
-
 /**
  * Binds a complex type derived from another complex type by extension.
  *
- * @author
- *     Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
+ * @author Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
  */
 final class ExtendedComplexTypeBuilder extends AbstractExtendedComplexTypeBuilder {
 
-    public boolean isApplicable(XSComplexType ct) {
-        XSType baseType = ct.getBaseType();
-        return baseType!=schemas.getAnyType()
-            &&  baseType.isComplexType()
-            &&  ct.getDerivationMethod()==XSType.EXTENSION;
-    }
+	public boolean isApplicable(XSComplexType ct) {
+		XSType baseType = ct.getBaseType();
+		return baseType != schemas.getAnyType() && baseType.isComplexType() && ct.getDerivationMethod() == XSType.EXTENSION;
+	}
 
-    public void build(XSComplexType ct) {
-        XSComplexType baseType = ct.getBaseType().asComplexType();
+	public void build(XSComplexType ct) {
+		XSComplexType baseType = ct.getBaseType().asComplexType();
 
-        // build the base class
-        CClass baseClass = selector.bindToType(baseType, ct, true);
-        assert baseClass != null;   // global complex type must map to a class
+		// build the base class
+		CClass baseClass = selector.bindToType(baseType, ct, true);
+		assert baseClass != null; // global complex type must map to a class
+		BaseClassManager m = new BaseClassManager();
+		CClassInfo currentBean = selector.getCurrentBean();
+		m.setBaseClass(currentBean, baseClass);
+		// selector.getCurrentBean().setBaseClass(baseClass);
 
-        selector.getCurrentBean().setBaseClass(baseClass);
+		// derivation by extension.
+		ComplexTypeBindingMode baseTypeFlag = builder.getBindingMode(baseType);
 
-        // derivation by extension.
-        ComplexTypeBindingMode baseTypeFlag = builder.getBindingMode(baseType);
+		XSContentType explicitContent = ct.getExplicitContent();
 
-        XSContentType explicitContent = ct.getExplicitContent();
+		if (!checkIfExtensionSafe(baseType, ct)) {
+			// error. We can't handle any further extension
+			errorReceiver.error(ct.getLocator(), Messages.ERR_NO_FURTHER_EXTENSION.format(baseType.getName(), ct.getName()));
+			return;
+		}
 
-        if (!checkIfExtensionSafe(baseType, ct)) {
-            // error. We can't handle any further extension
-            errorReceiver.error(ct.getLocator(),
-                    Messages.ERR_NO_FURTHER_EXTENSION.format(
-                    baseType.getName(), ct.getName() )
-            );
-            return;
-        }
+		// explicit content is always either empty or a particle.
+		if (explicitContent != null && explicitContent.asParticle() != null) {
+			if (baseTypeFlag == ComplexTypeBindingMode.NORMAL) {
+				// if we have additional explicit content, process them.
+				builder.recordBindingMode(ct, bgmBuilder.getParticleBinder().checkFallback(explicitContent.asParticle())
+						? ComplexTypeBindingMode.FALLBACK_REST : ComplexTypeBindingMode.NORMAL);
 
-        // explicit content is always either empty or a particle.
-        if (explicitContent != null && explicitContent.asParticle() != null) {
-            if (baseTypeFlag == ComplexTypeBindingMode.NORMAL) {
-                // if we have additional explicit content, process them.
-                builder.recordBindingMode(ct,
-                        bgmBuilder.getParticleBinder().checkFallback(explicitContent.asParticle())
-                        ? ComplexTypeBindingMode.FALLBACK_REST
-                        : ComplexTypeBindingMode.NORMAL);
+				bgmBuilder.getParticleBinder().build(explicitContent.asParticle());
 
-                bgmBuilder.getParticleBinder().build(explicitContent.asParticle());
+			} else {
+				// the base class has already done the fallback.
+				// don't add anything new
+				builder.recordBindingMode(ct, baseTypeFlag);
+			}
+		} else {
+			// if it's empty, no additional processing is necessary
+			builder.recordBindingMode(ct, baseTypeFlag);
+		}
 
-            } else {
-                // the base class has already done the fallback.
-                // don't add anything new
-                builder.recordBindingMode(ct, baseTypeFlag );
-            }
-        } else {
-            // if it's empty, no additional processing is necessary
-            builder.recordBindingMode(ct, baseTypeFlag);
-        }
-
-        // adds attributes and we are through.
-        green.attContainer(ct);
-    }
+		// adds attributes and we are through.
+		green.attContainer(ct);
+	}
 
 }
