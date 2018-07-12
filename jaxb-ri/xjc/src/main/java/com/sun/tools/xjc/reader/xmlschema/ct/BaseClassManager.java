@@ -1,11 +1,13 @@
 package com.sun.tools.xjc.reader.xmlschema.ct;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.sun.tools.xjc.model.CClass;
 import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.tools.xjc.model.CClassInfoParent;
+import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.model.Model;
 import com.sun.xml.xsom.XSComponent;
 
@@ -39,10 +41,11 @@ public class BaseClassManager {
 	/**
 	 * Because no classes will be removed, this could be pretty straight forward
 	 * 
-	 * TODO: handles only extension correctly, the relation for simple type
-	 * restiction is lost
+	 * TODO: handles only restriction correctly
+	 * 
+	 * TODO: Move this code to shared location for the 2 methods
 	 */
-	public void setBaseClass(CClassInfo extendingClass, CClass parentClass) {
+	public void createRestrictingClass(CClassInfo extendingClass, CClass parentClass) {
 		CClassInfo newClassInfo = null;
 		CClassInfo modifiedParentClassInfo = null;
 		if (parentClass != null) {
@@ -57,6 +60,21 @@ public class BaseClassManager {
 	}
 
 	/**
+	 * Because no classes will be removed, this could be pretty straight forward
+	 * 
+	 * TODO: handles only extension correctly, the relation for simple type
+	 * restiction is lost
+	 */
+	public void createExtendingClass(CClassInfo extendingClass, CClass parentClass) {
+		createRestrictingClass(extendingClass, parentClass);
+		// updateFieldsFromAncestors(extendingClass, (CClassInfo) parentClass);
+	}
+
+	public void updateFields(CClassInfo extendingClass, CClass parentClass) {
+		updateFieldsFromAncestors(extendingClass, (CClassInfo) parentClass);
+	}
+
+	/**
 	 * Makes sure that the parent class is added to the abstract class tree
 	 * 
 	 * @param parentClass
@@ -66,11 +84,39 @@ public class BaseClassManager {
 			return;
 		}
 
-		setBaseClass(parentClass, parentClass.getBaseClass());
+		createRestrictingClass(parentClass, parentClass.getBaseClass());
 	}
 
-	private void updateFieldsFromAncestors(CClassInfo info) {
+	private void updateFieldsFromAncestors(CClassInfo info, CClassInfo parentClass) {
+		List<CPropertyInfo> props = info.getProperties();
 
+		CClassInfo currentParent = parentClass;
+		for (CPropertyInfo parentProp : currentParent.getProperties()) {
+			if (info.getProperty(parentProp.getName(true)) == null) {
+				info.addProperty(parentProp);
+			}
+		}
+		//
+		// info.getProperties().clear();
+		// info.getProperties().addAll(props);
+	}
+
+	/**
+	 * TODO: how to handle extending mixed cases where a field matches ....well
+	 * that's the other builder I think...
+	 * 
+	 * @param props
+	 * @param name
+	 * @return
+	 */
+	private boolean doesPropertyListContainFieldName(List<CPropertyInfo> props, String name) {
+		for (CPropertyInfo info : props) {
+			if (name.equals(info.getName(true))) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private CClassInfo createNewAbstractClassInfo(CClassInfo info, CClassInfo parentInfo) {

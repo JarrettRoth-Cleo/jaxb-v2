@@ -63,7 +63,7 @@ public final class ComplexTypeFieldBuilder extends BindingComponent {
 	 * Builders are tried in this order, to put specific ones first.
 	 */
 	private final CTBuilder[] complexTypeBuilders = new CTBuilder[] { new MultiWildcardComplexTypeBuilder(), new MixedExtendedComplexTypeBuilder(),
-			new MixedComplexTypeBuilder(), new FreshComplexTypeBuilder(), new ExtendedComplexTypeBuilder(), new MyRestrictedComplexTypeBuilder(),
+			new MixedComplexTypeBuilder(), new FreshComplexTypeBuilder(), new MyExtendedComplexTypeBuilder(), new MyRestrictedComplexTypeBuilder(),
 			new STDerivedComplexTypeBuilder() };
 
 	/** Records ComplexTypeBindingMode for XSComplexType. */

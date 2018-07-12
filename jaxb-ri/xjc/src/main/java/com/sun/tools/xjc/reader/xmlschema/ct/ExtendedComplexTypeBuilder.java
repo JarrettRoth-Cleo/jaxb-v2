@@ -41,7 +41,6 @@
 package com.sun.tools.xjc.reader.xmlschema.ct;
 
 import com.sun.tools.xjc.model.CClass;
-import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.xml.xsom.XSComplexType;
 import com.sun.xml.xsom.XSContentType;
 import com.sun.xml.xsom.XSType;
@@ -64,10 +63,7 @@ final class ExtendedComplexTypeBuilder extends AbstractExtendedComplexTypeBuilde
 		// build the base class
 		CClass baseClass = selector.bindToType(baseType, ct, true);
 		assert baseClass != null; // global complex type must map to a class
-		BaseClassManager m = BaseClassManager.getInstance();
-		CClassInfo currentBean = selector.getCurrentBean();
-		m.setBaseClass(currentBean, baseClass);
-		// selector.getCurrentBean().setBaseClass(baseClass);
+		selector.getCurrentBean().setBaseClass(baseClass);
 
 		// derivation by extension.
 		ComplexTypeBindingMode baseTypeFlag = builder.getBindingMode(baseType);
