@@ -52,7 +52,7 @@ public class XJCExtensionTests extends AbstractXJCTest {
 		runTest(new XJCExtensionLogic() {
 			@Override
 			protected File getXsd() {
-				return new File(resourceDir, "BookExample.xsd");
+				return new File(resourceDir, "BookExampleRestriction.xsd");
 			}
 
 			@Override
@@ -67,6 +67,23 @@ public class XJCExtensionTests extends AbstractXJCTest {
 				Assert.assertTrue(simpleAddress.getBaseClass() == simpleAddressAB);
 
 				Assert.assertTrue(simpleAddressAB.getBaseClass() == phyicalAddressAB);
+
+			}
+		});
+	}
+
+	@Test
+	public void complexExtensionFieldChecking() throws Throwable {
+		runTest(new XJCExtensionLogic() {
+			@Override
+			protected File getXsd() {
+				return new File(resourceDir, "BookExampleExtension.xsd");
+			}
+
+			@Override
+			protected void validateModel(Model m) {
+				CClassInfo simpleAddress = getInfoFromModel(m, "test.simpleAddressType");
+				Assert.assertEquals("Incorrect property list size", 4, simpleAddress.getProperties().size());
 
 			}
 		});
