@@ -12,6 +12,7 @@ import org.xml.sax.SAXException;
 import com.sun.codemodel.JCodeModel;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
+import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.outline.Outline;
 
@@ -26,13 +27,21 @@ public class XJCExtensionTests extends AbstractXJCTest {
 
 			@Override
 			protected void validateModel(Model m) {
-				assertClassInModel(m, "test.IdentifierTypeIF");
-				assertClassInModel(m, "test.PartyIdentifierTypeIF");
-				assertClassInModel(m, "test.BankAccountPartyRelationshipTypeIF");
+				CClassInfo identifierAb = getInfoFromModel(m, "test.IdentifierTypeIF");
+				CClassInfo partyIdentifierAb = getInfoFromModel(m, "test.PartyIdentifierTypeIF");
+				CClassInfo bankAccountIdentifierAb = getInfoFromModel(m, "test.BankAccountPartyRelationshipTypeIF");
 
-				assertClassInModel(m, "test.IdentifierType");
-				assertClassInModel(m, "test.PartyIdentifierType");
-				assertClassInModel(m, "test.BankAccountPartyRelationshipType");
+				CClassInfo identifierType = getInfoFromModel(m, "test.IdentifierType");
+				CClassInfo partyIdentifierType = getInfoFromModel(m, "test.PartyIdentifierType");
+				CClassInfo bankAccountidentifierType = getInfoFromModel(m, "test.BankAccountPartyRelationshipType");
+
+				Assert.assertTrue(identifierType.getBaseClass() == identifierAb);
+				Assert.assertTrue(partyIdentifierType.getBaseClass() == partyIdentifierAb);
+				Assert.assertTrue(bankAccountidentifierType.getBaseClass() == bankAccountIdentifierAb);
+
+				Assert.assertTrue(partyIdentifierAb.getBaseClass() == identifierAb);
+				Assert.assertTrue(bankAccountIdentifierAb.getBaseClass() == partyIdentifierAb);
+
 			}
 
 		});
@@ -48,23 +57,39 @@ public class XJCExtensionTests extends AbstractXJCTest {
 
 			@Override
 			protected void validateModel(Model m) {
-				assertClassInModel(m, "test.physicalAddressTypeIF");
-				assertClassInModel(m, "test.simpleAddressTypeIF");
+				CClassInfo phyicalAddressAB = getInfoFromModel(m, "test.physicalAddressTypeIF");
+				CClassInfo simpleAddressAB = getInfoFromModel(m, "test.simpleAddressTypeIF");
 
-				assertClassInModel(m, "test.physicalAddressType");
-				assertClassInModel(m, "test.simpleAddressType");
+				CClassInfo phyicalAddress = getInfoFromModel(m, "test.physicalAddressType");
+				CClassInfo simpleAddress = getInfoFromModel(m, "test.simpleAddressType");
+
+				Assert.assertTrue(phyicalAddress.getBaseClass() == phyicalAddressAB);
+				Assert.assertTrue(simpleAddress.getBaseClass() == simpleAddressAB);
+
+				Assert.assertTrue(simpleAddressAB.getBaseClass() == phyicalAddressAB);
 
 			}
 		});
 	}
 
 	private void assertClassInModel(Model m, String className) {
-		for (com.sun.tools.xjc.model.CClassInfo info : m.beans().values()) {
+		for (CClassInfo info : m.beans().values()) {
 			if (info.fullName().equals(className)) {
 				return;
 			}
 		}
 		Assert.fail(String.format("%s could not be found in model", className));
+	}
+
+	private CClassInfo getInfoFromModel(Model m, String className) {
+		assertClassInModel(m, className);
+
+		for (com.sun.tools.xjc.model.CClassInfo info : m.beans().values()) {
+			if (info.fullName().equals(className)) {
+				return info;
+			}
+		}
+		throw new RuntimeException(String.format("%s could not be found in model", className));
 	}
 
 	private abstract class XJCExtensionLogic extends Logic {
