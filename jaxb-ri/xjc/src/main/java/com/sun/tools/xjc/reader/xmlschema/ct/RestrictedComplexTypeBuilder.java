@@ -77,7 +77,7 @@ final class RestrictedComplexTypeBuilder extends CTBuilder {
 		assert baseClass != null; // global complex type must map to a class
 
 		CClassInfo currentBean = selector.getCurrentBean();
-		BaseClassManager m = new BaseClassManager();
+		BaseClassManager m = BaseClassManager.getInstance();
 		m.setBaseClass(currentBean, baseClass);
 		// selector.getCurrentBean().setBaseClass(baseClass);
 

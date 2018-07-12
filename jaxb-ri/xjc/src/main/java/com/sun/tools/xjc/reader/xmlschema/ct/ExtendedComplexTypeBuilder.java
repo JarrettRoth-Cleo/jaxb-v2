@@ -64,7 +64,7 @@ final class ExtendedComplexTypeBuilder extends AbstractExtendedComplexTypeBuilde
 		// build the base class
 		CClass baseClass = selector.bindToType(baseType, ct, true);
 		assert baseClass != null; // global complex type must map to a class
-		BaseClassManager m = new BaseClassManager();
+		BaseClassManager m = BaseClassManager.getInstance();
 		CClassInfo currentBean = selector.getCurrentBean();
 		m.setBaseClass(currentBean, baseClass);
 		// selector.getCurrentBean().setBaseClass(baseClass);
