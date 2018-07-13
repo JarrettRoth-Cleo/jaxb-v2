@@ -1,0 +1,22 @@
+<xs:schema xmlns="test" xmlns:bi="test" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="test" elementFormDefault="qualified" version="1.1">
+
+<xs:element name="Root" type="mixedParent"/> 
+
+	<xs:complexType  mixed="true" name="mixedParent">
+		<xs:sequence>
+			<xs:element name="city" type="xs:string"/>
+			<xs:element name="state" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType  mixed="true" name="mixedExtension">
+		<xs:complexContent>
+			<xs:extension base="mixedParent">
+				<xs:sequence>
+					<xs:element name="street" type="xs:string"/>
+					<xs:element name="zip" type="xs:string"/>
+				</xs:sequence>
+			</xs:extension >
+		</xs:complexContent>
+</xs:complexType>
+
+</xs:schema>

@@ -91,6 +91,44 @@ public class XJCExtensionTests extends AbstractXJCTest {
 		});
 	}
 
+	@Test
+	public void mixedExtension() throws Throwable {
+		runTest(new XJCExtensionLogic() {
+			@Override
+			protected File getXsd() {
+				return new File(extensionsResourceDir, "MixedExtension.xsd");
+			}
+
+			@Override
+			protected void validateModel(Model m) {
+				CClassInfo simpleAddress = getInfoFromModel(m, "test.mixedExtension");
+				Assert.assertEquals("Incorrect property list size", 1, simpleAddress.getProperties().size());
+
+			}
+		});
+	}
+
+	@Test
+	public void mixedExtensionBothSetMixed() throws Throwable {
+		runTest(new XJCExtensionLogic() {
+			@Override
+			protected File getXsd() {
+				return new File(extensionsResourceDir, "MixedExtensionBothSet.xsd");
+			}
+
+			protected boolean genCode() {
+				return true;
+			}
+
+			@Override
+			protected void validateModel(Model m) {
+				CClassInfo simpleAddress = getInfoFromModel(m, "test.mixedExtension");
+				Assert.assertEquals("Incorrect property list size", 1, simpleAddress.getProperties().size());
+
+			}
+		});
+	}
+
 	private void assertClassInModel(Model m, String className) {
 		for (CClassInfo info : m.beans().values()) {
 			if (info.fullName().equals(className)) {
@@ -114,7 +152,7 @@ public class XJCExtensionTests extends AbstractXJCTest {
 	private abstract class XJCExtensionLogic extends Logic {
 
 		protected void loadBindingFiles(List<File> files) {
-			files.add(new File(resourceDir, "restrictionBindings.xjb"));
+			files.add(new File(extensionsResourceDir, "extensionBindings.xjb"));
 		}
 
 		protected void loadPlugins(List<Plugin> plugins) {

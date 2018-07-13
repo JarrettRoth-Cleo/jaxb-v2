@@ -80,18 +80,18 @@ final class MyExtendedComplexTypeBuilder extends AbstractExtendedComplexTypeBuil
 
 		// explicit content is always either empty or a particle.
 		if (explicitContent != null && explicitContent.asParticle() != null) {
-			if (baseTypeFlag == ComplexTypeBindingMode.NORMAL) {
-				// if we have additional explicit content, process them.
-				builder.recordBindingMode(ct, bgmBuilder.getParticleBinder().checkFallback(explicitContent.asParticle())
-						? ComplexTypeBindingMode.FALLBACK_REST : ComplexTypeBindingMode.NORMAL);
+			// if (baseTypeFlag == ComplexTypeBindingMode.NORMAL) {
+			// if we have additional explicit content, process them.
+			builder.recordBindingMode(ct, bgmBuilder.getParticleBinder().checkFallback(explicitContent.asParticle())
+					? ComplexTypeBindingMode.FALLBACK_REST : ComplexTypeBindingMode.NORMAL);
 
-				bgmBuilder.getParticleBinder().build(explicitContent.asParticle());
+			bgmBuilder.getParticleBinder().build(explicitContent.asParticle());
 
-			} else {
-				// the base class has already done the fallback.
-				// don't add anything new
-				builder.recordBindingMode(ct, baseTypeFlag);
-			}
+			// } else {
+			// // the base class has already done the fallback.
+			// // don't add anything new
+			// builder.recordBindingMode(ct, baseTypeFlag);
+			// }
 		} else {
 			// if it's empty, no additional processing is necessary
 			builder.recordBindingMode(ct, baseTypeFlag);
