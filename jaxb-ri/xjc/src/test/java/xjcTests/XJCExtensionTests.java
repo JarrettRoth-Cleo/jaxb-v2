@@ -206,6 +206,52 @@ public class XJCExtensionTests extends AbstractXJCTest {
 
 	}
 
+	@Test
+	public void multiLevelInheritanceWithRestrictionInBetweenTest() throws Throwable {
+		// Inheritance should be maintained
+		runTest(new XJCExtensionLogic() {
+			@Override
+			protected File getXsd() {
+				return new File(extensionsResourceDir, "MultiLevelInheritanceWithRestritionAsMid.xsd");
+			}
+
+			@Override
+			protected void validateModel(Model m) {
+				CClassInfo topLevelAB = getInfoFromModel(m, "test.TopLevelClassIF");
+				CClassInfo midLevelAB = getInfoFromModel(m, "test.MidLevelClassIF");
+				CClassInfo baseLevelAB = getInfoFromModel(m, "test.BaseLevelClassIF");
+
+				CClassInfo topLevel = getInfoFromModel(m, "test.TopLevelClass");
+				CClassInfo midLevel = getInfoFromModel(m, "test.MidLevelClass");
+				CClassInfo baseLevel = getInfoFromModel(m, "test.BaseLevelClass");
+
+				Assert.assertTrue(topLevel.getBaseClass() == topLevelAB);
+				Assert.assertTrue(midLevel.getBaseClass() == midLevelAB);
+				Assert.assertTrue(baseLevel.getBaseClass() == baseLevelAB);
+
+				Assert.assertTrue(midLevelAB.getBaseClass() == topLevelAB);
+				Assert.assertTrue(baseLevelAB.getBaseClass() == midLevelAB);
+			}
+		});
+	}
+
+	@Test
+	public void multiLevelInheritanceWithRestrictionInBetweenFieldTest() throws Throwable {
+		// base class should only copy restriction class fields
+		runTest(new XJCExtensionLogic() {
+			@Override
+			protected File getXsd() {
+				return new File(extensionsResourceDir, "MultiLevelInheritanceWithRestritionAsMid.xsd");
+			}
+
+			@Override
+			protected void validateModel(Model m) {
+				CClassInfo baseClass = getInfoFromModel(m, "test.BaseLevelClass");
+				Assert.assertEquals("Incorrect property list size", 2, baseClass.getProperties().size());
+			}
+		});
+	}
+
 	private boolean isMixed(CPropertyInfo propInfo) {
 		if (propInfo instanceof CReferencePropertyInfo) {
 			return ((CReferencePropertyInfo) propInfo).isMixed();
