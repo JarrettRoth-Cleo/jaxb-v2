@@ -162,6 +162,47 @@ public class XJCExtensionTests extends AbstractXJCTest {
 
 	@Test
 	public void multilevelInheritanceTest() throws Throwable {
+		runTest(new XJCExtensionLogic() {
+			@Override
+			protected File getXsd() {
+				return new File(extensionsResourceDir, "MultiLevelInheritance.xsd");
+			}
+
+			@Override
+			protected void validateModel(Model m) {
+				CClassInfo baseClass = getInfoFromModel(m, "test.BaseLevelClass");
+				Assert.assertEquals("Incorrect property list size", 3, baseClass.getProperties().size());
+			}
+		});
+
+	}
+
+	@Test
+	public void multilevelInheritanceNewClassInheritanceExistsTest() throws Throwable {
+		runTest(new XJCExtensionLogic() {
+			@Override
+			protected File getXsd() {
+				return new File(extensionsResourceDir, "MultiLevelInheritance.xsd");
+			}
+
+			@Override
+			protected void validateModel(Model m) {
+				CClassInfo topLevelAB = getInfoFromModel(m, "test.TopLevelClassIF");
+				CClassInfo midLevelAB = getInfoFromModel(m, "test.MidLevelClassIF");
+				CClassInfo baseLevelAB = getInfoFromModel(m, "test.BaseLevelClassIF");
+
+				CClassInfo topLevel = getInfoFromModel(m, "test.TopLevelClass");
+				CClassInfo midLevel = getInfoFromModel(m, "test.MidLevelClass");
+				CClassInfo baseLevel = getInfoFromModel(m, "test.BaseLevelClass");
+
+				Assert.assertTrue(topLevel.getBaseClass() == topLevelAB);
+				Assert.assertTrue(midLevel.getBaseClass() == midLevelAB);
+				Assert.assertTrue(baseLevel.getBaseClass() == baseLevelAB);
+
+				Assert.assertTrue(midLevelAB.getBaseClass() == topLevelAB);
+				Assert.assertTrue(baseLevelAB.getBaseClass() == midLevelAB);
+			}
+		});
 
 	}
 
