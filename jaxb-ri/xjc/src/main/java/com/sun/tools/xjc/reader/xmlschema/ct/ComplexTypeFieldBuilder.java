@@ -45,9 +45,9 @@ import java.util.Map;
 
 import com.sun.tools.xjc.reader.xmlschema.BGMBuilder;
 import com.sun.tools.xjc.reader.xmlschema.BindingComponent;
-import com.sun.tools.xjc.reader.xmlschema.ct.clFork.MyExtendedComplexTypeBuilder;
-import com.sun.tools.xjc.reader.xmlschema.ct.clFork.MyMixedExtendedComplexTypeBuilder;
-import com.sun.tools.xjc.reader.xmlschema.ct.clFork.MyRestrictedComplexTypeBuilder;
+import com.sun.tools.xjc.reader.xmlschema.ct.clFork.CLForkExtendedComplexTypeBuilder;
+import com.sun.tools.xjc.reader.xmlschema.ct.clFork.CLForkMixedExtendedComplexTypeBuilder;
+import com.sun.tools.xjc.reader.xmlschema.ct.clFork.CLForkRestrictedComplexTypeBuilder;
 import com.sun.xml.xsom.XSComplexType;
 
 /**
@@ -65,8 +65,8 @@ public final class ComplexTypeFieldBuilder extends BindingComponent {
 	 * <p>
 	 * Builders are tried in this order, to put specific ones first.
 	 */
-	private final CTBuilder[] complexTypeBuilders = new CTBuilder[] { new MultiWildcardComplexTypeBuilder(), new MyMixedExtendedComplexTypeBuilder(),
-			new MixedComplexTypeBuilder(), new FreshComplexTypeBuilder(), new MyExtendedComplexTypeBuilder(), new MyRestrictedComplexTypeBuilder(),
+	private final CTBuilder[] complexTypeBuilders = new CTBuilder[] { new MultiWildcardComplexTypeBuilder(), new CLForkMixedExtendedComplexTypeBuilder(),
+			new MixedComplexTypeBuilder(), new FreshComplexTypeBuilder(), new CLForkExtendedComplexTypeBuilder(), new CLForkRestrictedComplexTypeBuilder(),
 			new STDerivedComplexTypeBuilder() };
 
 	/** Records ComplexTypeBindingMode for XSComplexType. */
