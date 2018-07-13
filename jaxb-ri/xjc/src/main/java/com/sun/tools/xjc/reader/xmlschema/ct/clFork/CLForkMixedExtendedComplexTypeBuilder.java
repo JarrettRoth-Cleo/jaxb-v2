@@ -41,11 +41,13 @@
 package com.sun.tools.xjc.reader.xmlschema.ct.clFork;
 
 import com.sun.tools.xjc.model.CClass;
+import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.reader.RawTypeSet;
 import com.sun.tools.xjc.reader.xmlschema.RawTypeSetBuilder;
 import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIProperty;
 import com.sun.tools.xjc.reader.xmlschema.ct.AbstractExtendedComplexTypeBuilder;
+import com.sun.tools.xjc.reader.xmlschema.ct.BaseClassManager;
 import com.sun.tools.xjc.reader.xmlschema.ct.ComplexTypeBindingMode;
 import com.sun.tools.xjc.reader.xmlschema.ct.Messages;
 import com.sun.xml.xsom.XSComplexType;
@@ -78,13 +80,16 @@ public final class CLForkMixedExtendedComplexTypeBuilder extends AbstractExtende
 		CClass baseClass = selector.bindToType(baseType, ct, true);
 		assert baseClass != null; // global complex type must map to a class
 
+		BaseClassManager m = BaseClassManager.getInstance();
+		CClassInfo currentBean = selector.getCurrentBean();
+		m.createExtendingClass(currentBean, baseClass);
+
 		if (!checkIfExtensionSafe(baseType, ct)) {
 			// error. We can't handle any further extension
 			errorReceiver.error(ct.getLocator(), Messages.ERR_NO_FURTHER_EXTENSION.format(baseType.getName(), ct.getName()));
 			return;
 		}
 
-		selector.getCurrentBean().setBaseClass(baseClass);
 		builder.recordBindingMode(ct, ComplexTypeBindingMode.FALLBACK_EXTENSION);
 
 		BIProperty prop = BIProperty.getCustomization(ct);

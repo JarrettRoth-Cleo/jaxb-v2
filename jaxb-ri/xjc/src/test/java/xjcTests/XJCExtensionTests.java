@@ -132,6 +132,30 @@ public class XJCExtensionTests extends AbstractXJCTest {
 		});
 	}
 
+	@Test
+	public void mixedExtensionBothSetMixedInterfaceChecking() throws Throwable {
+		runTest(new XJCExtensionLogic() {
+			@Override
+			protected File getXsd() {
+				return new File(extensionsResourceDir, "MixedExtensionBothSet.xsd");
+			}
+
+			@Override
+			protected void validateModel(Model m) {
+				CClassInfo mixedExtensionAB = getInfoFromModel(m, "test.mixedExtensionIF");
+				CClassInfo mixedParentAB = getInfoFromModel(m, "test.mixedParentIF");
+
+				CClassInfo mixedExtension = getInfoFromModel(m, "test.mixedExtension");
+				CClassInfo mixedParent = getInfoFromModel(m, "test.mixedParent");
+
+				Assert.assertTrue(mixedParent.getBaseClass() == mixedParentAB);
+				Assert.assertTrue(mixedExtension.getBaseClass() == mixedExtensionAB);
+
+				Assert.assertTrue(mixedExtensionAB.getBaseClass() == mixedParentAB);
+			}
+		});
+	}
+
 	private boolean isMixed(CPropertyInfo propInfo) {
 		if (propInfo instanceof CReferencePropertyInfo) {
 			return ((CReferencePropertyInfo) propInfo).isMixed();
