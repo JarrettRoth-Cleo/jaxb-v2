@@ -1,4 +1,4 @@
-package com.sun.tools.xjc.reader.xmlschema.ct;
+package com.sun.tools.xjc.reader.xmlschema.ct.clFork;
 
 import java.util.HashMap;
 import java.util.List;

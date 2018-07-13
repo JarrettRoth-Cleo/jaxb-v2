@@ -42,7 +42,6 @@ package com.sun.tools.xjc.reader.xmlschema.ct.clFork;
 
 import com.sun.tools.xjc.model.CClass;
 import com.sun.tools.xjc.model.CClassInfo;
-import com.sun.tools.xjc.reader.xmlschema.ct.BaseClassManager;
 import com.sun.tools.xjc.reader.xmlschema.ct.CTBuilder;
 import com.sun.tools.xjc.reader.xmlschema.ct.FreshComplexTypeBuilder;
 import com.sun.xml.xsom.XSComplexType;

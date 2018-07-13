@@ -47,7 +47,6 @@ import com.sun.tools.xjc.reader.RawTypeSet;
 import com.sun.tools.xjc.reader.xmlschema.RawTypeSetBuilder;
 import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIProperty;
 import com.sun.tools.xjc.reader.xmlschema.ct.AbstractExtendedComplexTypeBuilder;
-import com.sun.tools.xjc.reader.xmlschema.ct.BaseClassManager;
 import com.sun.tools.xjc.reader.xmlschema.ct.ComplexTypeBindingMode;
 import com.sun.tools.xjc.reader.xmlschema.ct.Messages;
 import com.sun.xml.xsom.XSComplexType;

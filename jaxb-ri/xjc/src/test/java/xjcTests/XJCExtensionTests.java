@@ -160,6 +160,11 @@ public class XJCExtensionTests extends AbstractXJCTest {
 		});
 	}
 
+	@Test
+	public void multilevelInheritanceTest() throws Throwable {
+
+	}
+
 	private boolean isMixed(CPropertyInfo propInfo) {
 		if (propInfo instanceof CReferencePropertyInfo) {
 			return ((CReferencePropertyInfo) propInfo).isMixed();
