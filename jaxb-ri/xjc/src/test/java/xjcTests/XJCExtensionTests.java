@@ -101,6 +101,10 @@ public class XJCExtensionTests extends AbstractXJCTest {
 				return new File(extensionsResourceDir, "MixedExtension.xsd");
 			}
 
+			protected boolean genCode() {
+				return true;
+			}
+
 			@Override
 			protected void validateModel(Model m) {
 				CClassInfo simpleAddress = getInfoFromModel(m, "test.mixedExtension");

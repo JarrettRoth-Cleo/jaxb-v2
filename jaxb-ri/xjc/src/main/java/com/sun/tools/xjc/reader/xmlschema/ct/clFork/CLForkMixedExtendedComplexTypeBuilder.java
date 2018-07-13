@@ -65,7 +65,7 @@ public final class CLForkMixedExtendedComplexTypeBuilder extends AbstractExtende
 			return false;
 
 		XSType bt = ct.getBaseType();
-		if (bt.isComplexType() && bt.asComplexType().isMixed() && ct.getDerivationMethod() == XSType.EXTENSION && ct.isMixed()
+		if (bt.isComplexType() && bt.asComplexType().isMixed() && ct.getDerivationMethod() == XSType.EXTENSION
 				&& ct.getContentType().asParticle() != null && ct.getExplicitContent().asEmpty() == null) {
 			return true;
 		}
