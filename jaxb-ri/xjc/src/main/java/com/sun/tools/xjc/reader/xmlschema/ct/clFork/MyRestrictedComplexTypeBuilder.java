@@ -38,69 +38,38 @@
  * holder.
  */
 
-package com.sun.tools.xjc.reader.xmlschema.ct;
+package com.sun.tools.xjc.reader.xmlschema.ct.clFork;
 
 import com.sun.tools.xjc.model.CClass;
 import com.sun.tools.xjc.model.CClassInfo;
+import com.sun.tools.xjc.reader.xmlschema.ct.BaseClassManager;
+import com.sun.tools.xjc.reader.xmlschema.ct.CTBuilder;
+import com.sun.tools.xjc.reader.xmlschema.ct.FreshComplexTypeBuilder;
 import com.sun.xml.xsom.XSComplexType;
-import com.sun.xml.xsom.XSContentType;
 import com.sun.xml.xsom.XSType;
 
 /**
- * Binds a complex type derived from another complex type by extension.
+ * Binds a complex type derived from another complex type by restriction.
  *
  */
-final class MyExtendedComplexTypeBuilder extends AbstractExtendedComplexTypeBuilder {
+public final class MyRestrictedComplexTypeBuilder extends CTBuilder {
 
 	public boolean isApplicable(XSComplexType ct) {
 		XSType baseType = ct.getBaseType();
-		return baseType != schemas.getAnyType() && baseType.isComplexType() && ct.getDerivationMethod() == XSType.EXTENSION;
+		return baseType != schemas.getAnyType() && baseType.isComplexType() && ct.getDerivationMethod() == XSType.RESTRICTION;
 	}
 
 	public void build(XSComplexType ct) {
+
+		new FreshComplexTypeBuilder().build(ct);
 		XSComplexType baseType = ct.getBaseType().asComplexType();
 
 		// build the base class
 		CClass baseClass = selector.bindToType(baseType, ct, true);
 		assert baseClass != null; // global complex type must map to a class
-		BaseClassManager m = BaseClassManager.getInstance();
+
 		CClassInfo currentBean = selector.getCurrentBean();
-		m.createExtendingClass(currentBean, baseClass);
-
-		// derivation by extension.
-		ComplexTypeBindingMode baseTypeFlag = builder.getBindingMode(baseType);
-
-		XSContentType explicitContent = ct.getExplicitContent();
-
-		if (!checkIfExtensionSafe(baseType, ct)) {
-			// error. We can't handle any further extension
-			errorReceiver.error(ct.getLocator(), Messages.ERR_NO_FURTHER_EXTENSION.format(baseType.getName(), ct.getName()));
-			return;
-		}
-
-		// explicit content is always either empty or a particle.
-		if (explicitContent != null && explicitContent.asParticle() != null) {
-			// if (baseTypeFlag == ComplexTypeBindingMode.NORMAL) {
-			// if we have additional explicit content, process them.
-			builder.recordBindingMode(ct, bgmBuilder.getParticleBinder().checkFallback(explicitContent.asParticle())
-					? ComplexTypeBindingMode.FALLBACK_REST : ComplexTypeBindingMode.NORMAL);
-
-			bgmBuilder.getParticleBinder().build(explicitContent.asParticle());
-
-			// } else {
-			// // the base class has already done the fallback.
-			// // don't add anything new
-			// builder.recordBindingMode(ct, baseTypeFlag);
-			// }
-		} else {
-			// if it's empty, no additional processing is necessary
-			builder.recordBindingMode(ct, baseTypeFlag);
-		}
-
-		// adds attributes and we are through.
-		green.attContainer(ct);
-
-		m.updateFields(currentBean, baseClass);
+		BaseClassManager m = BaseClassManager.getInstance();
+		m.createRestrictingClass(currentBean, baseClass);
 	}
-
 }

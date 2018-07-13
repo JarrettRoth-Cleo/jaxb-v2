@@ -45,6 +45,9 @@ import java.util.Map;
 
 import com.sun.tools.xjc.reader.xmlschema.BGMBuilder;
 import com.sun.tools.xjc.reader.xmlschema.BindingComponent;
+import com.sun.tools.xjc.reader.xmlschema.ct.clFork.MyExtendedComplexTypeBuilder;
+import com.sun.tools.xjc.reader.xmlschema.ct.clFork.MyMixedExtendedComplexTypeBuilder;
+import com.sun.tools.xjc.reader.xmlschema.ct.clFork.MyRestrictedComplexTypeBuilder;
 import com.sun.xml.xsom.XSComplexType;
 
 /**
@@ -103,7 +106,7 @@ public final class ComplexTypeFieldBuilder extends BindingComponent {
 	 * Obtains the binding mode recorded through
 	 * {@link #recordBindingMode(XSComplexType, ComplexTypeBindingMode)}.
 	 */
-	protected ComplexTypeBindingMode getBindingMode(XSComplexType type) {
+	public ComplexTypeBindingMode getBindingMode(XSComplexType type) {
 		ComplexTypeBindingMode r = complexTypeBindingModes.get(type);
 		assert r != null;
 		return r;

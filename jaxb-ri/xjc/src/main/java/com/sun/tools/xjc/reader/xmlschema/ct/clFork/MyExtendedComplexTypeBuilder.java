@@ -38,34 +38,27 @@
  * holder.
  */
 
-package com.sun.tools.xjc.reader.xmlschema.ct;
+package com.sun.tools.xjc.reader.xmlschema.ct.clFork;
 
 import com.sun.tools.xjc.model.CClass;
-import com.sun.tools.xjc.model.CPropertyInfo;
-import com.sun.tools.xjc.reader.RawTypeSet;
-import com.sun.tools.xjc.reader.xmlschema.RawTypeSetBuilder;
-import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIProperty;
+import com.sun.tools.xjc.model.CClassInfo;
+import com.sun.tools.xjc.reader.xmlschema.ct.AbstractExtendedComplexTypeBuilder;
+import com.sun.tools.xjc.reader.xmlschema.ct.BaseClassManager;
+import com.sun.tools.xjc.reader.xmlschema.ct.ComplexTypeBindingMode;
+import com.sun.tools.xjc.reader.xmlschema.ct.Messages;
 import com.sun.xml.xsom.XSComplexType;
+import com.sun.xml.xsom.XSContentType;
 import com.sun.xml.xsom.XSType;
 
 /**
- * Handles the Mixed extensions....better?
+ * Binds a complex type derived from another complex type by extension.
+ *
  */
-final class MyMixedExtendedComplexTypeBuilder extends AbstractExtendedComplexTypeBuilder {
+public final class MyExtendedComplexTypeBuilder extends AbstractExtendedComplexTypeBuilder {
 
 	public boolean isApplicable(XSComplexType ct) {
-
-		// TODO: is this necessary?
-		if (!bgmBuilder.isGenerateMixedExtensions())
-			return false;
-
-		XSType bt = ct.getBaseType();
-		if (bt.isComplexType() && bt.asComplexType().isMixed() && ct.getDerivationMethod() == XSType.EXTENSION && ct.isMixed()
-				&& ct.getContentType().asParticle() != null && ct.getExplicitContent().asEmpty() == null) {
-			return true;
-		}
-
-		return false;
+		XSType baseType = ct.getBaseType();
+		return baseType != schemas.getAnyType() && baseType.isComplexType() && ct.getDerivationMethod() == XSType.EXTENSION;
 	}
 
 	public void build(XSComplexType ct) {
@@ -74,6 +67,14 @@ final class MyMixedExtendedComplexTypeBuilder extends AbstractExtendedComplexTyp
 		// build the base class
 		CClass baseClass = selector.bindToType(baseType, ct, true);
 		assert baseClass != null; // global complex type must map to a class
+		BaseClassManager m = BaseClassManager.getInstance();
+		CClassInfo currentBean = selector.getCurrentBean();
+		m.createExtendingClass(currentBean, baseClass);
+
+		// derivation by extension.
+		ComplexTypeBindingMode baseTypeFlag = builder.getBindingMode(baseType);
+
+		XSContentType explicitContent = ct.getExplicitContent();
 
 		if (!checkIfExtensionSafe(baseType, ct)) {
 			// error. We can't handle any further extension
@@ -81,19 +82,29 @@ final class MyMixedExtendedComplexTypeBuilder extends AbstractExtendedComplexTyp
 			return;
 		}
 
-		selector.getCurrentBean().setBaseClass(baseClass);
-		builder.recordBindingMode(ct, ComplexTypeBindingMode.FALLBACK_EXTENSION);
+		// explicit content is always either empty or a particle.
+		if (explicitContent != null && explicitContent.asParticle() != null) {
+			// if (baseTypeFlag == ComplexTypeBindingMode.NORMAL) {
+			// if we have additional explicit content, process them.
+			builder.recordBindingMode(ct, bgmBuilder.getParticleBinder().checkFallback(explicitContent.asParticle())
+					? ComplexTypeBindingMode.FALLBACK_REST : ComplexTypeBindingMode.NORMAL);
 
-		BIProperty prop = BIProperty.getCustomization(ct);
-		CPropertyInfo p;
+			bgmBuilder.getParticleBinder().build(explicitContent.asParticle());
 
-		RawTypeSet ts = RawTypeSetBuilder.build(ct.getContentType().asParticle(), false);
-		p = prop.createContentExtendedMixedReferenceProperty(ct.getName() + "_Mixed", ct, ts);
-
-		selector.getCurrentBean().addProperty(p);
+			// } else {
+			// // the base class has already done the fallback.
+			// // don't add anything new
+			// builder.recordBindingMode(ct, baseTypeFlag);
+			// }
+		} else {
+			// if it's empty, no additional processing is necessary
+			builder.recordBindingMode(ct, baseTypeFlag);
+		}
 
 		// adds attributes and we are through.
 		green.attContainer(ct);
+
+		m.updateFields(currentBean, baseClass);
 	}
 
 }
