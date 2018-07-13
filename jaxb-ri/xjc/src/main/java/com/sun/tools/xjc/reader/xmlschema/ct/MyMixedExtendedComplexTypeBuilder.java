@@ -49,18 +49,13 @@ import com.sun.xml.xsom.XSComplexType;
 import com.sun.xml.xsom.XSType;
 
 /**
- * @author Kohsuke Kawaguchi
- * 
- *         <b>IMPORTANT</b>
- * 
- *         This class is no longer used in the Clarify XJC fork! Use
- *         MyMixedExtendedComplexTypeBuilder instead. It assumes the global
- *         binding is set and will set the parent class correctly.
+ * Handles the Mixed extensions....better?
  */
-final class MixedExtendedComplexTypeBuilder extends AbstractExtendedComplexTypeBuilder {
+final class MyMixedExtendedComplexTypeBuilder extends AbstractExtendedComplexTypeBuilder {
 
 	public boolean isApplicable(XSComplexType ct) {
 
+		// TODO: is this necessary?
 		if (!bgmBuilder.isGenerateMixedExtensions())
 			return false;
 
@@ -93,7 +88,7 @@ final class MixedExtendedComplexTypeBuilder extends AbstractExtendedComplexTypeB
 		CPropertyInfo p;
 
 		RawTypeSet ts = RawTypeSetBuilder.build(ct.getContentType().asParticle(), false);
-		p = prop.createDummyExtendedMixedReferenceProperty("contentOverrideFor" + ct.getName(), ct, ts);
+		p = prop.createContentExtendedMixedReferenceProperty(ct.getName() + "_Mixed", ct, ts);
 
 		selector.getCurrentBean().addProperty(p);
 

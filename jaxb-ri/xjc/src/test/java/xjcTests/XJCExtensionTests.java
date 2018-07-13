@@ -13,6 +13,8 @@ import com.sun.codemodel.JCodeModel;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.model.CClassInfo;
+import com.sun.tools.xjc.model.CPropertyInfo;
+import com.sun.tools.xjc.model.CReferencePropertyInfo;
 import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.outline.Outline;
 
@@ -124,9 +126,18 @@ public class XJCExtensionTests extends AbstractXJCTest {
 			protected void validateModel(Model m) {
 				CClassInfo simpleAddress = getInfoFromModel(m, "test.mixedExtension");
 				Assert.assertEquals("Incorrect property list size", 1, simpleAddress.getProperties().size());
-
+				CPropertyInfo propInfo = simpleAddress.getProperty("mixedExtension_Mixed");
+				Assert.assertTrue(isMixed(propInfo));
 			}
 		});
+	}
+
+	private boolean isMixed(CPropertyInfo propInfo) {
+		if (propInfo instanceof CReferencePropertyInfo) {
+			return ((CReferencePropertyInfo) propInfo).isMixed();
+		}
+
+		return false;
 	}
 
 	private void assertClassInModel(Model m, String className) {
