@@ -2,7 +2,9 @@ package xjcTests;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -10,11 +12,14 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
 import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.JDefinedClass;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.model.CClassInfo;
+import com.sun.tools.xjc.model.CClassInfoParent;
 import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.model.CReferencePropertyInfo;
+import com.sun.tools.xjc.model.CTypeInfo;
 import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.outline.Outline;
 
@@ -245,6 +250,35 @@ public class XJCExtensionTests extends AbstractXJCTest {
 	}
 
 	@Test
+	public void outOfOrderMultiLevelInheritanceWithRestrictionInBetweenTest() throws Throwable {
+		// Inheritance should be maintained
+		runTest(new XJCExtensionLogic() {
+			@Override
+			protected File getXsd() {
+				return new File(extensionsResourceDir, "MultiLevelInheritanceWithRestritionAsMid.xsd");
+			}
+
+			@Override
+			protected void validateModel(Model m) {
+				CClassInfo topLevelAB = getInfoFromModel(m, packageNameTODO + ".TopLevelClassIF");
+				CClassInfo midLevelAB = getInfoFromModel(m, packageNameTODO + ".MidLevelClassIF");
+				CClassInfo baseLevelAB = getInfoFromModel(m, packageNameTODO + ".BaseLevelClassIF");
+
+				CClassInfo topLevel = getInfoFromModel(m, "test.TopLevelClass");
+				CClassInfo midLevel = getInfoFromModel(m, "test.MidLevelClass");
+				CClassInfo baseLevel = getInfoFromModel(m, "test.BaseLevelClass");
+
+				Assert.assertTrue(topLevel.getBaseClass() == topLevelAB);
+				Assert.assertTrue(midLevel.getBaseClass() == midLevelAB);
+				Assert.assertTrue(baseLevel.getBaseClass() == baseLevelAB);
+
+				Assert.assertTrue(midLevelAB.getBaseClass() == topLevelAB);
+				Assert.assertTrue(baseLevelAB.getBaseClass() == midLevelAB);
+			}
+		});
+	}
+
+	@Test
 	public void multiLevelInheritanceWithRestrictionInBetweenFieldTest() throws Throwable {
 		// base class should only copy restriction class fields
 		runTest(new XJCExtensionLogic() {
@@ -291,6 +325,8 @@ public class XJCExtensionTests extends AbstractXJCTest {
 
 	private abstract class XJCExtensionLogic extends Logic {
 
+		private Map<CClassInfo, CClassInfo> modifiedClasses;
+
 		protected void loadBindingFiles(List<File> files) {
 			files.add(new File(extensionsResourceDir, "extensionBindings.xjb"));
 		}
@@ -311,10 +347,77 @@ public class XJCExtensionTests extends AbstractXJCTest {
 				}
 				jModel.build(outputDir);
 			}
+
+			if (!modifiedClasses.isEmpty()) {
+				Map<JDefinedClass, JDefinedClass> definedClasses = loadDefinedClasses(jModel);
+				// For each package, for each class, (for each nested class),
+				// for each field -> check its type, if its a key, set it to the
+				// value... also need to check NarrowedClasses for the
+				// ObjectFactory......
+
+				// TODO: will this be necessary or will any reference be defined
+				// first?
+				// TODO: how does XJC parse the document? Bottom up? top Down?
+				// Can I replace the class right away? Then all I would need to
+				// do is analyze the ObjectFactory.
+				// I can cache all the reference properties (need to make a
+				// change to probably ALL builders then)
+				// JType t =
+				// jModel.packages().next().classes().next().fields().get("ds").type();
+				// h();
+			}
+		}
+
+		private Map<JDefinedClass, JDefinedClass> loadDefinedClasses(JCodeModel jModel) {
+			Map<JDefinedClass, JDefinedClass> classes = new HashMap<>(modifiedClasses.size());
+			for (Map.Entry<CClassInfo, CClassInfo> classInfoEntry : modifiedClasses.entrySet()) {
+				JDefinedClass keyClass = getClassByTypeInfo(jModel, classInfoEntry.getKey());
+				JDefinedClass valueClass = getClassByTypeInfo(jModel, classInfoEntry.getValue());
+
+				classes.put(keyClass, valueClass);
+			}
+			return classes;
+		}
+
+		private JDefinedClass getClassByTypeInfo(JCodeModel model, CTypeInfo typeInfo) {
+			if (typeInfo instanceof CClassInfo) {
+				CClassInfo info = (CClassInfo) typeInfo;
+				if (isParentPackage(info)) {
+					String fullName = info.fullName();
+					return model._getClass(fullName);
+				}
+
+				CClassInfoParent parent = info.parent();
+
+				String packageVal = parent.getOwnerPackage().name();
+				String typeFqn = typeInfo.toString();
+				String[] nestedClassPathParts = typeFqn.substring(packageVal.length() + 1).split("\\.");
+
+				String currentFqn = packageVal + "." + nestedClassPathParts[0];
+
+				JDefinedClass returnClass = model._getClass(currentFqn);
+				for (int i = 1; i < nestedClassPathParts.length; i++) {
+					returnClass = returnClass.getNestedClass(nestedClassPathParts[i]);
+				}
+
+				return returnClass;
+			}
+
+			// TODO
+			return null;
+		}
+
+		private boolean isParentPackage(CClassInfo cci) {
+			return cci.parent() instanceof CClassInfoParent.Package;
+		}
+
+		private void h() {
+
 		}
 
 		protected abstract void validateModel(Model m);
 
+		// TODO: add whatever is necessary to the Clarify Plugin
 		private class PostProcessPlugin extends Plugin {
 
 			@Override
@@ -338,8 +441,8 @@ public class XJCExtensionTests extends AbstractXJCTest {
 			public void postProcessModel(Model model, ErrorHandler errorHandler) {
 				validateModel(model);
 
-				// TODO: this is more implementation of the solution:
-
+				MyClarifyBaseClassManager bcm = (MyClarifyBaseClassManager) model.options.baseClassManager;
+				modifiedClasses = bcm.getModifiedClasses();
 			}
 		}
 	}
