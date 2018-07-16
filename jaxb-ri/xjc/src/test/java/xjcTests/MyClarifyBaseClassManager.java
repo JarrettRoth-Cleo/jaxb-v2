@@ -16,6 +16,8 @@ import com.sun.xml.xsom.XSComponent;
 public class MyClarifyBaseClassManager implements BaseClassManager {
 
 	private CClassInfoParent.Package abstractClassPackage;
+
+	// Testing package name
 	private final String PACKAGE_NAME = "ohBoiNewPackageName2";
 
 	public MyClarifyBaseClassManager() {
@@ -36,10 +38,6 @@ public class MyClarifyBaseClassManager implements BaseClassManager {
 
 	/**
 	 * Because no classes will be removed, this could be pretty straight forward
-	 * 
-	 * TODO: handles only restriction correctly
-	 * 
-	 * TODO: Move this code to shared location for the 2 methods
 	 */
 	public void createExtension(CClassInfo extendingClass, CClass parentClass) {
 		CClassInfo newClassInfo = null;
