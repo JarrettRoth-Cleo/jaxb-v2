@@ -1,9 +1,10 @@
 package com.sun.tools.xjc.reader.xmlschema.ct.clFork;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.JPackage;
 import com.sun.tools.xjc.model.CClass;
 import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.tools.xjc.model.CClassInfoParent;
@@ -11,9 +12,12 @@ import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.model.Model;
 import com.sun.xml.xsom.XSComponent;
 
+//TODO: can this be extracted from the XJC project and set in the SchemaCompiler?
 public class BaseClassManager {
 
 	private static BaseClassManager self;
+	private CClassInfoParent.Package abstractClassPackage;
+	private final String PACKAGE_NAME = "ohBoiNewPackageName";
 
 	public static final BaseClassManager getInstance() {
 		if (self == null) {
@@ -88,35 +92,12 @@ public class BaseClassManager {
 	}
 
 	private void updateFieldsFromAncestors(CClassInfo info, CClassInfo parentClass) {
-		List<CPropertyInfo> props = info.getProperties();
-
 		CClassInfo currentParent = parentClass;
 		for (CPropertyInfo parentProp : currentParent.getProperties()) {
 			if (info.getProperty(parentProp.getName(true)) == null) {
 				info.addProperty(parentProp);
 			}
 		}
-		//
-		// info.getProperties().clear();
-		// info.getProperties().addAll(props);
-	}
-
-	/**
-	 * TODO: how to handle extending mixed cases where a field matches ....well
-	 * that's the other builder I think...
-	 * 
-	 * @param props
-	 * @param name
-	 * @return
-	 */
-	private boolean doesPropertyListContainFieldName(List<CPropertyInfo> props, String name) {
-		for (CPropertyInfo info : props) {
-			if (name.equals(info.getName(true))) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	private CClassInfo createNewAbstractClassInfo(CClassInfo info, CClassInfo parentInfo) {
@@ -124,7 +105,7 @@ public class BaseClassManager {
 		// are being generated in order...
 		String name = info.getSqueezedName() + "IF";
 		Model m = info.model;
-		CClassInfoParent todoPackage = getBasePackage(info);
+		CClassInfoParent todoPackage = getAbstractClassPackage(info.model);
 		XSComponent todoSource = info.getSchemaComponent();
 		CClassInfo newInfo = new MyCClassInfo(m, todoPackage, todoSource, name);
 		newInfo.setBaseClass(parentInfo);
@@ -132,30 +113,26 @@ public class BaseClassManager {
 		return newInfo;
 	}
 
-	/**
-	 * TODO: create a new package instead of placing in the same as the working
-	 * class.
-	 * 
-	 * TODO: will not handle all cases potentially.
-	 * 
-	 * @param parentClass
-	 * @return
-	 */
-	private CClassInfoParent getBasePackage(CClassInfo parentClass) {
-		CClassInfoParent p = parentClass.parent();
-		if (!(p instanceof CClassInfoParent.Package)) {
-			return getBasePackage((CClassInfo) p);
+	private CClassInfoParent.Package getAbstractClassPackage(Model m) {
+		if (abstractClassPackage == null) {
+			JCodeModel codeModel = m.codeModel;
+			JPackage jpack = codeModel._package(PACKAGE_NAME);
+			abstractClassPackage = new CClassInfoParent.Package(jpack);
 		}
-		return p;
+		return abstractClassPackage;
 	}
 
-	private CClassInfo getKeyInfoFromValue(CClassInfo value) {
-		for (Map.Entry<CClassInfo, CClassInfo> entry : modifiedClasses.entrySet()) {
-			if (entry.getValue() == value) {
-				return entry.getKey();
-			}
-		}
-		return null;
+	public Map<CClassInfo, CClassInfo> getModifiedClasses() {
+		return modifiedClasses;
+	}
+
+	public void reset() {
+		modifiedClasses.clear();
+		abstractClassPackage = null;
+	}
+
+	public String getPackageName() {
+		return PACKAGE_NAME;
 	}
 
 	private class MyCClassInfo extends CClassInfo {

@@ -17,9 +17,11 @@ import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.model.CReferencePropertyInfo;
 import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.outline.Outline;
+import com.sun.tools.xjc.reader.xmlschema.ct.clFork.BaseClassManager;
 
 public class XJCExtensionTests extends AbstractXJCTest {
 	private File extensionsResourceDir = new File(resourceDir, "extensions");
+	private BaseClassManager manager = BaseClassManager.getInstance();
 
 	@Test
 	public void simpleTypeRestrictionAndExtensionTest() throws Throwable {
@@ -31,9 +33,9 @@ public class XJCExtensionTests extends AbstractXJCTest {
 
 			@Override
 			protected void validateModel(Model m) {
-				CClassInfo identifierAb = getInfoFromModel(m, "test.IdentifierTypeIF");
-				CClassInfo partyIdentifierAb = getInfoFromModel(m, "test.PartyIdentifierTypeIF");
-				CClassInfo bankAccountIdentifierAb = getInfoFromModel(m, "test.BankAccountPartyRelationshipTypeIF");
+				CClassInfo identifierAb = getInfoFromModel(m, manager.getPackageName() + ".IdentifierTypeIF");
+				CClassInfo partyIdentifierAb = getInfoFromModel(m, manager.getPackageName() + ".PartyIdentifierTypeIF");
+				CClassInfo bankAccountIdentifierAb = getInfoFromModel(m, manager.getPackageName() + ".BankAccountPartyRelationshipTypeIF");
 
 				CClassInfo identifierType = getInfoFromModel(m, "test.IdentifierType");
 				CClassInfo partyIdentifierType = getInfoFromModel(m, "test.PartyIdentifierType");
@@ -61,8 +63,8 @@ public class XJCExtensionTests extends AbstractXJCTest {
 
 			@Override
 			protected void validateModel(Model m) {
-				CClassInfo phyicalAddressAB = getInfoFromModel(m, "test.physicalAddressTypeIF");
-				CClassInfo simpleAddressAB = getInfoFromModel(m, "test.simpleAddressTypeIF");
+				CClassInfo phyicalAddressAB = getInfoFromModel(m, manager.getPackageName() + ".physicalAddressTypeIF");
+				CClassInfo simpleAddressAB = getInfoFromModel(m, manager.getPackageName() + ".simpleAddressTypeIF");
 
 				CClassInfo phyicalAddress = getInfoFromModel(m, "test.physicalAddressType");
 				CClassInfo simpleAddress = getInfoFromModel(m, "test.simpleAddressType");
@@ -82,6 +84,10 @@ public class XJCExtensionTests extends AbstractXJCTest {
 			@Override
 			protected File getXsd() {
 				return new File(extensionsResourceDir, "BookExampleExtension.xsd");
+			}
+
+			protected boolean genCode() {
+				return true;
 			}
 
 			@Override
@@ -146,8 +152,8 @@ public class XJCExtensionTests extends AbstractXJCTest {
 
 			@Override
 			protected void validateModel(Model m) {
-				CClassInfo mixedExtensionAB = getInfoFromModel(m, "test.mixedExtensionIF");
-				CClassInfo mixedParentAB = getInfoFromModel(m, "test.mixedParentIF");
+				CClassInfo mixedExtensionAB = getInfoFromModel(m, manager.getPackageName() + ".mixedExtensionIF");
+				CClassInfo mixedParentAB = getInfoFromModel(m, manager.getPackageName() + ".mixedParentIF");
 
 				CClassInfo mixedExtension = getInfoFromModel(m, "test.mixedExtension");
 				CClassInfo mixedParent = getInfoFromModel(m, "test.mixedParent");
@@ -187,9 +193,9 @@ public class XJCExtensionTests extends AbstractXJCTest {
 
 			@Override
 			protected void validateModel(Model m) {
-				CClassInfo topLevelAB = getInfoFromModel(m, "test.TopLevelClassIF");
-				CClassInfo midLevelAB = getInfoFromModel(m, "test.MidLevelClassIF");
-				CClassInfo baseLevelAB = getInfoFromModel(m, "test.BaseLevelClassIF");
+				CClassInfo topLevelAB = getInfoFromModel(m, manager.getPackageName() + ".TopLevelClassIF");
+				CClassInfo midLevelAB = getInfoFromModel(m, manager.getPackageName() + ".MidLevelClassIF");
+				CClassInfo baseLevelAB = getInfoFromModel(m, manager.getPackageName() + ".BaseLevelClassIF");
 
 				CClassInfo topLevel = getInfoFromModel(m, "test.TopLevelClass");
 				CClassInfo midLevel = getInfoFromModel(m, "test.MidLevelClass");
@@ -217,9 +223,9 @@ public class XJCExtensionTests extends AbstractXJCTest {
 
 			@Override
 			protected void validateModel(Model m) {
-				CClassInfo topLevelAB = getInfoFromModel(m, "test.TopLevelClassIF");
-				CClassInfo midLevelAB = getInfoFromModel(m, "test.MidLevelClassIF");
-				CClassInfo baseLevelAB = getInfoFromModel(m, "test.BaseLevelClassIF");
+				CClassInfo topLevelAB = getInfoFromModel(m, manager.getPackageName() + ".TopLevelClassIF");
+				CClassInfo midLevelAB = getInfoFromModel(m, manager.getPackageName() + ".MidLevelClassIF");
+				CClassInfo baseLevelAB = getInfoFromModel(m, manager.getPackageName() + ".BaseLevelClassIF");
 
 				CClassInfo topLevel = getInfoFromModel(m, "test.TopLevelClass");
 				CClassInfo midLevel = getInfoFromModel(m, "test.MidLevelClass");
@@ -328,6 +334,9 @@ public class XJCExtensionTests extends AbstractXJCTest {
 
 			public void postProcessModel(Model model, ErrorHandler errorHandler) {
 				validateModel(model);
+
+				// TODO: this is more implementation of the solution:
+
 			}
 		}
 	}
