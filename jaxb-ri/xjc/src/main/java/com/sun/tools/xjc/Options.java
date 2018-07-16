@@ -95,12 +95,16 @@ import com.sun.xml.bind.api.impl.NameConverter;
  * class should be abstract enough so that it could be parsed from both
  * command-line or Ant.
  */
+@SuppressWarnings({ "restriction", "deprecation", "resource", "unchecked", "rawtypes" })
+
 public class Options {
 
 	/**
-	 * manager for making extensions and restrictions
+	 * manager for making extensions and restrictions. The base implementation
+	 * will outright fail when the methods are called. An actual implementation
+	 * needs to be set for correct execution.
 	 */
-	public BaseClassManager baseClassManager;
+	public BaseClassManager baseClassManager = new BaseClassManager.FailureBaseClassManager();
 
 	/** If "-debug" is specified. */
 	public boolean debugMode;

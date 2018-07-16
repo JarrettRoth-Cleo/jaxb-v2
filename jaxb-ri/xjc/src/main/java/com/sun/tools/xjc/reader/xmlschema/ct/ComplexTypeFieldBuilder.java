@@ -65,9 +65,9 @@ public final class ComplexTypeFieldBuilder extends BindingComponent {
 	 * <p>
 	 * Builders are tried in this order, to put specific ones first.
 	 */
-	private final CTBuilder[] complexTypeBuilders = new CTBuilder[] { new MultiWildcardComplexTypeBuilder(), new CLForkMixedExtendedComplexTypeBuilder(),
-			new MixedComplexTypeBuilder(), new FreshComplexTypeBuilder(), new CLForkExtendedComplexTypeBuilder(), new CLForkRestrictedComplexTypeBuilder(),
-			new STDerivedComplexTypeBuilder() };
+	private final CTBuilder[] complexTypeBuilders = new CTBuilder[] { new MultiWildcardComplexTypeBuilder(),
+			new CLForkMixedExtendedComplexTypeBuilder(), new MixedComplexTypeBuilder(), new FreshComplexTypeBuilder(),
+			new CLForkExtendedComplexTypeBuilder(), new CLForkRestrictedComplexTypeBuilder(), new STDerivedComplexTypeBuilder() };
 
 	/** Records ComplexTypeBindingMode for XSComplexType. */
 	private final Map<XSComplexType, ComplexTypeBindingMode> complexTypeBindingModes = new HashMap<XSComplexType, ComplexTypeBindingMode>();

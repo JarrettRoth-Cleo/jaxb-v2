@@ -8,4 +8,23 @@ public interface BaseClassManager {
 
 	public void updateFields(CClassInfo extendingClass, CClass parentClass);
 
+	/**
+	 * Implementation of the BaseClassManager class that will throw exceptions
+	 * when used. The SchemaCompiler's options baseClassManager field should be
+	 * a reference to an actual BaseClassManager instance
+	 */
+	public static class FailureBaseClassManager implements BaseClassManager {
+
+		@Override
+		public void createExtension(CClassInfo extendingClass, CClass parentClass) {
+			throw new UnsupportedOperationException("Method is not enabled.");
+		}
+
+		@Override
+		public void updateFields(CClassInfo extendingClass, CClass parentClass) {
+			throw new UnsupportedOperationException("Method is not enabled.");
+		}
+
+	}
+
 }
