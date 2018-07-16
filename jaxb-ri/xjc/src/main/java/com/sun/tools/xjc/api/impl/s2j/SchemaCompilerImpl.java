@@ -75,7 +75,6 @@ import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.outline.Outline;
 import com.sun.tools.xjc.reader.internalizer.DOMForest;
 import com.sun.tools.xjc.reader.internalizer.SCDBasedBindingSet;
-import com.sun.tools.xjc.reader.xmlschema.ct.clFork.BaseClassManager;
 import com.sun.tools.xjc.reader.xmlschema.parser.LSInputSAXWrapper;
 import com.sun.tools.xjc.reader.xmlschema.parser.XMLSchemaInternalizationLogic;
 import com.sun.xml.bind.unmarshaller.DOMScanner;
@@ -222,7 +221,6 @@ public final class SchemaCompilerImpl extends ErrorReceiver implements SchemaCom
 	}
 
 	public JAXBModelImpl bind() {
-		BaseClassManager.getInstance().reset();
 
 		// this has been problematic. turn it off.
 		// if(!forest.checkSchemaCorrectness(this))

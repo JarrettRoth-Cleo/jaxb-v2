@@ -135,6 +135,8 @@ public class AbstractXJCTest {
 	private void addCustomNameCovnerter(Options ops) {
 		try {
 			ops.setNameConverter(getTestingNameConverter(), getTestingNameConverterPlugin());
+			// TODO
+			ops.baseClassManager = new MyClarifyBaseClassManager();
 		} catch (BadCommandLineException e) {
 			Assert.fail(e.getMessage());
 		}

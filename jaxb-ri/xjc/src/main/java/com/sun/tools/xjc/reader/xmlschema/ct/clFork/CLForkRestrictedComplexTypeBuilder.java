@@ -68,7 +68,7 @@ public final class CLForkRestrictedComplexTypeBuilder extends CTBuilder {
 		assert baseClass != null; // global complex type must map to a class
 
 		CClassInfo currentBean = selector.getCurrentBean();
-		BaseClassManager m = BaseClassManager.getInstance();
-		m.createRestrictingClass(currentBean, baseClass);
+		BaseClassManager m = currentBean.model.options.baseClassManager;
+		m.createExtension(currentBean, baseClass);
 	}
 }

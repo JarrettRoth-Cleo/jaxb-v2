@@ -66,9 +66,9 @@ public final class CLForkExtendedComplexTypeBuilder extends AbstractExtendedComp
 		// build the base class
 		CClass baseClass = selector.bindToType(baseType, ct, true);
 		assert baseClass != null; // global complex type must map to a class
-		BaseClassManager m = BaseClassManager.getInstance();
 		CClassInfo currentBean = selector.getCurrentBean();
-		m.createExtendingClass(currentBean, baseClass);
+		BaseClassManager m = currentBean.model.options.baseClassManager;
+		m.createExtension(currentBean, baseClass);
 
 		// derivation by extension.
 		ComplexTypeBindingMode baseTypeFlag = builder.getBindingMode(baseType);

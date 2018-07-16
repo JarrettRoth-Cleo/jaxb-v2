@@ -79,9 +79,9 @@ public final class CLForkMixedExtendedComplexTypeBuilder extends AbstractExtende
 		CClass baseClass = selector.bindToType(baseType, ct, true);
 		assert baseClass != null; // global complex type must map to a class
 
-		BaseClassManager m = BaseClassManager.getInstance();
 		CClassInfo currentBean = selector.getCurrentBean();
-		m.createExtendingClass(currentBean, baseClass);
+		BaseClassManager m = currentBean.model.options.baseClassManager;
+		m.createExtension(currentBean, baseClass);
 
 		if (!checkIfExtensionSafe(baseType, ct)) {
 			// error. We can't handle any further extension
