@@ -25,6 +25,13 @@ public interface BaseClassManager {
 			throw new UnsupportedOperationException("Method is not enabled.");
 		}
 
+		@Override
+		public CClassInfo getModifiedClass(CClassInfo ccInfo) {
+			throw new UnsupportedOperationException("Method is not enabled.");
+		}
+
 	}
+
+	public CClassInfo getModifiedClass(CClassInfo ccInfo);
 
 }

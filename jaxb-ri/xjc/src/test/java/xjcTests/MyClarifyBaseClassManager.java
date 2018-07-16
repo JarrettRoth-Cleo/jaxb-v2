@@ -122,4 +122,12 @@ public class MyClarifyBaseClassManager implements BaseClassManager {
 
 	}
 
+	@Override
+	public CClassInfo getModifiedClass(CClassInfo ccInfo) {
+		if (modifiedClasses.containsKey(ccInfo)) {
+			return modifiedClasses.get(ccInfo);
+		}
+		return ccInfo;
+	}
+
 }

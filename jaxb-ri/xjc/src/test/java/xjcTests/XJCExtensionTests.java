@@ -295,6 +295,31 @@ public class XJCExtensionTests extends AbstractXJCTest {
 		});
 	}
 
+	@Test
+	public void fieldModificationsTest() throws Throwable {
+		runTest(new XJCExtensionLogic() {
+			@Override
+			protected File getXsd() {
+				return new File(extensionsResourceDir, "FieldMod.xsd");
+			}
+
+			protected boolean genCode() {
+				return true;
+			}
+
+			@Override
+			protected void validateModel(Model m) {
+				CClassInfo baseClass = getInfoFromModel(m, "test.TestingCLass");
+				for (CPropertyInfo info : baseClass.getProperties()) {
+					h();
+				}
+			}
+		});
+	}
+
+	private void h() {
+	}
+
 	private boolean isMixed(CPropertyInfo propInfo) {
 		if (propInfo instanceof CReferencePropertyInfo) {
 			return ((CReferencePropertyInfo) propInfo).isMixed();
