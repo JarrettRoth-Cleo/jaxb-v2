@@ -104,7 +104,7 @@ public class Options {
 	 * will outright fail when the methods are called. An actual implementation
 	 * needs to be set for correct execution.
 	 */
-	public BaseClassManager baseClassManager = new BaseClassManager.FailureBaseClassManager();
+	public BaseClassManager baseClassManager = null;
 
 	/** If "-debug" is specified. */
 	public boolean debugMode;
