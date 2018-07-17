@@ -47,7 +47,12 @@ public class MyClarifyBaseClassManager implements BaseClassManager {
 			checkParentClassIsSet(parentClassInfo);
 			modifiedParentClassInfo = modifiedClasses.get(parentClassInfo);
 		}
-		newClassInfo = createNewAbstractClassInfo(extendingClass, modifiedParentClassInfo);
+		if (extendingClass.parent() instanceof CClassInfo) {
+			// If the extending class is a nested class
+			newClassInfo = modifiedParentClassInfo;
+		} else {
+			newClassInfo = createNewAbstractClassInfo(extendingClass, modifiedParentClassInfo);
+		}
 
 		extendingClass.setBaseClass(newClassInfo);
 		modifiedClasses.put(extendingClass, newClassInfo);
