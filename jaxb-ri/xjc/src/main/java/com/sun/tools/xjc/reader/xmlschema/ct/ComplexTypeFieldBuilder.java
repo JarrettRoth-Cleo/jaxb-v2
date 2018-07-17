@@ -43,8 +43,11 @@ package com.sun.tools.xjc.reader.xmlschema.ct;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.tools.xjc.model.Model;
+import com.sun.tools.xjc.reader.Ring;
 import com.sun.tools.xjc.reader.xmlschema.BGMBuilder;
 import com.sun.tools.xjc.reader.xmlschema.BindingComponent;
+import com.sun.tools.xjc.reader.xmlschema.ct.clFork.BaseClassManager;
 import com.sun.tools.xjc.reader.xmlschema.ct.clFork.CLForkExtendedComplexTypeBuilder;
 import com.sun.tools.xjc.reader.xmlschema.ct.clFork.CLForkMixedExtendedComplexTypeBuilder;
 import com.sun.tools.xjc.reader.xmlschema.ct.clFork.CLForkRestrictedComplexTypeBuilder;
@@ -65,12 +68,23 @@ public final class ComplexTypeFieldBuilder extends BindingComponent {
 	 * <p>
 	 * Builders are tried in this order, to put specific ones first.
 	 */
-	private final CTBuilder[] complexTypeBuilders = new CTBuilder[] { new MultiWildcardComplexTypeBuilder(),
-			new CLForkMixedExtendedComplexTypeBuilder(), new MixedComplexTypeBuilder(), new FreshComplexTypeBuilder(),
-			new CLForkExtendedComplexTypeBuilder(), new CLForkRestrictedComplexTypeBuilder(), new STDerivedComplexTypeBuilder() };
+	private final CTBuilder[] complexTypeBuilders;
 
 	/** Records ComplexTypeBindingMode for XSComplexType. */
 	private final Map<XSComplexType, ComplexTypeBindingMode> complexTypeBindingModes = new HashMap<XSComplexType, ComplexTypeBindingMode>();
+
+	public ComplexTypeFieldBuilder() {
+		if (Ring.get(Model.class).options.baseClassManager instanceof BaseClassManager.FailureBaseClassManager) {
+			complexTypeBuilders = new CTBuilder[] { new MultiWildcardComplexTypeBuilder(), new MixedExtendedComplexTypeBuilder(),
+					new MixedComplexTypeBuilder(), new FreshComplexTypeBuilder(), new ExtendedComplexTypeBuilder(),
+					new RestrictedComplexTypeBuilder(), new STDerivedComplexTypeBuilder() };
+
+		} else {
+			complexTypeBuilders = new CTBuilder[] { new MultiWildcardComplexTypeBuilder(), new CLForkMixedExtendedComplexTypeBuilder(),
+					new MixedComplexTypeBuilder(), new FreshComplexTypeBuilder(), new CLForkExtendedComplexTypeBuilder(),
+					new CLForkRestrictedComplexTypeBuilder(), new STDerivedComplexTypeBuilder() };
+		}
+	}
 
 	/**
 	 * Binds a complex type to a field expression.

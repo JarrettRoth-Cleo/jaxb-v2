@@ -12,6 +12,7 @@ public interface BaseClassManager {
 	 * Implementation of the BaseClassManager class that will throw exceptions
 	 * when used. The SchemaCompiler's options baseClassManager field should be
 	 * a reference to an actual BaseClassManager instance
+	 * 
 	 */
 	public static class FailureBaseClassManager implements BaseClassManager {
 
