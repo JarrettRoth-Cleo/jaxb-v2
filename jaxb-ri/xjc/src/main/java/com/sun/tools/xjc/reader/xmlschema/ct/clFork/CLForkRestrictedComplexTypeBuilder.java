@@ -38,24 +38,37 @@
  * holder.
  */
 
-package com.sun.tools.xjc.reader.xmlschema.ct;
+package com.sun.tools.xjc.reader.xmlschema.ct.clFork;
 
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
+import com.sun.tools.xjc.model.CClass;
+import com.sun.tools.xjc.model.CClassInfo;
+import com.sun.tools.xjc.reader.xmlschema.ct.CTBuilder;
+import com.sun.tools.xjc.reader.xmlschema.ct.FreshComplexTypeBuilder;
+import com.sun.xml.xsom.XSComplexType;
+import com.sun.xml.xsom.XSType;
 
 /**
- * Message resources
+ * Binds a complex type derived from another complex type by restriction.
+ *
  */
-public enum Messages {
-	ERR_NO_FURTHER_EXTENSION;
+public final class CLForkRestrictedComplexTypeBuilder extends CTBuilder {
 
-	private static final ResourceBundle rb = ResourceBundle.getBundle(Messages.class.getPackage().getName() + ".MessageBundle");
-
-	public String toString() {
-		return format();
+	public boolean isApplicable(XSComplexType ct) {
+		XSType baseType = ct.getBaseType();
+		return baseType != schemas.getAnyType() && baseType.isComplexType() && ct.getDerivationMethod() == XSType.RESTRICTION;
 	}
 
-	public String format(Object... args) {
-		return MessageFormat.format(rb.getString(name()), args);
+	public void build(XSComplexType ct) {
+
+		new FreshComplexTypeBuilder().build(ct);
+		XSComplexType baseType = ct.getBaseType().asComplexType();
+
+		// build the base class
+		CClass baseClass = selector.bindToType(baseType, ct, true);
+		assert baseClass != null; // global complex type must map to a class
+
+		CClassInfo currentBean = selector.getCurrentBean();
+		BaseClassManager m = currentBean.model.options.baseClassManager;
+		m.createExtension(currentBean, baseClass);
 	}
 }

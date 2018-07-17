@@ -38,68 +38,66 @@
  * holder.
  */
 
-package com.sun.tools.xjc.reader.xmlschema.ct;
+package com.sun.tools.xjc.reader.xmlschema.ct.clFork;
 
-import static com.sun.tools.xjc.reader.xmlschema.ct.ComplexTypeBindingMode.FALLBACK_CONTENT;
-import static com.sun.tools.xjc.reader.xmlschema.ct.ComplexTypeBindingMode.NORMAL;
-
+import com.sun.tools.xjc.model.CClass;
+import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.tools.xjc.model.CPropertyInfo;
-import com.sun.tools.xjc.model.TypeUse;
-import com.sun.tools.xjc.reader.xmlschema.BGMBuilder;
+import com.sun.tools.xjc.reader.RawTypeSet;
+import com.sun.tools.xjc.reader.xmlschema.RawTypeSetBuilder;
 import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIProperty;
+import com.sun.tools.xjc.reader.xmlschema.ct.AbstractExtendedComplexTypeBuilder;
+import com.sun.tools.xjc.reader.xmlschema.ct.ComplexTypeBindingMode;
+import com.sun.tools.xjc.reader.xmlschema.ct.Messages;
 import com.sun.xml.xsom.XSComplexType;
-import com.sun.xml.xsom.XSContentType;
-import com.sun.xml.xsom.XSModelGroup;
-import com.sun.xml.xsom.XSParticle;
-import com.sun.xml.xsom.XSSimpleType;
-import com.sun.xml.xsom.XSTerm;
-import com.sun.xml.xsom.visitor.XSContentTypeVisitor;
+import com.sun.xml.xsom.XSType;
 
 /**
- * Builds a complex type that inherits from the anyType complex type.
- *
- * @author Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
+ * Handles the Mixed extensions....better?
  */
-public final class FreshComplexTypeBuilder extends CTBuilder {
+public final class CLForkMixedExtendedComplexTypeBuilder extends AbstractExtendedComplexTypeBuilder {
 
 	public boolean isApplicable(XSComplexType ct) {
-		return ct.getBaseType() == schemas.getAnyType() && !ct.isMixed(); // not
-																			// mixed
+
+		// TODO: is this necessary?
+		if (!bgmBuilder.isGenerateMixedExtensions())
+			return false;
+
+		XSType bt = ct.getBaseType();
+		if (bt.isComplexType() && bt.asComplexType().isMixed() && ct.getDerivationMethod() == XSType.EXTENSION
+				&& ct.getContentType().asParticle() != null && ct.getExplicitContent().asEmpty() == null) {
+			return true;
+		}
+
+		return false;
 	}
 
-	public void build(final XSComplexType ct) {
-		XSContentType contentType = ct.getContentType();
+	public void build(XSComplexType ct) {
+		XSComplexType baseType = ct.getBaseType().asComplexType();
 
-		contentType.visit(new XSContentTypeVisitor() {
-			public void simpleType(XSSimpleType st) {
-				builder.recordBindingMode(ct, ComplexTypeBindingMode.NORMAL);
+		// build the base class
+		CClass baseClass = selector.bindToType(baseType, ct, true);
+		assert baseClass != null; // global complex type must map to a class
 
-				simpleTypeBuilder.refererStack.push(ct);
-				TypeUse use = simpleTypeBuilder.build(st);
-				simpleTypeBuilder.refererStack.pop();
+		CClassInfo currentBean = selector.getCurrentBean();
+		BaseClassManager m = currentBean.model.options.baseClassManager;
+		m.createExtension(currentBean, baseClass);
 
-				BIProperty prop = BIProperty.getCustomization(ct);
-				CPropertyInfo p = prop.createValueProperty("Value", false, ct, use, BGMBuilder.getName(st));
-				selector.getCurrentBean().addProperty(p);
-			}
+		if (!checkIfExtensionSafe(baseType, ct)) {
+			// error. We can't handle any further extension
+			errorReceiver.error(ct.getLocator(), Messages.ERR_NO_FURTHER_EXTENSION.format(baseType.getName(), ct.getName()));
+			return;
+		}
 
-			public void particle(XSParticle p) {
-				// determine the binding of this complex type.
+		builder.recordBindingMode(ct, ComplexTypeBindingMode.FALLBACK_EXTENSION);
 
-				builder.recordBindingMode(ct, bgmBuilder.getParticleBinder().checkFallback(p) ? FALLBACK_CONTENT : NORMAL);
+		BIProperty prop = BIProperty.getCustomization(ct);
+		CPropertyInfo p;
 
-				bgmBuilder.getParticleBinder().build(p);
+		RawTypeSet ts = RawTypeSetBuilder.build(ct.getContentType().asParticle(), false);
+		p = prop.createContentExtendedMixedReferenceProperty(ct.getName() + "_Mixed", ct, ts);
 
-				XSTerm term = p.getTerm();
-				if (term.isModelGroup() && term.asModelGroup().getCompositor() == XSModelGroup.ALL)
-					selector.getCurrentBean().setOrdered(false);
-
-			}
-
-			public void empty(XSContentType e) {
-				builder.recordBindingMode(ct, NORMAL);
-			}
-		});
+		selector.getCurrentBean().addProperty(p);
 
 		// adds attributes and we are through.
 		green.attContainer(ct);

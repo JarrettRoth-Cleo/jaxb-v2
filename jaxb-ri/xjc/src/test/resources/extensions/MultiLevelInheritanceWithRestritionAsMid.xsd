@@ -1,0 +1,32 @@
+<xs:schema xmlns="test" xmlns:bi="test" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="test" elementFormDefault="qualified" version="1.1">
+
+	<xs:element name="Root" type="TopLevelClass"/> 
+
+	<xs:complexType name="TopLevelClass">
+		<xs:sequence>
+			<xs:element name="topLevelField" type="xs:string" maxOccurs="3"/>
+			<xs:any/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="MidLevelClass">
+		<xs:complexContent>
+			<xs:restriction base="TopLevelClass">
+				<xs:sequence>
+					<xs:element name="midLevelField" type="xs:string"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="BaseLevelClass">
+		<xs:complexContent>
+			<xs:extension base="MidLevelClass">
+				<xs:sequence>
+					<xs:element name="baseLevelField" type="xs:string"/>
+				</xs:sequence>
+			</xs:extension >
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

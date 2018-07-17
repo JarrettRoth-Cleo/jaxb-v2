@@ -68,7 +68,7 @@ import com.sun.xml.xsom.visitor.XSTermFunction;
  *
  * @author Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
  */
-abstract class AbstractExtendedComplexTypeBuilder extends CTBuilder {
+public abstract class AbstractExtendedComplexTypeBuilder extends CTBuilder {
 
 	/**
 	 * Map from {@link XSComplexType} to {@link NameClass}[2] that represents
