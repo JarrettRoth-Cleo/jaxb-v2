@@ -64,6 +64,7 @@ import com.sun.tools.xjc.reader.Ring;
 import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIDom;
 import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIGlobalBinding;
 import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIXSubstitutable;
+import com.sun.tools.xjc.reader.xmlschema.ct.clFork.BaseClassManager;
 import com.sun.xml.bind.v2.model.core.ID;
 import com.sun.xml.bind.v2.model.core.WildcardMode;
 import com.sun.xml.xsom.XSElementDecl;
@@ -342,9 +343,10 @@ public class RawTypeSetBuilder implements XSTermVisitor {
 			if (ep != null && target.getAdapterUse() != null)
 				ep.setAdapter(target.getAdapterUse());
 			CNonElement e = target.getInfo();
-			if (e instanceof CClassInfo) {
+			BaseClassManager manager = Ring.get(Model.class).options.baseClassManager;
+			if (e instanceof CClassInfo && manager != null) {
 				CClassInfo ccInfo = (CClassInfo) e;
-				CClassInfo realInfo = Ring.get(Model.class).options.baseClassManager.getModifiedClass(ccInfo);
+				CClassInfo realInfo = manager.getModifiedClass(ccInfo);
 				return new CTypeRef(realInfo, decl);
 			} else {
 				return new CTypeRef(target.getInfo(), decl);
