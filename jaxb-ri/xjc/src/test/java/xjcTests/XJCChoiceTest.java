@@ -116,7 +116,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 	}
 
 	@Test
-	public void bloodworthASNTest() throws Throwable {
+	public void LargeNestedChoicesTest() throws Throwable {
 		runTest(new ChoiceTestLogic() {
 
 			@Override
@@ -126,7 +126,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 			@Override
 			protected File getXsd() {
-				return new File(choiceResourcesDir, "BloodworthASN.XSD");
+				return new File(choiceResourcesDir, "LargeNestedChoices.XSD");
 			}
 
 		});
