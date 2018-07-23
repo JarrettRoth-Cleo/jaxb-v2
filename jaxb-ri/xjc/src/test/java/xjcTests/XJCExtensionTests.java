@@ -21,7 +21,7 @@ import com.sun.tools.xjc.outline.Outline;
 
 public class XJCExtensionTests extends AbstractXJCTest {
 	private File extensionsResourceDir = new File(resourceDir, "extensions");
-	String packageNameTODO = "ohBoiNewPackageName2";
+	String packageNameTODO = "testingPackageName";
 
 	@Test
 	public void simpleTypeRestrictionAndExtensionTest() throws Throwable {
@@ -417,7 +417,7 @@ public class XJCExtensionTests extends AbstractXJCTest {
 			public void postProcessModel(Model model, ErrorHandler errorHandler) {
 				validateModel(model);
 
-				MyClarifyBaseClassManager bcm = (MyClarifyBaseClassManager) model.options.baseClassManager;
+				TestingBaseClassManager bcm = (TestingBaseClassManager) model.options.baseClassManager;
 				modifiedClasses = bcm.getModifiedClasses();
 			}
 		}

@@ -70,7 +70,6 @@ public class AbstractXJCTest {
 
 		logic.handleS2JJAXBModel(model);
 
-		// TODO: how are plugins used here?
 		JCodeModel jcodeModel = model.generateCode(null, null);
 		try {
 			logic.handleJCodeModel(jcodeModel, outputDir);
@@ -84,8 +83,7 @@ public class AbstractXJCTest {
 	private SchemaCompiler getInitializedSchemaCompiler(InputSource xsd, Logic logic) {
 		SchemaCompiler compiler = XJC.createSchemaCompiler();
 		compiler.setErrorListener(new TestingErrorListener());
-		// TODO: THIS is how you activate a plugin for post processing
-		// modeling...
+
 		for (Plugin plugin : getPlugins(logic)) {
 			compiler.getOptions().activePlugins.add(plugin);
 		}
@@ -136,7 +134,7 @@ public class AbstractXJCTest {
 		try {
 			ops.setNameConverter(getTestingNameConverter(), getTestingNameConverterPlugin());
 			// TODO
-			ops.baseClassManager = new MyClarifyBaseClassManager();
+			ops.baseClassManager = new TestingBaseClassManager();
 		} catch (BadCommandLineException e) {
 			Assert.fail(e.getMessage());
 		}
@@ -193,7 +191,7 @@ public class AbstractXJCTest {
 
 		@Override
 		public String getUsage() {
-			return "EVERYWHERE";
+			return "tests";
 		}
 
 		@Override

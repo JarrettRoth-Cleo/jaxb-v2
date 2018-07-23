@@ -20,7 +20,6 @@ import xjcTests.temp.autoNameResolution.NameResolutionPlugin;
 
 //TODO: attempt to utilize the generated annotations with a retry... this may need multiple logic instances
 public class XJCAutoNameResoultionTests extends AbstractXJCTest {
-	private File workingDir = new File("C:/temp/xjc/bindingsTesting");
 
 	@Test
 	@Ignore

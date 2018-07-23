@@ -190,8 +190,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 		}
 
 		private boolean isPropertyChoice(CPropertyInfo propInfo) {
-			// TODO: is this the only way a property can be a choice?
-			// TODO:should these checks use the Impls?
 			if (!(propInfo.getSchemaComponent() instanceof ParticleImpl)) {
 				return false;
 			}

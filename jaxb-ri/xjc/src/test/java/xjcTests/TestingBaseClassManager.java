@@ -13,14 +13,14 @@ import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.reader.xmlschema.ct.clFork.BaseClassManager;
 import com.sun.xml.xsom.XSComponent;
 
-public class MyClarifyBaseClassManager implements BaseClassManager {
+public class TestingBaseClassManager implements BaseClassManager {
 
 	private CClassInfoParent.Package abstractClassPackage;
 
 	// Testing package name
-	private final String PACKAGE_NAME = "ohBoiNewPackageName2";
+	private final String PACKAGE_NAME = "testingPackageName";
 
-	public MyClarifyBaseClassManager() {
+	public TestingBaseClassManager() {
 	}
 	/*
 	 * This class will attempt to manage an inheritance tree that the
