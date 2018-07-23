@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.InputSource;
 
@@ -18,11 +17,9 @@ import xjcTests.temp.autoNameResolution.ExternalBindingsBuilder;
 import xjcTests.temp.autoNameResolution.NameBindingsManager;
 import xjcTests.temp.autoNameResolution.NameResolutionPlugin;
 
-//TODO: attempt to utilize the generated annotations with a retry... this may need multiple logic instances
 public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 
 	@Test
-	@Ignore
 	public void xjcRunsPlugin_test() throws Throwable {
 		BeanNameManager nm = new BeanNameManager();
 		final File f = new File(resourceDir, "simplifiedPrecision.xsd");
