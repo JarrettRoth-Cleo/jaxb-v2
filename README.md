@@ -26,6 +26,9 @@ The  [NameConverter](jaxb-ri/core/src/main/java/com/sun/xml/bind/api/impl/NameCo
 
 Now, the interface is just an interface and can be changed via the SchemaCompiler's options.  All previous references to NameConverter.standard are now going through the NameConverterProvider.getStandard() static method.
 
+#### Squeezed name is used in CClassInfo
+
+Binding values were being ignored in the [CClassInfo](jaxb-ri/xjc/src/main/java/com/sun/tools/xjc/model/CClassInfo.java) methods and now they are honored if the squeezed name value is set.
 
 #### JCodeModel is slighty more mutable
 
