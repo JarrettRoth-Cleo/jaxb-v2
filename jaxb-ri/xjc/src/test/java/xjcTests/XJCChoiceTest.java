@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -31,7 +30,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 	private ModelModificationsManager manager;
 
 	@Test
-	@Ignore
 	public void runSimpleChoiceTest() throws Throwable {
 		runTest(new ChoiceTestLogic() {
 
@@ -48,7 +46,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 	}
 
 	@Test
-	@Ignore
 	public void overridingParentInterfaceTest() throws Throwable {
 		// This tests that a nested class with the same name as the expected
 		// generated choice type marker interface
@@ -68,7 +65,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 	}
 
 	@Test
-	@Ignore
 	public void primitiveTypesTest() throws Throwable {
 		runTest(new ChoiceTestLogic() {
 
@@ -86,7 +82,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 	}
 
 	@Test
-	@Ignore
 	public void primitiveWithComplexTypeReferencesTest() throws Throwable {
 		runTest(new ChoiceTestLogic() {
 
@@ -104,7 +99,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 	}
 
 	@Test
-	@Ignore
 	public void multiLayerChoiceTest() throws Throwable {
 		runTest(new ChoiceTestLogic() {
 
@@ -122,8 +116,7 @@ public class XJCChoiceTest extends AbstractXJCTest {
 	}
 
 	@Test
-	@Ignore
-	public void bloodworthASNTest() throws Throwable {
+	public void LargeNestedChoicesTest() throws Throwable {
 		runTest(new ChoiceTestLogic() {
 
 			@Override
@@ -133,14 +126,13 @@ public class XJCChoiceTest extends AbstractXJCTest {
 
 			@Override
 			protected File getXsd() {
-				return new File(choiceResourcesDir, "BloodworthASN.XSD");
+				return new File(choiceResourcesDir, "LargeNestedChoices.XSD");
 			}
 
 		});
 	}
 
 	@Test
-	@Ignore
 	public void unboundedPrimitiveTypesTest() throws Throwable {
 		runTest(new ChoiceTestLogic() {
 
@@ -190,8 +182,6 @@ public class XJCChoiceTest extends AbstractXJCTest {
 		}
 
 		private boolean isPropertyChoice(CPropertyInfo propInfo) {
-			// TODO: is this the only way a property can be a choice?
-			// TODO:should these checks use the Impls?
 			if (!(propInfo.getSchemaComponent() instanceof ParticleImpl)) {
 				return false;
 			}

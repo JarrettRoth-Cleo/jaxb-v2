@@ -18,76 +18,47 @@ or have questions, ask at our user forum: <a href="mailto:users@metro.java.net">
 * http://java.net/jira/browse/JAX_WS
 * http://java.net/jira/browse/WSIT
 
+### Changes in Fork
 
-### Clarify changes
+#### NameConverter
 
-Clarify needed changes to various aspects of the XJC parsing/generation process.  Most notably:
+The  [NameConverter](jaxb-ri/core/src/main/java/com/sun/xml/bind/api/impl/NameConverter.java) interface has all instances moved from out to the [NameConverterProvider](jaxb-ri/core/src/main/java/com/sun/xml/bind/api/impl/NameConverterProvider.java) class definition.  
 
-* Standard NameConverter needs to preserve how items are represented in the XSD
-* ObjectFactory needs to honor bindings values for fields/classes
-* ComplexType restriction needs to be enabled
+Now, the interface is just an interface and can be changed via the SchemaCompiler's options.  All previous references to NameConverter.standard are now going through the NameConverterProvider.getStandard() static method.
 
-#### Add generated code to Clarify
+#### Squeezed name is used in CClassInfo
 
-To add all necessary classes to the XSD import wizard, you must build the project to generate the XJC deliverables.  Then, you will need to generate the dependencies for the project's runtime.
+Binding values were being ignored in the [CClassInfo](jaxb-ri/xjc/src/main/java/com/sun/tools/xjc/model/CClassInfo.java) methods and now they are honored if the squeezed name value is set.
 
-*Note*: this process is multipart and generates more jars than there were before, but I am not sure how the XJC team generates the smaller jar that just contains XSD and DTD dependencies.
+#### JCodeModel is slighty more mutable
 
-Generating the project's deliverables:
+Changes throughout the JCodeModel classes were needed to be made so post processing could be done to the instances.  
 
-This process can be defined as "clunky" at best.
+Some changes:
+* [JBlock](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JBlock.java) content can be reset
+* [JAssignment](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JAssignment.java) exposes right hand side field
+* [JAnnotationUse](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JAnnotationUse.java) exposes itself and the class it models
+* [JAnnotationStringValue](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JAnnotationStringValue.java) is exposed along with its value
+* [JAnnotationArrayMember](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JAnnotationArrayMember.java) exposes the values
+* [JExpressionDotClass](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JExpressionDotClass.java) new class that is used in the [JExpr](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JExpr.java) for classes found throughout the model.  This exposed itself to outside processes.
+* [JInvocation](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JInvocation.java) allows to view the type and change the type
+* [JMods](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JMods.java) is made public
+* [JNarrowedClass](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JNarrowedClass.java) is made public along with getter methods for its values
+* [JStringLiteral](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JStringLiteral.java) allows the str value to change through a setter method
+* [JVar](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JVar.java) enables setting annotations on itself and enables changing the mods
 
-First, rebuild the entire project so new deliverables are generated:
+#### Ref instantiation is controlled through a factory
 
-1. cd jaxb-ri
-2. mvn package
+A new class [RefFactory](jaxb-ri/xjc/src/main/java/com/sun/tools/xjc/reader/xmlschema/ref/RefFactory.java) was added that can be overridden in the SchemaCompiler's options so change how reference classes are instantiated.
 
-Next, download the dependencies for the xjc project:
-1. cd jaxb-ri/xjc
-2. remove any jars located in the target/dependency dircectory
-3. Copy dependencies into the target/dependency directory: `mvn dependency:copy-dependencies -DincludeScope=runtime`
+The current implementations where originally found in the [RawTypeSetBuilder](jaxb-ri/xjc/src/main/java/com/sun/tools/xjc/reader/xmlschema/RawTypeSetBuilder.java).  Classes that referenced RawTypeSetBuilder.Ref are now referencing the new [Ref](jaxb-ri/xjc/src/main/java/com/sun/tools/xjc/reader/xmlschema/ref/Ref.java) class.
 
-These next steps are where this process starts to fall apart.  The maven logic for copying dependencies seems to only download the libraries from the local maven repo, not the project like we want.
+An example of how to change the functionality of the RefFactory can be found in the [AbstractXJCTest](jaxb-ri/xjc/src/test/java/xjcTests/AbstractXJCTest.java)#addCustomTestingOptions method
 
-First, copy the XJC library `xjc/target/jaxb-xjc-2.2.11.jar`
-Next, copy the XJC dependencies that did not get generated:
-* dtd-parser
-* jaxb-api
-* istack-commons-runtime
-* istack-commons-tools
-* relaxngDatatype
-* rngom
-* xml-apis
-* xsom
+#### CTBuilder instantiation is controlled through a factory
 
-*Note*: if these values are already in the product, they shouldn't need to be changed
+A new class [CTBuilderFactory](jaxb-ri/xjc/src/main/java/com/sun/tools/xjc/reader/xmlschema/ct/CTBuilderFactory.java) was added that can be overridden in the SchemaCompiler's options so change how complex type builders are instantiated.
 
-Lastly, copy out the generated dependencies from the other modules to satisfy the XJC dependecies:
-*Note*: these paths are relative to the jaxb-ri project root
+The [CTBuilder](jaxb-ri/xjc/src/main/java/com/sun/tools/xjc/reader/xmlschema/ct/CTBuilder.java) has been updated to load its array of CTBuilders through the factory instead of an instance variable.
 
-* codemodel\codemodel\target\codemodel-2.2.11.jar
-* core\target\jaxb-core-2.2.11.jar
-* txw\runtime\target\txw2-2.2.11.jar
-
-All of these libraries need to be placed in the Clairfy XSD import wizard plugin for all of the changes to take effect.
-
-
-
-After completing these 2 mvn calls, the XJC jar can be found in jaxb-ri/xjc/xjc/target and all dependencies can be found in jaxb-ri/xjc/xjc/target/dependencies.  All need to be added to the xsd.importwizard plugin.
-
-
-### Overriding the Default NameConverter
-
-Changes were made to the XJC logic to no longer utilize the hard coded NameConverter.standard NameConverter instance.  This allows us to change how the class/interface/field names are generated without having to rebuild the entire XJC project.
-
-This [class](jaxb-ri/core/src/main/java/com/sun/xml/bind/api/impl/NameConverterProvider.java) was added to be the source of each kind of NameConverter instance available to the XJC project.  
-
-This [test suite](jaxb-ri/xjc/src/test/java/xjcTests/NameConverterOverrideTest.java) was created to represent how the standard NameConverter can be implemented.
-
-The current instance of the Standard NameConverter used in the test attempts to remove any automatic camel casing so it matches the XSD closer.  This doesn't follow Java naming conventions, but it does match the data closer.
-
-TODO: Override the `Standard#removeIllegalIdentifierChars` method in in the new  NameConverter in order to map Illegal Identifier characters to their full names.
-Ex: '*' is found in an element name, replace it with 'asterisk'
-
-
-
+An example of how to change the functionality of the CTBuilderFactory can be found in the [AbstractXJCTest](jaxb-ri/xjc/src/test/java/xjcTests/AbstractXJCTest.java)#addCustomTestingOptions method

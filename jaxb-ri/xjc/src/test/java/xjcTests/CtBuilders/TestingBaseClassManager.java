@@ -1,4 +1,4 @@
-package xjcTests;
+package xjcTests.CtBuilders;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,17 +10,21 @@ import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.tools.xjc.model.CClassInfoParent;
 import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.model.Model;
-import com.sun.tools.xjc.reader.xmlschema.ct.clFork.BaseClassManager;
 import com.sun.xml.xsom.XSComponent;
 
-public class MyClarifyBaseClassManager implements BaseClassManager {
+/**
+ * 
+ * Note: this class differs from actual implementation.
+ *
+ */
+public class TestingBaseClassManager {
 
 	private CClassInfoParent.Package abstractClassPackage;
 
 	// Testing package name
-	private final String PACKAGE_NAME = "ohBoiNewPackageName2";
+	private final String PACKAGE_NAME = "testingPackageName";
 
-	public MyClarifyBaseClassManager() {
+	public TestingBaseClassManager() {
 	}
 	/*
 	 * This class will attempt to manage an inheritance tree that the
@@ -127,7 +131,6 @@ public class MyClarifyBaseClassManager implements BaseClassManager {
 
 	}
 
-	@Override
 	public CClassInfo getModifiedClass(CClassInfo ccInfo) {
 		if (modifiedClasses.containsKey(ccInfo)) {
 			return modifiedClasses.get(ccInfo);

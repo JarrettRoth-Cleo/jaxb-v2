@@ -29,6 +29,10 @@ import com.sun.tools.xjc.api.XJC;
 import com.sun.tools.xjc.outline.Outline;
 import com.sun.xml.bind.api.impl.NameConverter;
 
+import xjcTests.CtBuilders.TestingBaseClassManager;
+import xjcTests.CtBuilders.TestingCTBuilderFactory;
+import xjcTests.ref.TestingRefFactory;
+
 /**
  * 
  * This class essentially defines how the wizard would use the XJC project
@@ -70,7 +74,6 @@ public class AbstractXJCTest {
 
 		logic.handleS2JJAXBModel(model);
 
-		// TODO: how are plugins used here?
 		JCodeModel jcodeModel = model.generateCode(null, null);
 		try {
 			logic.handleJCodeModel(jcodeModel, outputDir);
@@ -84,8 +87,7 @@ public class AbstractXJCTest {
 	private SchemaCompiler getInitializedSchemaCompiler(InputSource xsd, Logic logic) {
 		SchemaCompiler compiler = XJC.createSchemaCompiler();
 		compiler.setErrorListener(new TestingErrorListener());
-		// TODO: THIS is how you activate a plugin for post processing
-		// modeling...
+
 		for (Plugin plugin : getPlugins(logic)) {
 			compiler.getOptions().activePlugins.add(plugin);
 		}
@@ -93,7 +95,7 @@ public class AbstractXJCTest {
 			compiler.getOptions().addBindFile(f);
 		}
 
-		addCustomNameCovnerter(compiler.getOptions());
+		addCustomTestingOptions(compiler.getOptions());
 
 		compiler.parseSchema(xsd);
 		return compiler;
@@ -132,11 +134,12 @@ public class AbstractXJCTest {
 		return inputSource;
 	}
 
-	private void addCustomNameCovnerter(Options ops) {
+	private void addCustomTestingOptions(Options ops) {
 		try {
 			ops.setNameConverter(getTestingNameConverter(), getTestingNameConverterPlugin());
-			// TODO
-			ops.baseClassManager = new MyClarifyBaseClassManager();
+			TestingBaseClassManager manager = new TestingBaseClassManager();
+			ops.ctBuilderFactory = new TestingCTBuilderFactory(manager);
+			ops.refFactory = new TestingRefFactory(manager);
 		} catch (BadCommandLineException e) {
 			Assert.fail(e.getMessage());
 		}
@@ -193,7 +196,7 @@ public class AbstractXJCTest {
 
 		@Override
 		public String getUsage() {
-			return "EVERYWHERE";
+			return "tests";
 		}
 
 		@Override

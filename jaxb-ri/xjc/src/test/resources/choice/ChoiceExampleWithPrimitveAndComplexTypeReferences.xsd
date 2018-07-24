@@ -1,4 +1,4 @@
-<xs:schema elementFormDefault="qualified" targetNamespace="cleo.clarify.just.choice.issue" xmlns="cleo.clarify.just.choice.issue" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema elementFormDefault="qualified" targetNamespace="just.choice.issue" xmlns="just.choice.issue" xmlns:xs="http://www.w3.org/2001/XMLSchema">
    <xs:element name="choiceExample">
       <xs:complexType>
          <xs:choice>

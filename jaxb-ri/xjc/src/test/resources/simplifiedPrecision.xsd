@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema elementFormDefault="qualified" targetNamespace="com.cisag.app.sales.obj.CustomerInvoice" xmlns="com.cisag.app.sales.obj.CustomerInvoice" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:schema elementFormDefault="qualified" targetNamespace="sales.obj.CustomerInvoice" xmlns="sales.obj.CustomerInvoice" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <xsd:element name="semiramis">
         <xsd:complexType>
             <xsd:sequence>

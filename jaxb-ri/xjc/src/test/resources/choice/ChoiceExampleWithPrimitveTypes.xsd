@@ -1,4 +1,4 @@
-<xsd:schema elementFormDefault="qualified" targetNamespace="cleo.clarify.just.choice.issue" xmlns="cleo.clarify.choicePrimitive.types.test" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:schema elementFormDefault="qualified" targetNamespace="just.choice.issue" xmlns="cleo.clarify.choicePrimitive.types.test" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 <xsd:element name="choiceExample">
    <xsd:complexType>
       <xsd:choice>

@@ -19,9 +19,11 @@ import com.sun.tools.xjc.model.CReferencePropertyInfo;
 import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.outline.Outline;
 
+import xjcTests.CtBuilders.TestingBaseClassManager;
+
 public class XJCExtensionTests extends AbstractXJCTest {
 	private File extensionsResourceDir = new File(resourceDir, "extensions");
-	String packageNameTODO = "ohBoiNewPackageName2";
+	String packageNameTODO = new TestingBaseClassManager().getPackageName();
 
 	@Test
 	public void simpleTypeRestrictionAndExtensionTest() throws Throwable {
@@ -417,8 +419,9 @@ public class XJCExtensionTests extends AbstractXJCTest {
 			public void postProcessModel(Model model, ErrorHandler errorHandler) {
 				validateModel(model);
 
-				MyClarifyBaseClassManager bcm = (MyClarifyBaseClassManager) model.options.baseClassManager;
-				modifiedClasses = bcm.getModifiedClasses();
+				// TestingBaseClassManager bcm =
+				// TestingBaseClassManager.getInstance();
+				// modifiedClasses = bcm.getModifiedClasses();
 			}
 		}
 	}
