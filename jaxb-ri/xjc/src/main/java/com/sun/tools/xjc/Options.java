@@ -100,6 +100,9 @@ import com.sun.xml.bind.api.impl.NameConverter;
 
 public class Options {
 
+	/**
+	 * Provides a way to change the RefFactory instance
+	 */
 	public RefFactory refFactory = new RefFactory();
 
 	/**
