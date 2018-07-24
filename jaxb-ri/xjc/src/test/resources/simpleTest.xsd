@@ -2,9 +2,9 @@
 <xsd:schema version="1.0"
            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
            elementFormDefault="qualified" 
-           targetNamespace="urn:xml.binary.cleo.com"
-		   xmlns:tns="urn:xml.binary.cleo.com"
-           xmlns="http://cleo.com/xsd/ImageAttachment">
+           targetNamespace="urn:xml.binary.com"
+		   xmlns:tns="urn:xml.binary.com"
+           xmlns="http://test.com/xsd/ImageAttachment">
 
 	<xsd:element name="ImageAttachment">
 		<xsd:complexType >
