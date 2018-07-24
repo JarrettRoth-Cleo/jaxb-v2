@@ -11,15 +11,15 @@ public class TestingCTBuilderFactory extends CTBuilderFactory {
 		this.m = m;
 	}
 
-	protected CTBuilder getMixedExtendedComplexTypeBuilder() {
+	public CTBuilder getMixedExtendedComplexTypeBuilder() {
 		return new TestingMixedExtendedComplexTypeBuilder(m);
 	}
 
-	protected CTBuilder getExtendedComplexTypeBuilder() {
+	public CTBuilder getExtendedComplexTypeBuilder() {
 		return new TestingExtendedComplexTypeBuilder(m);
 	}
 
-	protected CTBuilder getRestrictedComplexTypeBuilder() {
+	public CTBuilder getRestrictedComplexTypeBuilder() {
 		return new TestingRestrictedComplexTypeBuilder(m);
 	}
 

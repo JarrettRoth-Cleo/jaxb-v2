@@ -42,8 +42,9 @@ package xjcTests.CtBuilders;
 
 import com.sun.tools.xjc.model.CClass;
 import com.sun.tools.xjc.model.CClassInfo;
+import com.sun.tools.xjc.model.Model;
+import com.sun.tools.xjc.reader.Ring;
 import com.sun.tools.xjc.reader.xmlschema.ct.CTBuilder;
-import com.sun.tools.xjc.reader.xmlschema.ct.FreshComplexTypeBuilder;
 import com.sun.xml.xsom.XSComplexType;
 import com.sun.xml.xsom.XSType;
 
@@ -66,7 +67,7 @@ public final class TestingRestrictedComplexTypeBuilder extends CTBuilder {
 
 	public void build(XSComplexType ct) {
 
-		new FreshComplexTypeBuilder().build(ct);
+		Ring.get(Model.class).options.ctBuilderFactory.getFreshComplexTypeBuilder().build(ct);
 		XSComplexType baseType = ct.getBaseType().asComplexType();
 
 		// build the base class
