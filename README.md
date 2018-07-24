@@ -22,7 +22,7 @@ or have questions, ask at our user forum: <a href="mailto:users@metro.java.net">
 
 #### NameConverter
 
-The  [NameConverter interface](jaxb-ri/core/src/main/java/com/sun/xml/bind/api/impl/NameConverter.java) has all instances moved from out to the [NameConverterProvider class](jaxb-ri/core/src/main/java/com/sun/xml/bind/api/impl/NameConverterProvider.java) definition.  
+The  [NameConverter](jaxb-ri/core/src/main/java/com/sun/xml/bind/api/impl/NameConverter.java) interface has all instances moved from out to the [NameConverterProvider](jaxb-ri/core/src/main/java/com/sun/xml/bind/api/impl/NameConverterProvider.java) class definition.  
 
 Now, the interface is just an interface and can be changed via the SchemaCompiler's options.  All previous references to NameConverter.standard are now going through the NameConverterProvider.getStandard() static method.
 
@@ -44,7 +44,7 @@ Some changes:
 * [JStringLiteral](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JStringLiteral.java) allows the str value to change through a setter method
 * [JVar](jaxb-ri/codemodel/codemodel/src/main/java/com/sun/codemodel/JVar.java) enables setting annotations on itself and enables changing the mods
 
-#### Ref instantiation is controlled via factory
+#### Ref instantiation is controlled through a factory
 
 A new class [RefFactory](jaxb-ri/xjc/src/main/java/com/sun/tools/xjc/reader/xmlschema/ref/RefFactory.java) was added that can be overridden in the SchemaCompiler's options so change how reference classes are instantiated.
 
@@ -52,7 +52,7 @@ The current implementations where originally found in the [RawTypeSetBuilder](ja
 
 An example of how to change the functionality of the RefFactory can be found in the [AbstractXJCTest](jaxb-ri/xjc/src/test/java/xjcTests/AbstractXJCTest.java)#addCustomTestingOptions method
 
-#### CTBuilder instantiation is controlled via factory
+#### CTBuilder instantiation is controlled through a factory
 
 A new class [CTBuilderFactory](jaxb-ri/xjc/src/main/java/com/sun/tools/xjc/reader/xmlschema/ct/CTBuilderFactory.java) was added that can be overridden in the SchemaCompiler's options so change how complex type builders are instantiated.
 
