@@ -29,6 +29,10 @@ import com.sun.tools.xjc.api.XJC;
 import com.sun.tools.xjc.outline.Outline;
 import com.sun.xml.bind.api.impl.NameConverter;
 
+import xjcTests.CtBuilders.TestingBaseClassManager;
+import xjcTests.CtBuilders.TestingCTBuilderFactory;
+import xjcTests.ref.TestingRefFactory;
+
 /**
  * 
  * This class essentially defines how the wizard would use the XJC project
@@ -91,7 +95,7 @@ public class AbstractXJCTest {
 			compiler.getOptions().addBindFile(f);
 		}
 
-		addCustomNameCovnerter(compiler.getOptions());
+		addCustomTestingOptions(compiler.getOptions());
 
 		compiler.parseSchema(xsd);
 		return compiler;
@@ -130,11 +134,12 @@ public class AbstractXJCTest {
 		return inputSource;
 	}
 
-	private void addCustomNameCovnerter(Options ops) {
+	private void addCustomTestingOptions(Options ops) {
 		try {
 			ops.setNameConverter(getTestingNameConverter(), getTestingNameConverterPlugin());
-			// TODO
-			ops.baseClassManager = new TestingBaseClassManager();
+			TestingBaseClassManager manager = new TestingBaseClassManager();
+			ops.ctBuilderFactory = new TestingCTBuilderFactory(manager);
+			ops.refFactory = new TestingRefFactory(manager);
 		} catch (BadCommandLineException e) {
 			Assert.fail(e.getMessage());
 		}

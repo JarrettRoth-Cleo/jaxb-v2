@@ -84,7 +84,8 @@ import com.sun.tools.xjc.api.SpecVersion;
 import com.sun.tools.xjc.generator.bean.field.FieldRendererFactory;
 import com.sun.tools.xjc.model.Model;
 import com.sun.tools.xjc.reader.Util;
-import com.sun.tools.xjc.reader.xmlschema.ct.clFork.BaseClassManager;
+import com.sun.tools.xjc.reader.xmlschema.ct.CTBuilderFactory;
+import com.sun.tools.xjc.reader.xmlschema.ref.RefFactory;
 import com.sun.xml.bind.api.impl.NameConverter;
 
 /**
@@ -99,12 +100,13 @@ import com.sun.xml.bind.api.impl.NameConverter;
 
 public class Options {
 
+	public RefFactory refFactory = new RefFactory();
+
 	/**
-	 * manager for making extensions and restrictions. The base implementation
-	 * will outright fail when the methods are called. An actual implementation
-	 * needs to be set for correct execution.
+	 * Provides a way to instantiate Complex Type builders for the
+	 * ComplexTypeFieldBuilder
 	 */
-	public BaseClassManager baseClassManager = null;
+	public CTBuilderFactory ctBuilderFactory = new CTBuilderFactory();
 
 	/** If "-debug" is specified. */
 	public boolean debugMode;
