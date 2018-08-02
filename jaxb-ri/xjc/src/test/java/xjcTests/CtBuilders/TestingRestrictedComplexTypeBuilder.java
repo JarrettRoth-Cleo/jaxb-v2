@@ -67,7 +67,7 @@ public final class TestingRestrictedComplexTypeBuilder extends CTBuilder {
 
 	public void build(XSComplexType ct) {
 
-		Ring.get(Model.class).options.ctBuilderFactory.getFreshComplexTypeBuilder().build(ct);
+		((TestingCTBuilderFactory) Ring.get(Model.class).options.ctBuilderFactory).getFreshComplexTypeBuilder().build(ct);
 		XSComplexType baseType = ct.getBaseType().asComplexType();
 
 		// build the base class

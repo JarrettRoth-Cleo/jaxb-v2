@@ -2,6 +2,7 @@ package xjcTests.CtBuilders;
 
 import com.sun.tools.xjc.reader.xmlschema.ct.CTBuilder;
 import com.sun.tools.xjc.reader.xmlschema.ct.CTBuilderFactory;
+import com.sun.tools.xjc.reader.xmlschema.ct.FreshComplexTypeBuilder;
 
 public class TestingCTBuilderFactory extends CTBuilderFactory {
 
@@ -21,6 +22,10 @@ public class TestingCTBuilderFactory extends CTBuilderFactory {
 
 	public CTBuilder getRestrictedComplexTypeBuilder() {
 		return new TestingRestrictedComplexTypeBuilder(m);
+	}
+
+	public CTBuilder getFreshComplexTypeBuilder() {
+		return new FreshComplexTypeBuilder();
 	}
 
 }

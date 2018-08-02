@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="foo" elementFormDefault="qualified" targetNamespace="foo">
+    <xs:complexType name="B"/>
+    
+    <xs:element name="root">
+        <xs:complexType>
+            <xs:choice maxOccurs="2">
+                <xs:element name="item1" type="B"/>
+                <xs:element name="item2" type="B"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

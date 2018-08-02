@@ -23,9 +23,10 @@ public class XJCAutoNameResoultionTests extends AbstractXJCTest {
 	public void xjcRunsPlugin_test() throws Throwable {
 		BeanNameManager nm = new BeanNameManager();
 		final File f = new File(resourceDir, "simplifiedPrecision.xsd");
+		// final File f = new File(resourceDir, "choice/Collision.xsd");
 		NameResolutionPlugin p = new NameResolutionPlugin(nm);
 
-		Logic l1 = buildTestLogic(f, p, false);
+		Logic l1 = buildTestLogic(f, p, true);
 		runTest(l1);
 
 		NameBindingsManager m = p.getBindingsManger();
