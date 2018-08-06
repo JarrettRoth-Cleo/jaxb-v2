@@ -373,6 +373,8 @@ public abstract class CPropertyInfo implements PropertyInfo<NType, NClass>, CCus
 		try {
 			return (CPropertyInfo) super.clone();
 		} catch (CloneNotSupportedException e) {
+			// It is literally impossible to enter this block.
+			// If we do, something has clearly gone very wrong.
 			throw new RuntimeException(e);
 		}
 	}
