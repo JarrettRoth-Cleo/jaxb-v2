@@ -381,9 +381,8 @@ public class CClassInfo extends AbstractCElement implements ClassInfo<NType, NCl
 			// this property isn't contributing anything
 			// this happens when you try to map an empty sequence to a property
 			return;
-		CPropertyInfo newProp = prop.clone();
-		newProp.setParent(this);
-		properties.add(newProp);
+		prop.setParent(this);
+		properties.add(prop);
 	}
 
 	/**
