@@ -360,6 +360,19 @@ public final class JPackage implements JDeclaration, JGenerable, JClassContainer
 	}
 
 	/**
+	 * Checks if a given name can be created as a class/interface
+	 */
+	public boolean canBeCreated(String classLocalName) {
+		if (classes.containsKey(classLocalName)){
+			return false;
+		}
+		if (upperCaseClassMap != null && upperCaseClassMap.containsKey(classLocalName.toUpperCase())) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Checks if a given name is already defined as a class/interface
 	 */
 	public boolean isDefined(String classLocalName) {
