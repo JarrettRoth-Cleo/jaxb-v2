@@ -380,6 +380,18 @@ public final class JAnnotationUse extends JAnnotationValue {
 		return arrayMember;
 	}
 
+	/**
+	 * Helper method to copy annotations from other properties
+	 * 
+	 * @param name
+	 * @param value
+	 * @return
+	 */
+	public JAnnotationUse param(String name, JAnnotationValue value) {
+		addValue(name, value);
+		return this;
+	}
+
 	// /**
 	// * This can be used to add annotations inside annotations
 	// * for e.g &#64;XmlCollection(values=
