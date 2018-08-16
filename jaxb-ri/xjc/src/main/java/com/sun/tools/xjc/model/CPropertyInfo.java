@@ -69,7 +69,7 @@ import com.sun.xml.xsom.XSComponent;
  *
  * @author Kohsuke Kawaguchi
  */
-public abstract class CPropertyInfo implements PropertyInfo<NType, NClass>, CCustomizable {
+public abstract class CPropertyInfo implements PropertyInfo<NType, NClass>, CCustomizable, Cloneable {
 
 	@XmlTransient
 	private CClassInfo parent;
@@ -367,5 +367,15 @@ public abstract class CPropertyInfo implements PropertyInfo<NType, NClass>, CCus
 	@Override
 	public final boolean hasAnnotation(Class<? extends Annotation> annotationType) {
 		throw new UnsupportedOperationException();
+	}
+	
+	public CPropertyInfo clone() {
+		try {
+			return (CPropertyInfo) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// It is literally impossible to enter this block.
+			// If we do, something has clearly gone very wrong.
+			throw new RuntimeException(e);
+		}
 	}
 }
