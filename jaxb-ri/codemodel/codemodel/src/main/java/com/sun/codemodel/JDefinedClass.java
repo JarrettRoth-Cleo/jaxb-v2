@@ -908,10 +908,10 @@ public class JDefinedClass extends JClass implements JDeclaration, JClassContain
 	 * {@link JAnnotatable#annotations()}
 	 */
 	@Override
-	public Collection<JAnnotationUse> annotations() {
+	public List<JAnnotationUse> annotations() {
 		if (annotations == null)
 			annotations = new ArrayList<JAnnotationUse>();
-		return Collections.unmodifiableCollection(annotations);
+		return annotations;
 	}
 
 	/**
